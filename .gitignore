@@ -1,5 +1,9 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
+# editor project files
+.idea/
+skype-for-business-purecloud-app.iml
+
 # compiled output
 /dist
 /tmp
