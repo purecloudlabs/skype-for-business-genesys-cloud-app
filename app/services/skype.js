@@ -11,6 +11,8 @@ const config = {
 
 export default Service.extend({
     init() {
+        this._super(...arguments);
+        
         window.Skype.initialize({
             apiKey: config.apiKeyCC,
             supportsAudio: true,
