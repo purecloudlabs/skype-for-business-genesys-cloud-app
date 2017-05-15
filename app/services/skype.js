@@ -24,5 +24,46 @@ export default Service.extend({
         }, error => {
             window.alert('There was an error loading the api:', error);
         });
+    },
+
+    // Chat
+
+    startChat(id) {
+        var conversationManager;
+        var listeners;
+        var conversation = conversationManager.getConversation(id);
+        // do stuff with chat listeners
+        listeners.push(conversation.selfParticipant.chat.state.when('Connected', function () {
+            // Connected to chat
+        }));
+    },
+
+    sendMessage(message) {
+        var conversation;
+        conversation.chatService.sendMessage(message);
+    },
+
+    // Audio & Video
+
+    startAudio(id) {
+        var conversationManager;
+        var conversation = conversationManager.getConversation(id);
+        conversation.participants.added((participant) => {
+            //participant added
+            participant; //appease lint
+        });
+        conversation.audioService.start();
+    },
+
+    startVideo() {          // appears to assume/require that an audio conversation has been started first
+        var conversation;
+        conversation.videoService.start(null, (error) => {
+            // error handler
+            error; //appease lint
+        })
+    },
+
+    endConversation (conversation) { //video, audio or chat (?)
+        conversation.leave();
     }
 });
