@@ -408,6 +408,8 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
         init: function init() {
             var _this = this;
 
+            this._super.apply(this, arguments);
+
             window.Skype.initialize({
                 apiKey: config.apiKeyCC,
                 supportsAudio: true,
@@ -419,6 +421,48 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
             }, function (error) {
                 window.alert('There was an error loading the api:', error);
             });
+        },
+
+
+        // Chat
+
+        startChat: function startChat(id) {
+            var conversationManager;
+            var listeners;
+            var conversation = conversationManager.getConversation(id);
+            // do stuff with chat listeners
+            listeners.push(conversation.selfParticipant.chat.state.when('Connected', function () {
+                // Connected to chat
+            }));
+        },
+        sendMessage: function sendMessage(message) {
+            var conversation;
+            conversation.chatService.sendMessage(message);
+        },
+
+
+        // Audio & Video
+
+        startAudio: function startAudio(id) {
+            var conversationManager;
+            var conversation = conversationManager.getConversation(id);
+            conversation.participants.added(function (participant) {
+                //participant added
+                participant; //appease lint
+            });
+            conversation.audioService.start();
+        },
+        startVideo: function startVideo() {
+            // appears to assume/require that an audio conversation has been started first
+            var conversation;
+            conversation.videoService.start(null, function (error) {
+                // error handler
+                error; //appease lint
+            });
+        },
+        endConversation: function endConversation(conversation) {
+            //video, audio or chat (?)
+            conversation.leave();
         }
     });
 });
@@ -460,6 +504,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+cb80590c"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+b10648a5"});
 }
 //# sourceMappingURL=purecloud-skype.map
