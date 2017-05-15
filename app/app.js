@@ -8,9 +8,19 @@ let App;
 Ember.MODEL_FACTORY_INJECTIONS = true;
 
 App = Ember.Application.extend({
-  modulePrefix: config.modulePrefix,
-  podModulePrefix: config.podModulePrefix,
-  Resolver
+    modulePrefix: config.modulePrefix,
+    podModulePrefix: config.podModulePrefix,
+    Resolver,
+
+    init() {
+        this._super(...arguments);
+
+        window.App = this;
+    },
+
+    serviceFor(name) {
+        return this.__container__.lookup(`service:${name}`);
+    }
 });
 
 loadInitializers(App, config.modulePrefix);
