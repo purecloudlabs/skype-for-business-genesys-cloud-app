@@ -4,7 +4,7 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'purecloud-skype',
     environment: environment,
-    rootURL: '/',
+    rootURL: '/skype-for-business-purecloud-app',
     locationType: 'auto',
     EmberENV: {
       FEATURES: {
