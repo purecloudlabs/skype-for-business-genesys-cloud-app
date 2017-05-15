@@ -18,7 +18,9 @@ export default Service.extend({
             convLogSettings: true
         }, api => {
             this.api = api;
-            this.application = new api.application();
+            this.application = api.UIApplicationInstance;
+        }, error => {
+            window.alert('There was an error loading the api:', error);
         });
     }
 });

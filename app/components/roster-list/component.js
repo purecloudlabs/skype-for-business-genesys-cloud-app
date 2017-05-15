@@ -1,11 +1,12 @@
 import Ember from 'ember';
+
 const {
-  Component,
-  inject
+    Component,
+    inject
 } = Ember;
 
 export default Component.extend({
-  classNames: ['roster-list'],
+    classNames: ['roster-list'],
 
-  skype: inject.service()
+    skype: inject.service()
 });
