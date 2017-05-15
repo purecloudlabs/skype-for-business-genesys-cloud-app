@@ -64728,6 +64728,27 @@ createDeprecatedModule('resolver');
   var versionRegExp = exports.versionRegExp = /\d[.]\d[.]\d/;
   var shaRegExp = exports.shaRegExp = /[a-z\d]{8}/;
 });
+;define("ember-component-css/initializers/component-styles", ["exports"], function (exports) {});
+;define('ember-component-css/mixins/style-namespacing-extras', ['exports', 'ember'], function (exports, _ember) {
+  var computed = _ember['default'].computed;
+  var Mixin = _ember['default'].Mixin;
+  exports['default'] = Mixin.create({
+    _componentIdentifier: computed({
+      get: function get() {
+        return (this._debugContainerKey || '').replace('component:', '');
+      }
+    }),
+
+    _shouldAddNamespacedClassName: computed({
+      get: function get() {
+        return this.get('tagName') !== '' && this.get('componentCssClassName');
+      }
+    })
+  });
+});
+;define("ember-component-css/pod-names", ["exports"], function (exports) {
+  exports["default"] = { "roster-list": "__roster-list__9630d" };
+});
 ;define("ember-data/-private/adapters", ["exports", "ember-data/adapters/json-api", "ember-data/adapters/rest"], function (exports, _jsonApi, _rest) {
   "use strict";
 
@@ -81721,6 +81742,15 @@ createDeprecatedModule('resolver');
     value: true
   });
   exports.default = "2.13.1";
+});
+;define("ember-getowner-polyfill/index", ["exports", "ember"], function (exports, _ember) {
+
+  _ember["default"].deprecate("ember-getowner-polyfill is now a true polyfill. Use Ember.getOwner directly instead of importing from ember-getowner-polyfill", false, {
+    id: "ember-getowner-polyfill.import",
+    until: '2.0.0'
+  });
+
+  exports["default"] = _ember["default"].getOwner;
 });
 ;define("ember-inflector/index", ["module", "exports", "ember", "ember-inflector/lib/system", "ember-inflector/lib/ext/string"], function (module, exports, _ember, _system) {
   "use strict";

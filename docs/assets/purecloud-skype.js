@@ -3,26 +3,74 @@
 
 
 define('purecloud-skype/app', ['exports', 'ember', 'purecloud-skype/resolver', 'ember-load-initializers', 'purecloud-skype/config/environment'], function (exports, _ember, _resolver, _emberLoadInitializers, _environment) {
-  'use strict';
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+
+    var App = void 0;
+
+    _ember.default.MODEL_FACTORY_INJECTIONS = true;
+
+    App = _ember.default.Application.extend({
+        modulePrefix: _environment.default.modulePrefix,
+        podModulePrefix: _environment.default.podModulePrefix,
+        Resolver: _resolver.default,
+
+        init: function init() {
+            this._super.apply(this, arguments);
+
+            window.App = this;
+        },
+        serviceFor: function serviceFor(name) {
+            return this.__container__.lookup('service:' + name);
+        }
+    });
+
+    (0, _emberLoadInitializers.default)(App, _environment.default.modulePrefix);
+
+    exports.default = App;
+});
+define('purecloud-skype/components/conversation-pane/component', ['exports', 'ember'], function (exports, _ember) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var Component = _ember.default.Component;
+    exports.default = Component.extend({});
+});
+define("purecloud-skype/components/conversation-pane/template", ["exports"], function (exports) {
+  "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.default = Ember.HTMLBars.template({ "id": "l3mnnJC6", "block": "{\"statements\":[[0,\"Conversation pane\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/conversation-pane/template.hbs" } });
+});
+define('purecloud-skype/components/roster-list/component', ['exports', 'ember'], function (exports, _ember) {
+    'use strict';
 
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var Component = _ember.default.Component,
+        inject = _ember.default.inject;
+    exports.default = Component.extend({
+        classNames: ['roster-list'],
 
-  var App = void 0;
+        skype: inject.service()
+    });
+});
+define("purecloud-skype/components/roster-list/template", ["exports"], function (exports) {
+  "use strict";
 
-  _ember.default.MODEL_FACTORY_INJECTIONS = true;
-
-  App = _ember.default.Application.extend({
-    modulePrefix: _environment.default.modulePrefix,
-    podModulePrefix: _environment.default.podModulePrefix,
-    Resolver: _resolver.default
+  Object.defineProperty(exports, "__esModule", {
+    value: true
   });
-
-  (0, _emberLoadInitializers.default)(App, _environment.default.modulePrefix);
-
-  exports.default = App;
+  exports.default = Ember.HTMLBars.template({ "id": "jMvi5lkf", "block": "{\"statements\":[[0,\"roster\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/roster-list/template.hbs" } });
 });
 define('purecloud-skype/components/welcome-page', ['exports', 'ember-welcome-page/components/welcome-page'], function (exports, _welcomePage) {
   'use strict';
@@ -89,6 +137,53 @@ define('purecloud-skype/initializers/app-version', ['exports', 'ember-cli-app-ve
   exports.default = {
     name: 'App Version',
     initialize: (0, _initializerFactory.default)(name, version)
+  };
+});
+define('purecloud-skype/initializers/component-styles', ['exports', 'ember', 'ember-component-css/pod-names', 'purecloud-skype/mixins/style-namespacing-extras'], function (exports, _ember, _podNames, _styleNamespacingExtras) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.initialize = initialize;
+  var Component = _ember.default.Component,
+      ComponentLookup = _ember.default.ComponentLookup,
+      computed = _ember.default.computed,
+      getOwner = _ember.default.getOwner;
+
+
+  ComponentLookup.reopen({
+    componentFor: function componentFor(name, owner) {
+      owner = owner.hasRegistration ? owner : getOwner(this);
+
+      if (_podNames.default[name] && !owner.hasRegistration('component:' + name)) {
+        owner.register('component:' + name, Component);
+      }
+      return this._super.apply(this, arguments);
+    }
+  });
+
+  Component.reopen(_styleNamespacingExtras.default, {
+    componentCssClassName: computed({
+      get: function get() {
+        return _podNames.default[this.get('_componentIdentifier')] || '';
+      }
+    }),
+
+    init: function init() {
+      this._super.apply(this, arguments);
+
+      if (this.get('_shouldAddNamespacedClassName')) {
+        this.classNames = this.classNames.concat(this.get('componentCssClassName'));
+      }
+    }
+  });
+
+  function initialize() {}
+
+  exports.default = {
+    name: 'component-styles',
+    initialize: initialize
   };
 });
 define('purecloud-skype/initializers/container-debug-adapter', ['exports', 'ember-resolver/resolvers/classic/container-debug-adapter'], function (exports, _containerDebugAdapter) {
@@ -193,6 +288,22 @@ define('purecloud-skype/initializers/injectStore', ['exports', 'ember'], functio
     initialize: function initialize() {}
   };
 });
+define('purecloud-skype/initializers/skype', ['exports', 'purecloud-skype/services/skype'], function (exports, _skype) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.initialize = initialize;
+  function initialize(application) {
+    application.register('service:skype', _skype.default, { initialize: true, singleton: true });
+  }
+
+  exports.default = {
+    name: 'skype',
+    initialize: initialize
+  };
+});
 define('purecloud-skype/initializers/store', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
@@ -227,6 +338,19 @@ define("purecloud-skype/instance-initializers/ember-data", ["exports", "ember-da
     name: "ember-data",
     initialize: _initializeStoreService.default
   };
+});
+define('purecloud-skype/mixins/style-namespacing-extras', ['exports', 'ember-component-css/mixins/style-namespacing-extras'], function (exports, _styleNamespacingExtras) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _styleNamespacingExtras.default;
+    }
+  });
 });
 define('purecloud-skype/resolver', ['exports', 'ember-resolver'], function (exports, _emberResolver) {
   'use strict';
@@ -266,13 +390,53 @@ define('purecloud-skype/services/ajax', ['exports', 'ember-ajax/services/ajax'],
     }
   });
 });
+define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports, _ember) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var Service = _ember.default.Service;
+
+
+    var config = {
+        apiKey: 'a42fcebd-5b43-4b89-a065-74450fb91255', // SDK
+        apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // SDK+UI
+    };
+
+    exports.default = Service.extend({
+        init: function init() {
+            var _this = this;
+
+            window.Skype.initialize({
+                apiKey: config.apiKeyCC,
+                supportsAudio: true,
+                supportsVideo: true,
+                convLogSettings: true
+            }, function (api) {
+                _this.api = api;
+                _this.application = api.UIApplicationInstance;
+            }, function (error) {
+                window.alert('There was an error loading the api:', error);
+            });
+        }
+    });
+});
 define("purecloud-skype/templates/application", ["exports"], function (exports) {
   "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "3aac6MlU", "block": "{\"statements\":[[1,[26,[\"welcome-page\"]],false],[0,\"\\n\"],[0,\"\\n\"],[1,[26,[\"outlet\"]],false]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/application.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "Hu8LtFwX", "block": "{\"statements\":[[1,[26,[\"outlet\"]],false]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/application.hbs" } });
+});
+define("purecloud-skype/templates/index", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "s3jia8VG", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"skype-for-business-app\"],[13],[0,\"\\n    \"],[1,[26,[\"roster-list\"]],false],[0,\"\\n    \"],[1,[26,[\"conversation-pane\"]],false],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/index.hbs" } });
 });
 
 
@@ -296,6 +460,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+3e9dca66"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+cb80590c"});
 }
 //# sourceMappingURL=purecloud-skype.map
