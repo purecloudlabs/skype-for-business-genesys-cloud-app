@@ -3,7 +3,8 @@ import Ember from 'ember';
 const {
     RSVP,
     Logger,
-    Service
+    Service,
+    Evented
 } = Ember;
 
 const config = {
@@ -20,7 +21,16 @@ const appConfigProperties = {
     "homePage": "https://mypurecloud.github.io/skype-for-business-purecloud-app/",
 };
 
-export default Service.extend({
+export const EVENTS = {
+    groupAdded: 'GROUP_ADDED',
+    groupRemoved: 'GROUP_REMOVED',
+    personAdded: 'PERSON_ADDED',
+    personRemoved: 'PERSON_REMOVED',
+    conversationAdded: 'CONVERSATION_ADDED',
+    conversationRemoved: 'CONVERSATION_REMOVED'
+}
+
+export default Service.extend(Evented, {
     ajax: Ember.inject.service(),
 
     promise: null,
@@ -95,12 +105,45 @@ export default Service.extend({
         };
         return this.application.signInManager.signIn(options).then(() => {
             const me = this.application.personsAndGroupsManager.mePerson;
+
             this.set('user', {
                 id: me.id(),
                 avatar: me.avatarUrl(),
                 email: me.email(),
                 displayName: me.displayName()
             });
+
+            this.registerForEvents();
+        });
+    },
+
+    registerForEvents() {
+        const app = this.application;
+        const conversations = app.conversationsManager;
+        const groups = app.personsAndGroupsManager.all.groups;
+        const persons = app.personsAndGroupsManager.all.persons;
+
+        conversations.subscribe();
+        groups.subscribe();
+        persons.subscribe();
+
+        groups.added(group => {
+            Logger.info('Group added', group);
+            this.trigger(EVENTS.groupAdded, group);
+        });
+        groups.removed(group => {
+            Logger.info('Group added', group);
+            this.trigger(EVENTS.groupRemoved, group);
+        });
+
+        persons.added(person => {
+            Logger.info('Person added', person);
+            this.trigger(EVENTS.personAdded, person);
+        });
+
+        conversations.added(conversation => {
+            Logger.info('Conversation added', conversation);
+            this.trigger(EVENTS.conversationAdded, conversation);
         });
     },
 
