@@ -33,39 +33,38 @@ export default Service.extend({
     },
 
     startAuthentication() {
+        if (window.location.href.indexOf('#') > 0) {
+            return this.extractToken();
+        }
+
         this.get('ajax').request(discoveryUrl, {
             dataType: 'json'
-        }).then(data => {
-            const baseUrl = 'https://login.microsoftonline.com/oauth2/authorize';
+        }).then(() => {
+            const baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
             const authData = {
-                response_type: 'id_token',
+                response_type: 'token',
                 client_id: '521f4c8f-9048-4337-bf18-6495ca21e415',
                 state: 'dummy',
-                resource: data._links.self.href,
-                redirect_uri: 'https://localhost:4200/skype-for-business-purecloud-app/'
+                redirect_uri: 'https://localhost:4200/skype-for-business-purecloud-app/',
+                resource: 'https://webdir.online.lync.com'
             };
-            return this.application.signInManager.signIn({
-                cors: true,
-                client_id: authData.client_id,
-                redirect_uri: authData.redirect_uri,
-                origins: [
-                    'https://webdir0b.online.lync.com/Autodiscover/AutodiscoverService.svc/root?originalDomain=connectortrial.onmicrosoft.com'
-                ]
-            });
-            // const params = Object.keys(authData).map(key => {
-            //     let value = authData[key];
-            //     if (key === 'redirect_uri') {
-            //         value = window.encodeUriComponents(value);
-            //     }
-            //     return `${key}=${value}`;
-            // });
 
-            // return this.get('ajax').request(baseUrl, { data: authData });
-        }).then(data => {
-            debugger;
-        }).catch(error => {
-            console.error('There was an error signing in:', error);
+            const params = Object.keys(authData).map(key => {
+                const value = authData[key];
+                return `${key}=${value}`;
+            });
+            window.location.href = `${baseUrl}/?${params.join('&')}`;
         });
+    },
+
+    extractToken() {
+        const hash = window.location.hash.substr(1).split('&');
+        const data = {};
+        hash.forEach(info => {
+            const [key, value] = info.split('=');
+            data[key] = value;
+        });
+        this.authData = data;
     },
 
     // Chat
