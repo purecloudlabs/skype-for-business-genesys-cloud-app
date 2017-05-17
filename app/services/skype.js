@@ -119,7 +119,7 @@ export default Service.extend(Evented, {
 
     registerForEvents() {
         const app = this.application;
-        const conversations = app.conversationsManager;
+        const conversations = app.conversationsManager.conversations;
         const groups = app.personsAndGroupsManager.all.groups;
         const persons = app.personsAndGroupsManager.all.persons;
 
