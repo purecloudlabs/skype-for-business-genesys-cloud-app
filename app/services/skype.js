@@ -11,6 +11,14 @@ const config = {
 
 const discoveryUrl = 'https://webdir.online.lync.com/autodiscover/autodiscoverservice.svc/root';
 
+const appConfigProperties = {
+    "displayName": "purecloud-skype",
+    "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
+    "applicationType": "Web app / API",
+    "objectID": "bd59e8f7-7455-4bb5-8e5e-7a0f1988e144",
+    "homePage": "https://mypurecloud.github.io/skype-for-business-purecloud-app/",
+};
+
 export default Service.extend({
     ajax: Ember.inject.service(),
 
@@ -43,7 +51,7 @@ export default Service.extend({
             const baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
             const authData = {
                 response_type: 'token',
-                client_id: '521f4c8f-9048-4337-bf18-6495ca21e415',
+                client_id: appConfigProperties.applicationID,
                 state: 'dummy',
                 redirect_uri: 'https://localhost:4200/skype-for-business-purecloud-app/',
                 resource: 'https://webdir.online.lync.com'
