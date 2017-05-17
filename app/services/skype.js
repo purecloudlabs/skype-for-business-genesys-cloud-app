@@ -9,10 +9,14 @@ const config = {
     apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // SDK+UI
 };
 
+const discoveryUrl = 'https://webdir.online.lync.com/autodiscover/autodiscoverservice.svc/root';
+
 export default Service.extend({
+    ajax: Ember.inject.service(),
+
     init() {
         this._super(...arguments);
-        
+
         window.Skype.initialize({
             apiKey: config.apiKeyCC,
             supportsAudio: true,
@@ -21,8 +25,46 @@ export default Service.extend({
         }, api => {
             this.api = api;
             this.application = api.UIApplicationInstance;
+
+            this.startAuthentication();
         }, error => {
-            window.alert('There was an error loading the api:', error);
+            console.error('There was an error loading the api:', error);
+        });
+    },
+
+    startAuthentication() {
+        this.get('ajax').request(discoveryUrl, {
+            dataType: 'json'
+        }).then(data => {
+            const baseUrl = 'https://login.microsoftonline.com/oauth2/authorize';
+            const authData = {
+                response_type: 'id_token',
+                client_id: '521f4c8f-9048-4337-bf18-6495ca21e415',
+                state: 'dummy',
+                resource: data._links.self.href,
+                redirect_uri: 'https://localhost:4200/skype-for-business-purecloud-app/'
+            };
+            return this.application.signInManager.signIn({
+                cors: true,
+                client_id: authData.client_id,
+                redirect_uri: authData.redirect_uri,
+                origins: [
+                    'https://webdir0b.online.lync.com/Autodiscover/AutodiscoverService.svc/root?originalDomain=connectortrial.onmicrosoft.com'
+                ]
+            });
+            // const params = Object.keys(authData).map(key => {
+            //     let value = authData[key];
+            //     if (key === 'redirect_uri') {
+            //         value = window.encodeUriComponents(value);
+            //     }
+            //     return `${key}=${value}`;
+            // });
+
+            // return this.get('ajax').request(baseUrl, { data: authData });
+        }).then(data => {
+            debugger;
+        }).catch(error => {
+            console.error('There was an error signing in:', error);
         });
     },
 
