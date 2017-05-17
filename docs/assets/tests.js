@@ -37,7 +37,7 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
 
   QUnit.test('services/skype.js', function (assert) {
     assert.expect(1);
-    assert.ok(true, 'services/skype.js should pass ESLint\n\n');
+    assert.ok(false, 'services/skype.js should pass ESLint\n\n31:13 - Unexpected console statement. (no-console)');
   });
 });
 define('purecloud-skype/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {

@@ -39,8 +39,17 @@ define('purecloud-skype/components/conversation-pane/component', ['exports', 'em
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    var Component = _ember.default.Component;
-    exports.default = Component.extend({});
+    var inject = _ember.default.inject,
+        Component = _ember.default.Component;
+    exports.default = Component.extend({
+        skype: inject.service(),
+
+        init: function init() {
+            this._super.apply(this, arguments);
+
+            this.get('skype'); // dummy...
+        }
+    });
 });
 define("purecloud-skype/components/conversation-pane/template", ["exports"], function (exports) {
   "use strict";
@@ -396,6 +405,45 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+
+    var _slicedToArray = function () {
+        function sliceIterator(arr, i) {
+            var _arr = [];
+            var _n = true;
+            var _d = false;
+            var _e = undefined;
+
+            try {
+                for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+                    _arr.push(_s.value);
+
+                    if (i && _arr.length === i) break;
+                }
+            } catch (err) {
+                _d = true;
+                _e = err;
+            } finally {
+                try {
+                    if (!_n && _i["return"]) _i["return"]();
+                } finally {
+                    if (_d) throw _e;
+                }
+            }
+
+            return _arr;
+        }
+
+        return function (arr, i) {
+            if (Array.isArray(arr)) {
+                return arr;
+            } else if (Symbol.iterator in Object(arr)) {
+                return sliceIterator(arr, i);
+            } else {
+                throw new TypeError("Invalid attempt to destructure non-iterable instance");
+            }
+        };
+    }();
+
     var Service = _ember.default.Service;
 
 
@@ -404,7 +452,11 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
         apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // SDK+UI
     };
 
+    var discoveryUrl = 'https://webdir.online.lync.com/autodiscover/autodiscoverservice.svc/root';
+
     exports.default = Service.extend({
+        ajax: _ember.default.inject.service(),
+
         init: function init() {
             var _this = this;
 
@@ -418,9 +470,48 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
             }, function (api) {
                 _this.api = api;
                 _this.application = api.UIApplicationInstance;
+
+                _this.startAuthentication();
             }, function (error) {
-                window.alert('There was an error loading the api:', error);
+                console.error('There was an error loading the api:', error);
             });
+        },
+        startAuthentication: function startAuthentication() {
+            if (window.location.href.indexOf('#') > 0) {
+                return this.extractToken();
+            }
+
+            this.get('ajax').request(discoveryUrl, {
+                dataType: 'json'
+            }).then(function () {
+                var baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
+                var authData = {
+                    response_type: 'token',
+                    client_id: '521f4c8f-9048-4337-bf18-6495ca21e415',
+                    state: 'dummy',
+                    redirect_uri: 'https://localhost:4200/skype-for-business-purecloud-app/',
+                    resource: 'https://webdir.online.lync.com'
+                };
+
+                var params = Object.keys(authData).map(function (key) {
+                    var value = authData[key];
+                    return key + '=' + value;
+                });
+                window.location.href = baseUrl + '/?' + params.join('&');
+            });
+        },
+        extractToken: function extractToken() {
+            var hash = window.location.hash.substr(1).split('&');
+            var data = {};
+            hash.forEach(function (info) {
+                var _info$split = info.split('='),
+                    _info$split2 = _slicedToArray(_info$split, 2),
+                    key = _info$split2[0],
+                    value = _info$split2[1];
+
+                data[key] = value;
+            });
+            this.authData = data;
         },
 
 
@@ -504,6 +595,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+b10648a5"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+9d738802"});
 }
 //# sourceMappingURL=purecloud-skype.map
