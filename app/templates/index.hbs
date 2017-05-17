@@ -1,4 +1,8 @@
-<div class="skype-for-business-app">
-    {{roster-list}}
-    {{conversation-pane}}
-</div>
+{{#if loading}}
+    <h2>Loading!</h2>
+{{else}}
+    <div class="skype-for-business-app">
+        {{roster-list}}
+        {{conversation-pane}}
+    </div>
+{{/if}}

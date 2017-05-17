@@ -1,6 +1,8 @@
 import Ember from 'ember';
 
 const {
+    RSVP,
+    Logger,
     Service
 } = Ember;
 
@@ -9,8 +11,7 @@ const config = {
     apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // SDK+UI
 };
 
-const discoveryUrl = 'https://webdir.online.lync.com/autodiscover/autodiscoverservice.svc/root';
-
+const redirectUri = 'https://localhost:4200/skype-for-business-purecloud-app/';
 const appConfigProperties = {
     "displayName": "purecloud-skype",
     "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
@@ -22,8 +23,13 @@ const appConfigProperties = {
 export default Service.extend({
     ajax: Ember.inject.service(),
 
+    promise: null,
+
     init() {
         this._super(...arguments);
+
+        const deferred = RSVP.defer();
+        this.promise = deferred.promise;
 
         window.Skype.initialize({
             apiKey: config.apiKeyCC,
@@ -34,26 +40,24 @@ export default Service.extend({
             this.api = api;
             this.application = api.UIApplicationInstance;
 
-            this.startAuthentication();
+            deferred.resolve();
         }, error => {
-            console.error('There was an error loading the api:', error);
+            Logger.error('There was an error loading the api:', error);
         });
     },
 
     startAuthentication() {
-        if (window.location.href.indexOf('#') > 0) {
-            return this.extractToken();
-        }
+        return this.promise.then(() => {
+            if (window.location.href.indexOf('#') > 0) {
+                return this.extractToken();
+            }
 
-        this.get('ajax').request(discoveryUrl, {
-            dataType: 'json'
-        }).then(() => {
             const baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
             const authData = {
                 response_type: 'token',
                 client_id: appConfigProperties.applicationID,
                 state: 'dummy',
-                redirect_uri: 'https://localhost:4200/skype-for-business-purecloud-app/',
+                redirect_uri: redirectUri,
                 resource: 'https://webdir.online.lync.com'
             };
 
@@ -61,7 +65,10 @@ export default Service.extend({
                 const value = authData[key];
                 return `${key}=${value}`;
             });
+
             window.location.href = `${baseUrl}/?${params.join('&')}`;
+
+            return new RSVP.Promise(() => { }); // never resolve
         });
     },
 
@@ -73,6 +80,28 @@ export default Service.extend({
             data[key] = value;
         });
         this.authData = data;
+        return this.signIn();
+    },
+
+    signIn() {
+        const options = {
+            client_id: appConfigProperties.applicationID,
+            origins: [
+                'https://webdir.online.lync.com/autodiscover/autodiscoverservice.svc/root'
+            ],
+            cors: true,
+            version: 'PurecloudSkype/0.0.0',
+            redirect_uri: redirectUri
+        };
+        return this.application.signInManager.signIn(options).then(() => {
+            const me = this.application.personsAndGroupsManager.mePerson;
+            this.set('user', {
+                id: me.id(),
+                avatar: me.avatarUrl(),
+                email: me.email(),
+                displayName: me.displayName()
+            });
+        });
     },
 
     // Chat
@@ -112,7 +141,7 @@ export default Service.extend({
         })
     },
 
-    endConversation (conversation) { //video, audio or chat (?)
+    endConversation(conversation) { //video, audio or chat (?)
         conversation.leave();
     }
 });
