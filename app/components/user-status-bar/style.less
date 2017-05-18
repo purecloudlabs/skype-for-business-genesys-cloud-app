@@ -1,0 +1,26 @@
+& {
+    width: 100%;
+    padding: 10px;
+
+    background-color: rgb(15, 70, 93);
+}
+
+.profile-picture {
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    border: 3px solid #000;
+    border-radius: 50%;
+
+    img {
+        width: 100%;
+    }
+
+    &.online {
+        border-color: greenyellow;
+    }
+
+    &.busy {
+        border-color: red;
+    }
+}

@@ -1,6 +1,9 @@
 import Ember from 'ember';
 
+import User from '../models/user';
+
 const {
+    getOwner,
     RSVP,
     Logger,
     Service,
@@ -36,6 +39,8 @@ export default Service.extend(Evented, {
     promise: null,
 
     init() {
+        window.skype = this;
+
         this._super(...arguments);
 
         const deferred = RSVP.defer();
@@ -105,13 +110,8 @@ export default Service.extend(Evented, {
         };
         return this.application.signInManager.signIn(options).then(() => {
             const me = this.application.personsAndGroupsManager.mePerson;
-
-            this.set('user', {
-                id: me.id(),
-                avatar: me.avatarUrl(),
-                email: me.email(),
-                displayName: me.displayName()
-            });
+            const user = User.create({ me }, getOwner(this).ownerInjection());
+            this.set('user', user);
 
             this.registerForEvents();
         });
@@ -186,5 +186,11 @@ export default Service.extend(Evented, {
 
     endConversation(conversation) { //video, audio or chat (?)
         conversation.leave();
+    },
+
+    getAllGroups() {
+        return this.application.personsAndGroupsManager.all.groups.get().then(groups => {
+            return groups.filter(group => !!group.id());
+        });
     }
 });

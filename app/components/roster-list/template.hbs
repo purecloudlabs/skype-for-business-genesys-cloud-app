@@ -1,1 +1,7 @@
-roster
+{{user-status-bar user=skype.user}}
+
+<h2>Roster</h2>
+
+{{#each groups as |group|}}
+    {{group-entry group=group}}
+{{/each}}
