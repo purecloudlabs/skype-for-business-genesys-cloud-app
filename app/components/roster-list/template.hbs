@@ -2,6 +2,20 @@
 
 <h2>Roster</h2>
 
-{{#each groups as |group|}}
-    {{group-entry group=group}}
-{{/each}}
+<div class="groups">
+    {{#each groups as |group|}}
+        <div class="group-entry">
+
+            <div class="group-name">{{group.name}}</div>
+
+            {{#each group.persons as |person|}}
+                <div class="group-member">
+
+                    <div class="person-name">{{person.displayName}}</div>
+
+                </div>
+            {{/each}}
+
+        </div>
+    {{/each}}
+</div>
