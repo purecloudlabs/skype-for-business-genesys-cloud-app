@@ -1,5 +1,8 @@
-{{#each presences as |presence|}}
-    <div class="presence" {{action "setStatus" presence.key}}>
-        {{presence.label}}
+{{#each presenceList as |presence|}}
+    <div class="presence {{presence.key}}" {{action "setStatus" presence.key}}>
+        <div class="selector {{if presence.active 'active'}}"></div>
+        <div class="label">
+            {{presence.label}}
+        </div>
     </div>
 {{/each}}

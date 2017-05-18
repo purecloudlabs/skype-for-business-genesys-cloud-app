@@ -22,7 +22,19 @@ export default Ember.Object.extend({
     },
 
     presence: computed(function () {
-        return this.get('me').status();
+        const status = this.get('me').status();
+        const map = {
+            Online: 'Available',
+            Busy: 'Busy',
+            DoNotDisturb: 'Do Not Disturb',
+            Away: 'Away'
+        };
+
+        if (map[status]) {
+            return map[status];
+        }
+
+        return status;
     }),
 
     presenceClass: computed('presence', function () {

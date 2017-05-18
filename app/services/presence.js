@@ -11,7 +11,8 @@ export default Service.extend({
 
     presences: computed(function () {
         return [
-            { key: 'Online', label: 'Available' },
+            { key: 'Available', label: 'Available' },
+            { key: 'Away', label: 'Away' },
             { key: 'Busy', label: 'Busy' },
             { key: 'DoNotDisturb', label: 'Do Not Disturb' }
         ]
