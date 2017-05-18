@@ -17,6 +17,8 @@ export default Ember.Object.extend({
             email: me.email(),
             displayName: me.displayName()
         });
+
+        this.subscribeToProperties();
     },
 
     status: computed(function () {
@@ -26,5 +28,9 @@ export default Ember.Object.extend({
     photoUrl: computed(function () {
         const email = this.get('email');
         return `https://outlook.office365.com/owa/service.svc/s/GetPersonaPhoto?email=${email}&UA=0&size=HR64x64`;
-    })
+    }),
+
+    subscribeToProperties() {
+        this.get('me').status.changed(() => this.notifyPropertyChange('status'));
+    }
 });
