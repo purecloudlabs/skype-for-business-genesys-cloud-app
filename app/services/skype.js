@@ -192,5 +192,9 @@ export default Service.extend(Evented, {
         return this.application.personsAndGroupsManager.all.groups.get().then(groups => {
             return groups.filter(group => !!group.id());
         });
+    },
+
+    startConversation(personSip) {
+
     }
 });

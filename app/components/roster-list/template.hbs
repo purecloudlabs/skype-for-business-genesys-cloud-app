@@ -9,11 +9,12 @@
             <div class="group-name">{{group.name}}</div>
 
             {{#each group.persons as |person|}}
-                <div class="group-member">
+                <button class="group-member" onclick={{action "clickContact" person}}>
 
+                    <img src={{person.avatarUrl}} />
                     <div class="person-name">{{person.displayName}}</div>
 
-                </div>
+                </button>
             {{/each}}
 
         </div>

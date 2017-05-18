@@ -30,6 +30,12 @@ export default Component.extend({
         Ember.run.scheduleOnce('afterRender', this, this.fetchData);
     },
 
+    actions: {
+        clickContact(person) {
+            this.get('skype').startConversation(person.get('id'));
+        }
+    },
+
     fetchData() {
         // const skype = this.get('skype');
         //
@@ -74,10 +80,9 @@ export default Component.extend({
                 let personModel = Ember.Object.create();
                 groupModel.get('persons').pushObject(personModel);
 
-                person.displayName.get().then(() => {
-                    personModel.set('id', person.id());
-                    personModel.set('displayName', person.displayName());
-                });
+                person.id.get().then(() => personModel.set('id', person.id()));
+                person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
+                person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
             });
         });
     }
