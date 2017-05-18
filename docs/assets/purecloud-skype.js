@@ -94,6 +94,30 @@ define('purecloud-skype/components/welcome-page', ['exports', 'ember-welcome-pag
     }
   });
 });
+define('purecloud-skype/controllers/index', ['exports', 'ember'], function (exports, _ember) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var inject = _ember.default.inject,
+        Controller = _ember.default.Controller;
+    exports.default = Controller.extend({
+        skype: inject.service(),
+
+        loading: false,
+
+        init: function init() {
+            var _this = this;
+
+            this.set('loading', true);
+
+            this.get('skype').startAuthentication().then(function () {
+                _this.set('loading', false);
+            });
+        }
+    });
+});
 define('purecloud-skype/helpers/app-version', ['exports', 'ember', 'purecloud-skype/config/environment', 'ember-cli-app-version/utils/regexp'], function (exports, _ember, _environment, _regexp) {
   'use strict';
 
@@ -405,6 +429,7 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.EVENTS = undefined;
 
     var _slicedToArray = function () {
         function sliceIterator(arr, i) {
@@ -444,7 +469,10 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
         };
     }();
 
-    var Service = _ember.default.Service;
+    var RSVP = _ember.default.RSVP,
+        Logger = _ember.default.Logger,
+        Service = _ember.default.Service,
+        Evented = _ember.default.Evented;
 
 
     var config = {
@@ -452,15 +480,36 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
         apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // SDK+UI
     };
 
-    var discoveryUrl = 'https://webdir.online.lync.com/autodiscover/autodiscoverservice.svc/root';
+    var redirectUri = 'https://localhost:4200/skype-for-business-purecloud-app/';
+    var appConfigProperties = {
+        "displayName": "purecloud-skype",
+        "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
+        "applicationType": "Web app / API",
+        "objectID": "bd59e8f7-7455-4bb5-8e5e-7a0f1988e144",
+        "homePage": "https://mypurecloud.github.io/skype-for-business-purecloud-app/"
+    };
 
-    exports.default = Service.extend({
+    var EVENTS = exports.EVENTS = {
+        groupAdded: 'GROUP_ADDED',
+        groupRemoved: 'GROUP_REMOVED',
+        personAdded: 'PERSON_ADDED',
+        personRemoved: 'PERSON_REMOVED',
+        conversationAdded: 'CONVERSATION_ADDED',
+        conversationRemoved: 'CONVERSATION_REMOVED'
+    };
+
+    exports.default = Service.extend(Evented, {
         ajax: _ember.default.inject.service(),
+
+        promise: null,
 
         init: function init() {
             var _this = this;
 
             this._super.apply(this, arguments);
+
+            var deferred = RSVP.defer();
+            this.promise = deferred.promise;
 
             window.Skype.initialize({
                 apiKey: config.apiKeyCC,
@@ -471,25 +520,25 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
                 _this.api = api;
                 _this.application = api.UIApplicationInstance;
 
-                _this.startAuthentication();
+                deferred.resolve();
             }, function (error) {
-                console.error('There was an error loading the api:', error);
+                Logger.error('There was an error loading the api:', error);
             });
         },
         startAuthentication: function startAuthentication() {
-            if (window.location.href.indexOf('#') > 0) {
-                return this.extractToken();
-            }
+            var _this2 = this;
 
-            this.get('ajax').request(discoveryUrl, {
-                dataType: 'json'
-            }).then(function () {
+            return this.promise.then(function () {
+                if (window.location.href.indexOf('#') > 0) {
+                    return _this2.extractToken();
+                }
+
                 var baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
                 var authData = {
                     response_type: 'token',
-                    client_id: '521f4c8f-9048-4337-bf18-6495ca21e415',
+                    client_id: appConfigProperties.applicationID,
                     state: 'dummy',
-                    redirect_uri: 'https://localhost:4200/skype-for-business-purecloud-app/',
+                    redirect_uri: redirectUri,
                     resource: 'https://webdir.online.lync.com'
                 };
 
@@ -497,7 +546,10 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
                     var value = authData[key];
                     return key + '=' + value;
                 });
+
                 window.location.href = baseUrl + '/?' + params.join('&');
+
+                return new RSVP.Promise(function () {}); // never resolve
             });
         },
         extractToken: function extractToken() {
@@ -512,6 +564,61 @@ define('purecloud-skype/services/skype', ['exports', 'ember'], function (exports
                 data[key] = value;
             });
             this.authData = data;
+            return this.signIn();
+        },
+        signIn: function signIn() {
+            var _this3 = this;
+
+            var options = {
+                client_id: appConfigProperties.applicationID,
+                origins: ['https://webdir.online.lync.com/autodiscover/autodiscoverservice.svc/root'],
+                cors: true,
+                version: 'PurecloudSkype/0.0.0',
+                redirect_uri: redirectUri
+            };
+            return this.application.signInManager.signIn(options).then(function () {
+                var me = _this3.application.personsAndGroupsManager.mePerson;
+
+                _this3.set('user', {
+                    id: me.id(),
+                    avatar: me.avatarUrl(),
+                    email: me.email(),
+                    displayName: me.displayName()
+                });
+
+                _this3.registerForEvents();
+            });
+        },
+        registerForEvents: function registerForEvents() {
+            var _this4 = this;
+
+            var app = this.application;
+            var conversations = app.conversationsManager.conversations;
+            var groups = app.personsAndGroupsManager.all.groups;
+            var persons = app.personsAndGroupsManager.all.persons;
+
+            conversations.subscribe();
+            groups.subscribe();
+            persons.subscribe();
+
+            groups.added(function (group) {
+                Logger.info('Group added', group);
+                _this4.trigger(EVENTS.groupAdded, group);
+            });
+            groups.removed(function (group) {
+                Logger.info('Group added', group);
+                _this4.trigger(EVENTS.groupRemoved, group);
+            });
+
+            persons.added(function (person) {
+                Logger.info('Person added', person);
+                _this4.trigger(EVENTS.personAdded, person);
+            });
+
+            conversations.added(function (conversation) {
+                Logger.info('Conversation added', conversation);
+                _this4.trigger(EVENTS.conversationAdded, conversation);
+            });
         },
 
 
@@ -571,7 +678,7 @@ define("purecloud-skype/templates/index", ["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "s3jia8VG", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"skype-for-business-app\"],[13],[0,\"\\n    \"],[1,[26,[\"roster-list\"]],false],[0,\"\\n    \"],[1,[26,[\"conversation-pane\"]],false],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/index.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "TgMyuXeq", "block": "{\"statements\":[[6,[\"if\"],[[28,[\"loading\"]]],null,{\"statements\":[[0,\"    \"],[11,\"h2\",[]],[13],[0,\"Loading!\"],[14],[0,\"\\n\"]],\"locals\":[]},{\"statements\":[[0,\"    \"],[11,\"div\",[]],[15,\"class\",\"skype-for-business-app\"],[13],[0,\"\\n        \"],[1,[26,[\"roster-list\"]],false],[0,\"\\n        \"],[1,[26,[\"conversation-pane\"]],false],[0,\"\\n    \"],[14],[0,\"\\n\"]],\"locals\":[]}]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/index.hbs" } });
 });
 
 
@@ -595,6 +702,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+eda9cc8f"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+caa8a682"});
 }
 //# sourceMappingURL=purecloud-skype.map

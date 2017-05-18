@@ -20,6 +20,11 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
     assert.ok(true, 'components/roster-list/component.js should pass ESLint\n\n');
   });
 
+  QUnit.test('controllers/index.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'controllers/index.js should pass ESLint\n\n');
+  });
+
   QUnit.test('initializers/skype.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'initializers/skype.js should pass ESLint\n\n');
@@ -37,7 +42,7 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
 
   QUnit.test('services/skype.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'services/skype.js should pass ESLint\n\n31:13 - Unexpected console statement. (no-console)');
+    assert.ok(true, 'services/skype.js should pass ESLint\n\n');
   });
 });
 define('purecloud-skype/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {
