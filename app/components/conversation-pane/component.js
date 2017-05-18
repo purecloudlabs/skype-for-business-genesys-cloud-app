@@ -6,6 +6,7 @@ const {
 } = Ember;
 
 export default Component.extend({
+    classNames: ['conversation-pane'],
     skype: inject.service(),
 
     init() {

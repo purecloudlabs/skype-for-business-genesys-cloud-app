@@ -9,5 +9,11 @@ const {
 export default Component.extend({
     presence: inject.service(),
 
-    presences: computed.reads('presence.presences')
+    presences: computed.reads('presence.presences'),
+
+    actions: {
+        setStatus(status) {
+            this.get('presence').setStatus(status);
+        }
+    }
 });

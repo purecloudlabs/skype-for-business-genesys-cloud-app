@@ -1,5 +1,5 @@
 {{#each presences as |presence|}}
-    <div class="presence">
+    <div class="presence" {{action "setStatus" presence.key}}>
         {{presence.label}}
     </div>
 {{/each}}
