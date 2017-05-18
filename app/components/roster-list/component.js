@@ -69,12 +69,16 @@ export default Component.extend({
     },
     addGroup(group) {
         let groupModel = Ember.Object.create();
-        this.get('groups').pushObject(groupModel);
+        this.get('groups').unshiftObject(groupModel);
 
         group.id.get().then(() => {
             groupModel.set('id', group.id());
             groupModel.set('name', group.name());
             groupModel.set('persons', []);
+
+            if (groupModel.get('name') === 'pinnedGroup') {
+                groupModel.set('name', 'Favorites');
+            }
 
             group.persons().forEach(person => {
                 let personModel = Ember.Object.create();

@@ -1,7 +1,5 @@
 {{user-status-bar user=skype.user}}
 
-<h2>Roster</h2>
-
 <div class="groups">
     {{#each groups as |group|}}
         <div class="group-entry">
@@ -11,10 +9,12 @@
             {{#each group.persons as |person|}}
                 <button class="group-member" onclick={{action "clickContact" person}}>
 
-                    <img src={{person.avatarUrl}} />
-                    <div class="person-name">{{person.displayName}}</div>
+                    <span class="avatar"><img src={{person.avatarUrl}} /></span>
+                    <span class="person-name">{{person.displayName}}</span>
 
                 </button>
+            {{else}}
+                <div class="no-members">No members</div>
             {{/each}}
 
         </div>
