@@ -1,5 +1,15 @@
 {{user-status-bar user=skype.user}}
 
+<h4>Search</h4>
+<div class="search">
+<input class="search-input" type="text" onchange={{action "searchHandler"}} />
+{{#each searchResults as |result|}}
+    <div class="search-result" {{action "addContact"}}>{{result.name}}</div>
+{{/each}}
+</div>
+
+<h2>Roster</h2>
+
 <div class="groups">
     {{#each groups as |group|}}
         <div class="group-entry">

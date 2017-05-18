@@ -11,6 +11,8 @@ export default Component.extend({
 
     skype: inject.service(),
 
+    searchResults: [],
+
     init() {
         this._super(...arguments);
 
@@ -33,7 +35,30 @@ export default Component.extend({
     actions: {
         clickContact(person) {
             this.get('skype').startConversation(person.get('id'));
-        }
+        },
+
+        searchHandler (event) {
+            let val = event.target.value;
+            Ember.run.throttle(this, this.handleSearch, val, 500);
+        },
+    },
+
+    handleSearch(input) {
+        let query = this.get('skype').application.personsAndGroupsManager.createPersonSearchQuery();
+        query.limit(50);
+        query.text(input);
+        console.warn(`Starting search for ${input}`);
+        this.set('searchLoading', true);
+        query.getMore().then((results) => {
+            let list = results.map((result) => {
+                return result.result;
+            });
+            this.set('searchResults', list);
+            console.log(list);
+        },
+        (err) => {
+            console.error(err);
+        });
     },
 
     fetchData() {
