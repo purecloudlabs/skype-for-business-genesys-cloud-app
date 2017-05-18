@@ -1,3 +1,21 @@
-<div class="profile-picture {{user.status}}">
-    <img src="{{user.photoUrl}}">
+{{#basic-dropdown as |dropdown|}}
+    {{#dropdown.trigger}}
+        <div class="profile-picture {{user.presenceClass}}">
+            <img src="{{user.photoUrl}}">
+        </div>
+    {{/dropdown.trigger}}
+    {{#dropdown.content}}
+        {{presence-selector}}
+    {{/dropdown.content}}
+{{/basic-dropdown}}
+
+<div class="information">
+    <div class="name">
+        {{user.displayName}}
+    </div>
+
+    <div class="presence {{user.presenceClass}}">
+        {{user.presence}}
+    </div>
 </div>
+

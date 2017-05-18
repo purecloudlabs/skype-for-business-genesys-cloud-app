@@ -21,8 +21,12 @@ export default Ember.Object.extend({
         this.subscribeToProperties();
     },
 
-    status: computed(function () {
-        return this.get('me').status().toLowerCase();
+    presence: computed(function () {
+        return this.get('me').status();
+    }),
+
+    presenceClass: computed('presence', function () {
+        return this.get('presence').toLowerCase();
     }),
 
     photoUrl: computed(function () {
@@ -31,6 +35,6 @@ export default Ember.Object.extend({
     }),
 
     subscribeToProperties() {
-        this.get('me').status.changed(() => this.notifyPropertyChange('status'));
+        this.get('me').status.changed(() => this.notifyPropertyChange('presence'));
     }
 });
