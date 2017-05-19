@@ -1317,6 +1317,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+2f2d083d"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+cc23ee22"});
 }
 //# sourceMappingURL=purecloud-skype.map
