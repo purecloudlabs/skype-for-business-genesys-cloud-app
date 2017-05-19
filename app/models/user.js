@@ -24,12 +24,17 @@ export default Ember.Object.extend({
         } else {
             person.email.get().then(() => this.set('email', person.email()));
         }
+        person.status.get().then(() => this.set('rawPresence', person.status()));
 
         this.subscribeToProperties();
         this.setupPhoto();
     },
 
-    presence: computed(function () {
+    rawPresence: computed(function () {
+        return 'Offline';
+    }),
+
+    presence: computed('rawPresence', function () {
         const status = this.get('person').status();
         const map = {
             Online: 'Available',
@@ -46,7 +51,13 @@ export default Ember.Object.extend({
     }),
 
     presenceClass: computed('presence', function () {
-        return this.get('presence').toLowerCase();
+        let presence = this.get('presence');
+        if (presence) {
+            return presence.toLowerCase();
+        }
+        else {
+            return 'Offline';
+        }
     }),
 
     photoUrl: computed('email', function () {

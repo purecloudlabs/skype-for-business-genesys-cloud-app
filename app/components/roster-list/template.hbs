@@ -25,9 +25,7 @@
 
             {{#each group.persons as |person|}}
                 <button class="group-member" onclick={{action "clickContact" person}}>
-                    <span class="avatar">
-                        {{profile-image person=person}}
-                    </span>
+                    {{profile-image person=person}}
                     <span class="person-name">
                         {{person.displayName}}
                     </span>

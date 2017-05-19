@@ -6,6 +6,7 @@ const {
 } = Ember;
 
 export default Component.extend({
+    classNameBindings: ['person.presenceClass'],
     person: null,
 
     photoUrl: computed.reads('person.photoUrl'),
