@@ -1,28 +1,36 @@
 import Ember from 'ember';
 
 const {
+    inject,
     computed
 } = Ember;
 
 export default Ember.Object.extend({
-    me: null,
+    ajax: inject.service(),
+    skype: inject.service(),
+
+    person: null,
 
     init() {
         this._super(...arguments);
 
-        const me = this.get('me');
-        this.setProperties({
-            id: me.id(),
-            avatar: me.avatarUrl(),
-            email: me.email(),
-            displayName: me.displayName()
-        });
+        const person = this.get('person');
+
+        person.id.get().then(() => this.set('id', person.id()));
+        person.displayName.get().then(() => this.set('displayName', person.displayName()));
+        person.avatarUrl.get().then(() => this.set('avatarUrl', person.avatarUrl()));
+        if (!person.email) {
+            person.emails.get().then(([email]) => this.set('email', email.emailAddress()));
+        } else {
+            person.email.get().then(() => this.set('email', person.email()));
+        }
 
         this.subscribeToProperties();
+        this.setupPhoto();
     },
 
     presence: computed(function () {
-        const status = this.get('me').status();
+        const status = this.get('person').status();
         const map = {
             Online: 'Available',
             Busy: 'Busy',
@@ -41,12 +49,26 @@ export default Ember.Object.extend({
         return this.get('presence').toLowerCase();
     }),
 
-    photoUrl: computed(function () {
+    photoUrl: computed('email', function () {
         const email = this.get('email');
-        return `https://outlook.office365.com/owa/service.svc/s/GetPersonaPhoto?email=${email}&UA=0&size=HR64x64`;
+        if (!email) {
+            return null;
+        }
+        return `https://outlook.office.com/owa/service.svc/s/GetPersonaPhoto?email=${email}&UA=0&size=HR64x64`
     }),
 
+    setupPhoto() {
+        const ajax = this.get('ajax');
+        this.get('person').avatarUrl.get().then(() => {
+            ajax.request(this.get('avatarUrl'), {
+                headers: {
+                    Authorization: `Bearer ${this.get('skype.authData.access_token')}`
+                }
+            });
+        });
+    },
+
     subscribeToProperties() {
-        this.get('me').status.changed(() => this.notifyPropertyChange('presence'));
+        this.get('person').status.changed(() => this.notifyPropertyChange('presence'));
     }
 });

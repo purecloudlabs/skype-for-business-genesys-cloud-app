@@ -8,7 +8,9 @@
                onkeyup={{action "searchHandler"}}>
         {{#each searchResults as |result|}}
             <div class="search-result" {{action "addContact" result}}>
-                <span class="avatar"><img src={{result.avatarUrl}}/></span>
+                <span class="avatar">
+                    {{profile-image person=person}}
+                </span>
                 <span class="name">{{result.displayName}}</span>
             </div>
         {{/each}}
@@ -23,9 +25,12 @@
 
             {{#each group.persons as |person|}}
                 <button class="group-member" onclick={{action "clickContact" person}}>
-
-                    <span class="avatar"><img src={{person.avatarUrl}}/></span>
-                    <span class="person-name">{{person.displayName}}</span>
+                    <span class="avatar">
+                        {{profile-image person=person}}
+                    </span>
+                    <span class="person-name">
+                        {{person.displayName}}
+                    </span>
 
                 </button>
             {{else}}
