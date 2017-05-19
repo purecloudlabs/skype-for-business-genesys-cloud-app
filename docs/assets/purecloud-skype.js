@@ -346,6 +346,8 @@ define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 
             this._super.apply(this, arguments);
 
             this.set('groups', []);
+            this.set('generalContacts', []);
+
             window.GROUPS = this.get('groups');
             window.roster = this;
         },
@@ -442,9 +444,11 @@ define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 
             //     });
         },
         addPerson: function addPerson(person) {
-            person.displayName.get().then(function (name) {
-                console.log('ROSTER: addPerson', name, person.id());
-            });
+            var personModel = _user.default.create({
+                person: person
+            }, getOwner(this).ownerInjection());
+
+            this.get('generalContacts').pushObject(personModel);
         },
         addConversation: function addConversation(conversation) {},
         addGroup: function addGroup(group) {
@@ -460,6 +464,10 @@ define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 
 
                 if (groupModel.get('name') === 'pinnedGroup') {
                     groupModel.set('name', 'Favorites');
+                }
+                if (groupModel.get('name') === 'Other Contacts') {
+                    groupModel.set('name', 'Contacts');
+                    groupModel.set('persons', _this3.get('generalContacts'));
                 }
 
                 group.persons().forEach(function (person) {
@@ -1317,6 +1325,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+cc23ee22"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+d723dfba"});
 }
 //# sourceMappingURL=purecloud-skype.map
