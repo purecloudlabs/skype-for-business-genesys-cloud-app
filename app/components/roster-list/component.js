@@ -121,17 +121,11 @@ export default Component.extend({
     },
 
     addPerson(person) {
-<<<<<<< HEAD
         let personModel = User.create({
             person
         }, getOwner(this).ownerInjection());
 
         this.get('generalContacts').pushObject(personModel);
-=======
-        person.displayName.get().then(name => {
-            Logger.log('ROSTER: addPerson', name, person.id());
-        })
->>>>>>> Search improvements
     },
 
     addConversation(conversation) {
