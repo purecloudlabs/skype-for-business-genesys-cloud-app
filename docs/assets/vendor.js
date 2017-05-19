@@ -64698,6 +64698,1022 @@ createDeprecatedModule('resolver');
   var $ = _ember.default.$;
   exports.default = _isFastboot.default ? najax : $.ajax;
 });
+;define('ember-basic-dropdown/components/basic-dropdown', ['exports', 'ember', 'ember-component', 'ember-metal/set', 'ember-basic-dropdown/templates/components/basic-dropdown', 'ember-runloop', 'ember-basic-dropdown/utils/computed-fallback-if-undefined', 'ember-basic-dropdown/utils/calculate-position', 'ember-computed'], function (exports, _ember, _emberComponent, _set, _basicDropdown, _emberRunloop, _computedFallbackIfUndefined, _calculatePosition, _emberComputed) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var guidFor = _ember.default.guidFor,
+      testing = _ember.default.testing,
+      getOwner = _ember.default.getOwner;
+
+
+  var assign = Object.assign || function EmberAssign(original) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    for (var i = 0; i < args.length; i++) {
+      var arg = args[i];
+      if (!arg) {
+        continue;
+      }
+      var updates = Object.keys(arg);
+
+      for (var _i = 0; _i < updates.length; _i++) {
+        var prop = updates[_i];
+        original[prop] = arg[prop];
+      }
+    }
+
+    return original;
+  };
+
+  exports.default = _emberComponent.default.extend({
+    layout: _basicDropdown.default,
+    tagName: '',
+    renderInPlace: (0, _computedFallbackIfUndefined.default)(false),
+    verticalPosition: (0, _computedFallbackIfUndefined.default)('auto'), // above | below
+    horizontalPosition: (0, _computedFallbackIfUndefined.default)('auto'), // right | center | left
+    matchTriggerWidth: (0, _computedFallbackIfUndefined.default)(false),
+    triggerComponent: (0, _computedFallbackIfUndefined.default)('basic-dropdown/trigger'),
+    contentComponent: (0, _computedFallbackIfUndefined.default)('basic-dropdown/content'),
+    calculatePosition: (0, _computedFallbackIfUndefined.default)(_calculatePosition.default),
+    classNames: ['ember-basic-dropdown'],
+    top: null,
+    left: null,
+    right: null,
+    width: null,
+    height: null,
+
+    // Lifecycle hooks
+    init: function init() {
+      if (this.get('renderInPlace') && this.get('tagName') === '') {
+        this.set('tagName', 'div');
+      }
+      this._super.apply(this, arguments);
+      this.set('publicAPI', {});
+
+      var publicAPI = this.updateState({
+        uniqueId: guidFor(this),
+        isOpen: this.get('initiallyOpened') || false,
+        disabled: this.get('disabled') || false,
+        actions: {
+          open: this.open.bind(this),
+          close: this.close.bind(this),
+          toggle: this.toggle.bind(this),
+          reposition: this.reposition.bind(this)
+        }
+      });
+
+      this.dropdownId = this.dropdownId || 'ember-basic-dropdown-content-' + publicAPI.uniqueId;
+      var onInit = this.get('onInit');
+      if (onInit) {
+        onInit(publicAPI);
+      }
+    },
+    didReceiveAttrs: function didReceiveAttrs() {
+      this._super.apply(this, arguments);
+      var oldDisabled = !!this._oldDisabled;
+      var newDisabled = !!this.get('disabled');
+      this._oldDisabled = newDisabled;
+      if (newDisabled && !oldDisabled) {
+        (0, _emberRunloop.join)(this, this.disable);
+      } else if (!newDisabled && oldDisabled) {
+        (0, _emberRunloop.join)(this, this.enable);
+      }
+    },
+    willDestroy: function willDestroy() {
+      this._super.apply(this, arguments);
+      var registerAPI = this.get('registerAPI');
+      if (registerAPI) {
+        registerAPI(null);
+      }
+    },
+
+
+    // CPs
+    destination: (0, _emberComputed.default)({
+      get: function get() {
+        return this._getDestinationId();
+      },
+      set: function set(_, v) {
+        return v === undefined ? this._getDestinationId() : v;
+      }
+    }),
+
+    // Actions
+    actions: {
+      handleFocus: function handleFocus(e) {
+        var onFocus = this.get('onFocus');
+        if (onFocus) {
+          onFocus(this.get('publicAPI'), e);
+        }
+      }
+    },
+
+    // Methods
+    open: function open(e) {
+      if (this.get('isDestroyed')) {
+        return;
+      }
+      var publicAPI = this.get('publicAPI');
+      if (publicAPI.disabled || publicAPI.isOpen) {
+        return;
+      }
+      var onOpen = this.get('onOpen');
+      if (onOpen && onOpen(publicAPI, e) === false) {
+        return;
+      }
+      this.updateState({ isOpen: true });
+    },
+    close: function close(e, skipFocus) {
+      if (this.get('isDestroyed')) {
+        return;
+      }
+      var publicAPI = this.get('publicAPI');
+      if (publicAPI.disabled || !publicAPI.isOpen) {
+        return;
+      }
+      var onClose = this.get('onClose');
+      if (onClose && onClose(publicAPI, e) === false) {
+        return;
+      }
+      if (this.get('isDestroyed')) {
+        return;
+      }
+      this.setProperties({ hPosition: null, vPosition: null, top: null, left: null, right: null, width: null, height: null });
+      this.previousVerticalPosition = this.previousHorizontalPosition = null;
+      this.updateState({ isOpen: false });
+      if (skipFocus) {
+        return;
+      }
+      var trigger = document.querySelector('[data-ebd-id=' + publicAPI.uniqueId + '-trigger]');
+      if (trigger && trigger.tabIndex > -1) {
+        trigger.focus();
+      }
+    },
+    toggle: function toggle(e) {
+      if (this.get('publicAPI.isOpen')) {
+        this.close(e);
+      } else {
+        this.open(e);
+      }
+    },
+    reposition: function reposition() {
+      var publicAPI = this.get('publicAPI');
+      if (!publicAPI.isOpen) {
+        return;
+      }
+      var dropdownElement = self.document.getElementById(this.dropdownId);
+      var triggerElement = document.querySelector('[data-ebd-id=' + publicAPI.uniqueId + '-trigger]');
+      if (!dropdownElement || !triggerElement) {
+        return;
+      }
+
+      this.destinationElement = this.destinationElement || self.document.getElementById(this.get('destination'));
+      var options = this.getProperties('horizontalPosition', 'verticalPosition', 'matchTriggerWidth', 'previousHorizontalPosition', 'previousVerticalPosition', 'renderInPlace');
+      options.dropdown = this;
+      var positionData = this.get('calculatePosition')(triggerElement, dropdownElement, this.destinationElement, options);
+      return this.applyReposition(triggerElement, dropdownElement, positionData);
+    },
+    applyReposition: function applyReposition(trigger, dropdown, positions) {
+      var changes = {
+        hPosition: positions.horizontalPosition,
+        vPosition: positions.verticalPosition
+      };
+      if (positions.style) {
+        changes.top = positions.style.top + 'px';
+        // The component can be aligned from the right or from the left, but not from both.
+        if (positions.style.left !== undefined) {
+          changes.left = positions.style.left + 'px';
+          changes.right = null;
+        } else if (positions.style.right !== undefined) {
+          changes.right = positions.style.right + 'px';
+          changes.left = null;
+        }
+        if (positions.style.width !== undefined) {
+          changes.width = positions.style.width + 'px';
+        }
+        if (positions.style.height !== undefined) {
+          changes.height = positions.style.height + 'px';
+        }
+        if (this.get('top') === null) {
+          // Bypass Ember on the first reposition only to avoid flickering.
+          var cssRules = [];
+          for (var prop in positions.style) {
+            if (typeof positions.style[prop] === 'number') {
+              cssRules.push(prop + ': ' + positions.style[prop] + 'px');
+            } else {
+              cssRules.push(prop + ': ' + positions.style[prop]);
+            }
+          }
+          dropdown.setAttribute('style', cssRules.join(';'));
+        }
+      }
+      this.setProperties(changes);
+      this.previousHorizontalPosition = positions.horizontalPosition;
+      this.previousVerticalPosition = positions.verticalPosition;
+      return changes;
+    },
+    disable: function disable() {
+      var publicAPI = this.get('publicAPI');
+      if (publicAPI.isOpen) {
+        publicAPI.actions.close();
+      }
+      this.updateState({ disabled: true });
+    },
+    enable: function enable() {
+      this.updateState({ disabled: false });
+    },
+    updateState: function updateState(changes) {
+      var newState = (0, _set.default)(this, 'publicAPI', assign({}, this.get('publicAPI'), changes));
+      var registerAPI = this.get('registerAPI');
+      if (registerAPI) {
+        registerAPI(newState);
+      }
+      return newState;
+    },
+    _getDestinationId: function _getDestinationId() {
+      if (testing) {
+        return 'ember-testing';
+      }
+      var config = getOwner(this).resolveRegistration('config:environment');
+      return config['ember-basic-dropdown'] && config['ember-basic-dropdown'].destination || 'ember-basic-dropdown-wormhole';
+    }
+  });
+});
+;define('ember-basic-dropdown/components/basic-dropdown/content-element', ['exports', 'ember-component'], function (exports, _emberComponent) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _emberComponent.default.extend({
+    attributeBindings: ['style', 'dir']
+  });
+});
+;define('ember-basic-dropdown/components/basic-dropdown/content', ['exports', 'ember-component', 'ember-basic-dropdown/templates/components/basic-dropdown/content', 'ember', 'ember-computed', 'ember-runloop', 'ember-string', 'ember-basic-dropdown/utils/computed-fallback-if-undefined', 'ember-basic-dropdown/utils/calculate-position'], function (exports, _emberComponent, _content, _ember, _emberComputed, _emberRunloop, _emberString, _computedFallbackIfUndefined, _calculatePosition) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+
+  function closestContent(el) {
+    while (el && !el.classList.contains('ember-basic-dropdown-content')) {
+      el = el.parentElement;
+    }
+    return el;
+  }
+  var testing = _ember.default.testing;
+
+  var MutObserver = self.window.MutationObserver || self.window.WebKitMutationObserver;
+  var rAF = self.window.requestAnimationFrame || function (cb) {
+    cb();
+  };
+
+  function waitForAnimations(element, callback) {
+    rAF(function () {
+      var computedStyle = self.window.getComputedStyle(element);
+      if (computedStyle.animationName !== 'none' && computedStyle.animationPlayState === 'running') {
+        var eventCallback = function eventCallback() {
+          element.removeEventListener('animationend', eventCallback);
+          callback();
+        };
+        element.addEventListener('animationend', eventCallback);
+      } else {
+        callback();
+      }
+    });
+  }
+
+  /**
+   * Evaluates if the given element is in a dropdown or any of its parent dropdowns.
+   *
+   * @param {HTMLElement} el
+   * @param {String} dropdownId
+   */
+  function dropdownIsValidParent(el, dropdownId) {
+    var closestDropdown = closestContent(el);
+    if (closestDropdown) {
+      var trigger = document.querySelector('[aria-owns=' + closestDropdown.attributes.id.value + ']');
+      var parentDropdown = closestContent(trigger);
+      return parentDropdown && parentDropdown.attributes.id.value === dropdownId || dropdownIsValidParent(parentDropdown, dropdownId);
+    } else {
+      return false;
+    }
+  }
+
+  exports.default = _emberComponent.default.extend({
+    layout: _content.default,
+    tagName: '',
+    animationEnabled: !testing,
+    isTouchDevice: !!self.window && 'ontouchstart' in self.window,
+    hasMoved: false,
+    animationClass: '',
+    transitioningInClass: 'ember-basic-dropdown--transitioning-in',
+    transitionedInClass: 'ember-basic-dropdown--transitioned-in',
+    transitioningOutClass: 'ember-basic-dropdown--transitioning-out',
+
+    _contentTagName: (0, _computedFallbackIfUndefined.default)('div'),
+
+    // Lifecycle hooks
+    init: function init() {
+      this._super.apply(this, arguments);
+      this.handleRootMouseDown = this.handleRootMouseDown.bind(this);
+      this.touchStartHandler = this.touchStartHandler.bind(this);
+      this.touchMoveHandler = this.touchMoveHandler.bind(this);
+      var dropdown = this.get('dropdown');
+      this.scrollableAncestors = [];
+      this.dropdownId = 'ember-basic-dropdown-content-' + dropdown.uniqueId;
+      if (this.get('animationEnabled')) {
+        this.set('animationClass', this.get('transitioningInClass'));
+      }
+      this.runloopAwareReposition = function () {
+        (0, _emberRunloop.join)(dropdown.actions.reposition);
+      };
+    },
+    willDestroyElement: function willDestroyElement() {
+      this._super.apply(this, arguments);
+      this._teardown();
+    },
+    didReceiveAttrs: function didReceiveAttrs() {
+      this._super.apply(this, arguments);
+      var oldDropdown = this.get('oldDropdown') || {};
+      var dropdown = this.get('dropdown');
+      if (!oldDropdown.isOpen && dropdown.isOpen) {
+        (0, _emberRunloop.scheduleOnce)('afterRender', this, this.open);
+      } else if (oldDropdown.isOpen && !dropdown.isOpen) {
+        this.close();
+      }
+      this.set('oldDropdown', dropdown);
+    },
+
+
+    // CPs
+    to: (0, _emberComputed.default)('destination', {
+      get: function get() {
+        return this.get('destination');
+      },
+      set: function set(_, v) {
+        _ember.default.deprecate('Passing `to="id-of-elmnt"` to the {{#dropdown.content}} has been deprecated. Please pass `destination="id-of-elmnt"` to the {{#basic-dropdown}} component instead', false, { id: 'ember-basic-dropdown-to-in-content', until: '0.40' });
+        return v === undefined ? this.get('destination') : v;
+      }
+    }),
+
+    style: (0, _emberComputed.default)('top', 'left', 'right', 'width', 'height', function () {
+      var style = '';
+
+      var _getProperties = this.getProperties('top', 'left', 'right', 'width', 'height'),
+          top = _getProperties.top,
+          left = _getProperties.left,
+          right = _getProperties.right,
+          width = _getProperties.width,
+          height = _getProperties.height;
+
+      if (top) {
+        style += 'top: ' + top + ';';
+      }
+      if (left) {
+        style += 'left: ' + left + ';';
+      }
+      if (right) {
+        style += 'right: ' + right + ';';
+      }
+      if (width) {
+        style += 'width: ' + width + ';';
+      }
+      if (height) {
+        style += 'height: ' + height;
+      }
+      if (style.length > 0) {
+        return (0, _emberString.htmlSafe)(style);
+      }
+    }),
+
+    // Methods
+    open: function open() {
+      var dropdown = this.get('dropdown');
+      this.triggerElement = this.triggerElement || document.querySelector('[data-ebd-id=' + dropdown.uniqueId + '-trigger]');
+      this.dropdownElement = document.getElementById(this.dropdownId);
+      self.document.addEventListener('mousedown', this.handleRootMouseDown, true);
+      if (this.get('isTouchDevice')) {
+        self.document.addEventListener('touchstart', this.touchStartHandler, true);
+        self.document.addEventListener('touchend', this.handleRootMouseDown, true);
+      }
+      var onFocusIn = this.get('onFocusIn');
+      if (onFocusIn) {
+        this.dropdownElement.addEventListener('focusin', function (e) {
+          return onFocusIn(dropdown, e);
+        });
+      }
+      var onFocusOut = this.get('onFocusOut');
+      if (onFocusOut) {
+        this.dropdownElement.addEventListener('focusout', function (e) {
+          return onFocusOut(dropdown, e);
+        });
+      }
+      var onMouseEnter = this.get('onMouseEnter');
+      if (onMouseEnter) {
+        this.dropdownElement.addEventListener('mouseenter', function (e) {
+          return onMouseEnter(dropdown, e);
+        });
+      }
+      var onMouseLeave = this.get('onMouseLeave');
+      if (onMouseLeave) {
+        this.dropdownElement.addEventListener('mouseleave', function (e) {
+          return onMouseLeave(dropdown, e);
+        });
+      }
+      var changes = dropdown.actions.reposition();
+      if (!this.get('renderInPlace')) {
+        this.destinationElement = document.getElementById(this.get('destination'));
+        this.scrollableAncestors = this.getScrollableAncestors();
+        this.addGlobalEvents();
+        this.startObservingDomMutations();
+      } else if (changes.vPosition === 'above') {
+        this.startObservingDomMutations();
+      }
+
+      if (this.get('animationEnabled')) {
+        (0, _emberRunloop.scheduleOnce)('afterRender', this, this.animateIn);
+      }
+    },
+    close: function close() {
+      this._teardown();
+      if (this.get('animationEnabled')) {
+        this.animateOut(this.dropdownElement);
+      }
+      this.dropdownElement = null;
+    },
+
+
+    // Methods
+    handleRootMouseDown: function handleRootMouseDown(e) {
+      if (this.hasMoved || this.dropdownElement.contains(e.target) || this.triggerElement && this.triggerElement.contains(e.target)) {
+        this.hasMoved = false;
+        return;
+      }
+
+      if (dropdownIsValidParent(e.target, this.dropdownId)) {
+        this.hasMoved = false;
+        return;
+      }
+
+      this.get('dropdown').actions.close(e, true);
+    },
+    addGlobalEvents: function addGlobalEvents() {
+      var _this = this;
+
+      self.window.addEventListener('scroll', this.runloopAwareReposition);
+      this.scrollableAncestors.forEach(function (el) {
+        el.addEventListener('scroll', _this.runloopAwareReposition);
+      });
+      self.window.addEventListener('resize', this.runloopAwareReposition);
+      self.window.addEventListener('orientationchange', this.runloopAwareReposition);
+    },
+    startObservingDomMutations: function startObservingDomMutations() {
+      var _this2 = this;
+
+      if (MutObserver) {
+        this.mutationObserver = new MutObserver(function (mutations) {
+          if (mutations[0].addedNodes.length || mutations[0].removedNodes.length) {
+            _this2.runloopAwareReposition();
+          }
+        });
+        this.mutationObserver.observe(this.dropdownElement, { childList: true, subtree: true });
+      } else {
+        this.dropdownElement.addEventListener('DOMNodeInserted', this.runloopAwareReposition, false);
+        this.dropdownElement.addEventListener('DOMNodeRemoved', this.runloopAwareReposition, false);
+      }
+    },
+    removeGlobalEvents: function removeGlobalEvents() {
+      var _this3 = this;
+
+      self.window.removeEventListener('scroll', this.runloopAwareReposition);
+      this.scrollableAncestors.forEach(function (el) {
+        el.removeEventListener('scroll', _this3.runloopAwareReposition);
+      });
+      self.window.removeEventListener('resize', this.runloopAwareReposition);
+      self.window.removeEventListener('orientationchange', this.runloopAwareReposition);
+    },
+    stopObservingDomMutations: function stopObservingDomMutations() {
+      if (MutObserver) {
+        if (this.mutationObserver) {
+          this.mutationObserver.disconnect();
+          this.mutationObserver = null;
+        }
+      } else {
+        if (this.dropdownElement) {
+          this.dropdownElement.removeEventListener('DOMNodeInserted', this.runloopAwareReposition);
+          this.dropdownElement.removeEventListener('DOMNodeRemoved', this.runloopAwareReposition);
+        }
+      }
+    },
+    animateIn: function animateIn() {
+      var _this4 = this;
+
+      waitForAnimations(this.dropdownElement, function () {
+        _this4.set('animationClass', _this4.get('transitionedInClass'));
+      });
+    },
+    animateOut: function animateOut(dropdownElement) {
+      var parentElement = this.get('renderInPlace') ? dropdownElement.parentElement.parentElement : dropdownElement.parentElement;
+      var clone = dropdownElement.cloneNode(true);
+      clone.id = clone.id + '--clone';
+      var transitioningInClass = this.get('transitioningInClass');
+      clone.classList.remove(this.get('transitionedInClass'));
+      clone.classList.remove(transitioningInClass);
+      clone.classList.add(this.get('transitioningOutClass'));
+      parentElement.appendChild(clone);
+      this.set('animationClass', transitioningInClass);
+      waitForAnimations(clone, function () {
+        parentElement.removeChild(clone);
+      });
+    },
+    touchStartHandler: function touchStartHandler() {
+      self.document.addEventListener('touchmove', this.touchMoveHandler, true);
+    },
+    touchMoveHandler: function touchMoveHandler() {
+      this.hasMoved = true;
+      self.document.removeEventListener('touchmove', this.touchMoveHandler, true);
+    },
+
+
+    // All ancestors with scroll (except the BODY, which is treated differently)
+    getScrollableAncestors: function getScrollableAncestors() {
+      var scrollableAncestors = [];
+      if (this.triggerElement) {
+        var nextScrollable = (0, _calculatePosition.getScrollParent)(this.triggerElement.parentNode);
+        while (nextScrollable && nextScrollable.tagName.toUpperCase() !== 'BODY' && nextScrollable.tagName.toUpperCase() !== 'HTML') {
+          scrollableAncestors.push(nextScrollable);
+          nextScrollable = (0, _calculatePosition.getScrollParent)(nextScrollable.parentNode);
+        }
+      }
+      return scrollableAncestors;
+    },
+    _teardown: function _teardown() {
+      this.removeGlobalEvents();
+      this.destinationElement = null;
+      this.scrollableAncestors = [];
+      this.stopObservingDomMutations();
+      self.document.removeEventListener('mousedown', this.handleRootMouseDown, true);
+      if (this.get('isTouchDevice')) {
+        self.document.removeEventListener('touchstart', this.touchStartHandler, true);
+        self.document.removeEventListener('touchend', this.handleRootMouseDown, true);
+      }
+    }
+  });
+});
+;define('ember-basic-dropdown/components/basic-dropdown/trigger', ['exports', 'ember-basic-dropdown/templates/components/basic-dropdown/trigger', 'ember-component', 'ember-computed'], function (exports, _trigger, _emberComponent, _emberComputed) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+
+  var isTouchDevice = !!self.window && 'ontouchstart' in self.window;
+
+  function trueStringIfPresent(path) {
+    return (0, _emberComputed.default)(path, function () {
+      if (this.get(path)) {
+        return 'true';
+      } else {
+        return null;
+      }
+    });
+  }
+
+  exports.default = _emberComponent.default.extend({
+    layout: _trigger.default,
+    isTouchDevice: isTouchDevice,
+    classNames: ['ember-basic-dropdown-trigger'],
+    role: 'button',
+    tabindex: 0,
+    classNameBindings: ['inPlaceClass', 'hPositionClass', 'vPositionClass'],
+    attributeBindings: ['role', 'style', 'uniqueId:data-ebd-id', 'tabIndex:tabindex', 'dropdownId:aria-owns', 'ariaLabel:aria-label', 'ariaLabelledBy:aria-labelledby', 'ariaDescribedBy:aria-describedby', 'aria-autocomplete', 'aria-activedescendant', 'aria-disabled', 'aria-expanded', 'aria-haspopup', 'aria-invalid', 'aria-pressed', 'aria-required', 'title'],
+
+    // Lifecycle hooks
+    init: function init() {
+      var _this = this;
+
+      this._super.apply(this, arguments);
+      var dropdown = this.get('dropdown');
+      this.uniqueId = dropdown.uniqueId + '-trigger';
+      this.dropdownId = this.dropdownId || 'ember-basic-dropdown-content-' + dropdown.uniqueId;
+      this._touchMoveHandler = this._touchMoveHandler.bind(this);
+      this._mouseupHandler = function () {
+        self.document.removeEventListener('mouseup', _this._mouseupHandler, true);
+        self.document.body.classList.remove('ember-basic-dropdown-text-select-disabled');
+      };
+    },
+    didInsertElement: function didInsertElement() {
+      this._super.apply(this, arguments);
+      this.addMandatoryHandlers();
+      this.addOptionalHandlers();
+    },
+    willDestroyElement: function willDestroyElement() {
+      this._super.apply(this, arguments);
+      self.document.removeEventListener('touchmove', this._touchMoveHandler);
+      self.document.removeEventListener('mouseup', this._mouseupHandler, true);
+    },
+
+
+    // CPs
+    'aria-disabled': trueStringIfPresent('dropdown.disabled'),
+    'aria-expanded': trueStringIfPresent('dropdown.isOpen'),
+    'aria-invalid': trueStringIfPresent('ariaInvalid'),
+    'aria-pressed': trueStringIfPresent('ariaPressed'),
+    'aria-required': trueStringIfPresent('ariaRequired'),
+
+    tabIndex: (0, _emberComputed.default)('dropdown.disabled', 'tabindex', function () {
+      var tabindex = this.get('tabindex');
+      if (tabindex === false || this.get('dropdown.disabled')) {
+        return undefined;
+      } else {
+        return tabindex || 0;
+      }
+    }).readOnly(),
+
+    inPlaceClass: (0, _emberComputed.default)('renderInPlace', function () {
+      if (this.get('renderInPlace')) {
+        return 'ember-basic-dropdown-trigger--in-place';
+      }
+    }),
+
+    hPositionClass: (0, _emberComputed.default)('hPosition', function () {
+      var hPosition = this.get('hPosition');
+      if (hPosition) {
+        return 'ember-basic-dropdown-trigger--' + hPosition;
+      }
+    }),
+
+    vPositionClass: (0, _emberComputed.default)('vPosition', function () {
+      var vPosition = this.get('vPosition');
+      if (vPosition) {
+        return 'ember-basic-dropdown-trigger--' + vPosition;
+      }
+    }),
+
+    // Actions
+    actions: {
+      handleMouseDown: function handleMouseDown(e) {
+        if (this.skipHandleMousedown) {
+          // Some devises have both touchscreen & mouse, and they are not mutually exclusive
+          // In those cases the touchdown handler is fired first, and it sets a flag to
+          // short-circuit the mouseup so the component is not opened and immediately closed.
+          this.skipHandleMousedown = false;
+          return;
+        }
+        var dropdown = this.get('dropdown');
+        if (dropdown.disabled) {
+          return;
+        }
+        this.stopTextSelectionUntilMouseup();
+        // execute user-supplied onMouseDown function before default toggle action;
+        // short-circuit default behavior if user-supplied function returns `false`
+        var onMouseDown = this.get('onMouseDown');
+        if (onMouseDown && onMouseDown(dropdown, e) === false) {
+          return;
+        }
+        dropdown.actions.toggle(e);
+      },
+      handleTouchEnd: function handleTouchEnd(e) {
+        this.skipHandleMousedown = true;
+        var dropdown = this.get('dropdown');
+        if (e && e.defaultPrevented || dropdown.disabled) {
+          return;
+        }
+        if (!this.hasMoved) {
+          // execute user-supplied onTouchEnd function before default toggle action;
+          // short-circuit default behavior if user-supplied function returns `false`
+          var onTouchEnd = this.get('onTouchEnd');
+          if (onTouchEnd && onTouchEnd(dropdown, e) === false) {
+            return;
+          }
+          dropdown.actions.toggle(e);
+        }
+        this.hasMoved = false;
+        self.document.removeEventListener('touchmove', this._touchMoveHandler);
+        // This next three lines are stolen from hammertime. This prevents the default
+        // behaviour of the touchend, but synthetically trigger a focus and a (delayed) click
+        // to simulate natural behaviour.
+        e.target.focus();
+        setTimeout(function () {
+          var event = document.createEvent('MouseEvents');
+          event.initMouseEvent('click', true, true, window);
+          e.target.dispatchEvent(event);
+        }, 0);
+        e.preventDefault();
+      },
+      handleKeyDown: function handleKeyDown(e) {
+        var dropdown = this.get('dropdown');
+        if (dropdown.disabled) {
+          return;
+        }
+        var onKeyDown = this.get('onKeyDown');
+        if (onKeyDown && onKeyDown(dropdown, e) === false) {
+          return;
+        }
+        if (e.keyCode === 13) {
+          // Enter
+          dropdown.actions.toggle(e);
+        } else if (e.keyCode === 32) {
+          // Space
+          e.preventDefault(); // prevents the space to trigger a scroll page-next
+          dropdown.actions.toggle(e);
+        } else if (e.keyCode === 27) {
+          dropdown.actions.close(e);
+        }
+      }
+    },
+
+    // Methods
+    _touchMoveHandler: function _touchMoveHandler() {
+      this.hasMoved = true;
+      self.document.removeEventListener('touchmove', this._touchMoveHandler);
+    },
+    stopTextSelectionUntilMouseup: function stopTextSelectionUntilMouseup() {
+      self.document.addEventListener('mouseup', this._mouseupHandler, true);
+      self.document.body.classList.add('ember-basic-dropdown-text-select-disabled');
+    },
+    addMandatoryHandlers: function addMandatoryHandlers() {
+      var _this2 = this;
+
+      if (this.get('isTouchDevice')) {
+        this.element.addEventListener('touchstart', function () {
+          self.document.addEventListener('touchmove', _this2._touchMoveHandler);
+        });
+        this.element.addEventListener('touchend', function (e) {
+          return _this2.send('handleTouchEnd', e);
+        });
+      }
+      this.element.addEventListener('mousedown', function (e) {
+        return _this2.send('handleMouseDown', e);
+      });
+      this.element.addEventListener('keydown', function (e) {
+        return _this2.send('handleKeyDown', e);
+      });
+    },
+    addOptionalHandlers: function addOptionalHandlers() {
+      var dropdown = this.get('dropdown');
+      var onMouseEnter = this.get('onMouseEnter');
+      if (onMouseEnter) {
+        this.element.addEventListener('mouseenter', function (e) {
+          return onMouseEnter(dropdown, e);
+        });
+      }
+      var onMouseLeave = this.get('onMouseLeave');
+      if (onMouseLeave) {
+        this.element.addEventListener('mouseleave', function (e) {
+          return onMouseLeave(dropdown, e);
+        });
+      }
+      var onFocus = this.get('onFocus');
+      if (onFocus) {
+        this.element.addEventListener('focus', function (e) {
+          return onFocus(dropdown, e);
+        });
+      }
+      var onBlur = this.get('onBlur');
+      if (onBlur) {
+        this.element.addEventListener('blur', function (e) {
+          return onBlur(dropdown, e);
+        });
+      }
+      var onFocusIn = this.get('onFocusIn');
+      if (onFocusIn) {
+        this.element.addEventListener('focusin', function (e) {
+          return onFocusIn(dropdown, e);
+        });
+      }
+      var onFocusOut = this.get('onFocusOut');
+      if (onFocusOut) {
+        this.element.addEventListener('focusout', function (e) {
+          return onFocusOut(dropdown, e);
+        });
+      }
+    }
+  });
+});
+;define("ember-basic-dropdown/templates/components/basic-dropdown", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
+  exports.default = Ember.HTMLBars.template({ "id": "IUuAvjkk", "block": "{\"statements\":[[18,\"default\",[[33,[\"hash\"],null,[[\"uniqueId\",\"isOpen\",\"disabled\",\"actions\",\"trigger\",\"content\"],[[28,[\"publicAPI\",\"uniqueId\"]],[28,[\"publicAPI\",\"isOpen\"]],[28,[\"publicAPI\",\"disabled\"]],[28,[\"publicAPI\",\"actions\"]],[33,[\"component\"],[[28,[\"triggerComponent\"]]],[[\"dropdown\",\"hPosition\",\"onFocus\",\"renderInPlace\",\"vPosition\"],[[33,[\"readonly\"],[[28,[\"publicAPI\"]]],null],[33,[\"readonly\"],[[28,[\"hPosition\"]]],null],[33,[\"action\"],[[28,[null]],\"handleFocus\"],null],[33,[\"readonly\"],[[28,[\"renderInPlace\"]]],null],[33,[\"readonly\"],[[28,[\"vPosition\"]]],null]]]],[33,[\"component\"],[[28,[\"contentComponent\"]]],[[\"dropdown\",\"hPosition\",\"renderInPlace\",\"vPosition\",\"destination\",\"top\",\"left\",\"right\",\"width\",\"height\"],[[33,[\"readonly\"],[[28,[\"publicAPI\"]]],null],[33,[\"readonly\"],[[28,[\"hPosition\"]]],null],[33,[\"readonly\"],[[28,[\"renderInPlace\"]]],null],[33,[\"readonly\"],[[28,[\"vPosition\"]]],null],[33,[\"readonly\"],[[28,[\"destination\"]]],null],[33,[\"readonly\"],[[28,[\"top\"]]],null],[33,[\"readonly\"],[[28,[\"left\"]]],null],[33,[\"readonly\"],[[28,[\"right\"]]],null],[33,[\"readonly\"],[[28,[\"width\"]]],null],[33,[\"readonly\"],[[28,[\"height\"]]],null]]]]]]]]],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"hasPartials\":false}", "meta": { "moduleName": "ember-basic-dropdown/templates/components/basic-dropdown.hbs" } });
+});
+;define("ember-basic-dropdown/templates/components/basic-dropdown/content", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
+  exports.default = Ember.HTMLBars.template({ "id": "+CNvS7hs", "block": "{\"statements\":[[6,[\"if\"],[[28,[\"dropdown\",\"isOpen\"]]],null,{\"statements\":[[6,[\"ember-wormhole\"],null,[[\"to\",\"renderInPlace\",\"class\"],[[28,[\"to\"]],[28,[\"renderInPlace\"]],\"ember-basic-dropdown-content-wormhole-origin\"]],{\"statements\":[[6,[\"if\"],[[28,[\"overlay\"]]],null,{\"statements\":[[0,\"      \"],[11,\"div\",[]],[15,\"class\",\"ember-basic-dropdown-overlay\"],[13],[14],[0,\"\\n\"]],\"locals\":[]},null],[6,[\"basic-dropdown/content-element\"],null,[[\"tagName\",\"id\",\"class\",\"style\",\"dir\"],[[28,[\"_contentTagName\"]],[28,[\"dropdownId\"]],[33,[\"concat\"],[\"ember-basic-dropdown-content \",[28,[\"class\"]],\" \",[28,[\"defaultClass\"]],\" \",[33,[\"if\"],[[28,[\"renderInPlace\"]],\"ember-basic-dropdown-content--in-place \"],null],[33,[\"if\"],[[28,[\"hPosition\"]],[33,[\"concat\"],[\"ember-basic-dropdown-content--\",[28,[\"hPosition\"]]],null]],null],\" \",[33,[\"if\"],[[28,[\"vPosition\"]],[33,[\"concat\"],[\"ember-basic-dropdown-content--\",[28,[\"vPosition\"]]],null]],null],\" \",[28,[\"animationClass\"]]],null],[28,[\"style\"]],[28,[\"dir\"]]]],{\"statements\":[[0,\"      \"],[18,\"default\"],[0,\"\\n\"]],\"locals\":[]},null]],\"locals\":[]},null]],\"locals\":[]},{\"statements\":[[0,\"  \"],[11,\"div\",[]],[16,\"id\",[26,[\"dropdownId\"]],null],[15,\"class\",\"ember-basic-dropdown-content-placeholder\"],[15,\"style\",\"display: none;\"],[13],[14],[0,\"\\n\"]],\"locals\":[]}]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"hasPartials\":false}", "meta": { "moduleName": "ember-basic-dropdown/templates/components/basic-dropdown/content.hbs" } });
+});
+;define("ember-basic-dropdown/templates/components/basic-dropdown/trigger", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
+  exports.default = Ember.HTMLBars.template({ "id": "coMUYW77", "block": "{\"statements\":[[18,\"default\"]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"hasPartials\":false}", "meta": { "moduleName": "ember-basic-dropdown/templates/components/basic-dropdown/trigger.hbs" } });
+});
+;define('ember-basic-dropdown/utils/calculate-position', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  exports.default = function (_, _2, _destination, _ref) {
+    var renderInPlace = _ref.renderInPlace;
+
+    if (renderInPlace) {
+      return calculateInPlacePosition.apply(undefined, arguments);
+    } else {
+      return calculateWormholedPosition.apply(undefined, arguments);
+    }
+  };
+
+  exports.calculateWormholedPosition = calculateWormholedPosition;
+  exports.calculateInPlacePosition = calculateInPlacePosition;
+  exports.getScrollParent = getScrollParent;
+  function calculateWormholedPosition(trigger, content, destination, _ref2) {
+    var horizontalPosition = _ref2.horizontalPosition,
+        verticalPosition = _ref2.verticalPosition,
+        matchTriggerWidth = _ref2.matchTriggerWidth,
+        previousHorizontalPosition = _ref2.previousHorizontalPosition,
+        previousVerticalPosition = _ref2.previousVerticalPosition;
+
+    // Collect information about all the involved DOM elements
+    var scroll = { left: window.pageXOffset, top: window.pageYOffset };
+
+    var _trigger$getBoundingC = trigger.getBoundingClientRect(),
+        triggerLeft = _trigger$getBoundingC.left,
+        triggerTop = _trigger$getBoundingC.top,
+        triggerWidth = _trigger$getBoundingC.width,
+        triggerHeight = _trigger$getBoundingC.height;
+
+    var _content$getBoundingC = content.getBoundingClientRect(),
+        dropdownHeight = _content$getBoundingC.height,
+        dropdownWidth = _content$getBoundingC.width;
+
+    var viewportWidth = self.document.body.clientWidth || self.window.innerWidth;
+    var style = {};
+
+    // Apply containers' offset
+    var anchorElement = destination.parentNode;
+    var anchorPosition = window.getComputedStyle(anchorElement).position;
+    while (anchorPosition !== 'relative' && anchorPosition !== 'absolute' && anchorElement.tagName.toUpperCase() !== 'BODY' && destination.parentNode) {
+      anchorElement = anchorElement.parentNode;
+      anchorPosition = window.getComputedStyle(anchorElement).position;
+    }
+    if (anchorPosition === 'relative' || anchorPosition === 'absolute') {
+      var rect = anchorElement.getBoundingClientRect();
+      triggerLeft = triggerLeft - rect.left;
+      triggerTop = triggerTop - rect.top;
+      var offsetParent = anchorElement.offsetParent;
+      if (offsetParent) {
+        triggerLeft -= anchorElement.offsetParent.scrollLeft;
+        triggerTop -= anchorElement.offsetParent.scrollTop;
+      }
+    }
+
+    // Calculate drop down width
+    dropdownWidth = matchTriggerWidth ? triggerWidth : dropdownWidth;
+    if (matchTriggerWidth) {
+      style.width = dropdownWidth;
+    }
+
+    // Calculate horizontal position
+    var triggerLeftWithScroll = triggerLeft + scroll.left;
+    if (horizontalPosition === 'auto') {
+      // Calculate the number of visible horizontal pixels if we were to place the
+      // dropdown on the left and right
+      var leftVisible = Math.min(viewportWidth, triggerLeft + dropdownWidth) - Math.max(0, triggerLeft);
+      var rightVisible = Math.min(viewportWidth, triggerLeft + triggerWidth) - Math.max(0, triggerLeft + triggerWidth - dropdownWidth);
+
+      if (dropdownWidth > leftVisible && rightVisible > leftVisible) {
+        // If the drop down won't fit left-aligned, and there is more space on the
+        // right than on the left, then force right-aligned
+        horizontalPosition = 'right';
+      } else if (dropdownWidth > rightVisible && leftVisible > rightVisible) {
+        // If the drop down won't fit right-aligned, and there is more space on
+        // the left than on the right, then force left-aligned
+        horizontalPosition = 'left';
+      } else {
+        // Keep same position as previous
+        horizontalPosition = previousHorizontalPosition || 'left';
+      }
+    }
+    if (horizontalPosition === 'right') {
+      style.right = viewportWidth - (triggerLeftWithScroll + triggerWidth);
+    } else if (horizontalPosition === 'center') {
+      style.left = triggerLeftWithScroll + (triggerWidth - dropdownWidth) / 2;
+    } else {
+      style.left = triggerLeftWithScroll;
+    }
+
+    // Calculate vertical position
+    var triggerTopWithScroll = triggerTop + scroll.top;
+    if (verticalPosition === 'above') {
+      style.top = triggerTopWithScroll - dropdownHeight;
+    } else if (verticalPosition === 'below') {
+      style.top = triggerTopWithScroll + triggerHeight;
+    } else {
+      var viewportBottom = scroll.top + self.window.innerHeight;
+      var enoughRoomBelow = triggerTopWithScroll + triggerHeight + dropdownHeight < viewportBottom;
+      var enoughRoomAbove = triggerTop > dropdownHeight;
+
+      if (previousVerticalPosition === 'below' && !enoughRoomBelow && enoughRoomAbove) {
+        verticalPosition = 'above';
+      } else if (previousVerticalPosition === 'above' && !enoughRoomAbove && enoughRoomBelow) {
+        verticalPosition = 'below';
+      } else if (!previousVerticalPosition) {
+        verticalPosition = enoughRoomBelow ? 'below' : 'above';
+      } else {
+        verticalPosition = previousVerticalPosition;
+      }
+      style.top = triggerTopWithScroll + (verticalPosition === 'below' ? triggerHeight : -dropdownHeight);
+    }
+
+    return { horizontalPosition: horizontalPosition, verticalPosition: verticalPosition, style: style };
+  } /**
+      Function used to calculate the position of the content of the dropdown.
+      @public
+      @method calculatePosition
+      @param {DomElement} trigger The trigger of the dropdown
+      @param {DomElement} content The content of the dropdown
+      @param {DomElement} destination The element in which the content is going to be placed.
+      @param {Object} options The directives that define how the position is calculated
+        - {String} horizantalPosition How the users want the dropdown to be positioned horizontally. Values: right | center | left
+        - {String} verticalPosition How the users want the dropdown to be positioned vertically. Values: above | below
+        - {Boolean} matchTriggerWidth If the user wants the width of the dropdown to match the width of the trigger
+        - {String} previousHorizantalPosition How the dropdown was positioned for the last time. Same values than horizontalPosition, but can be null the first time.
+        - {String} previousVerticalPosition How the dropdown was positioned for the last time. Same values than verticalPosition, but can be null the first time.
+        - {Boolean} renderInPlace Boolean flat that is truthy if the component is rendered in place.
+      @return {Object} How the component is going to be positioned.
+        - {String} horizantalPosition The new horizontal position.
+        - {String} verticalPosition The new vertical position.
+        - {Object} CSS properties to be set on the dropdown. It supports `top`, `left`, `right` and `width`.
+    */
+  function calculateInPlacePosition(trigger, content, destination, _ref3) /*, matchTriggerWidth, previousHorizontalPosition, previousVerticalPosition */{
+    var horizontalPosition = _ref3.horizontalPosition,
+        verticalPosition = _ref3.verticalPosition;
+
+    var dropdownRect = void 0;
+    var positionData = {};
+    if (horizontalPosition === 'auto') {
+      var triggerRect = trigger.getBoundingClientRect();
+      dropdownRect = content.getBoundingClientRect();
+      var viewportRight = window.pageXOffset + self.window.innerWidth;
+      positionData.horizontalPosition = triggerRect.left + dropdownRect.width > viewportRight ? 'right' : 'left';
+    }
+    if (verticalPosition === 'above') {
+      positionData.verticalPosition = verticalPosition;
+      dropdownRect = dropdownRect || content.getBoundingClientRect();
+      positionData.style = { top: -dropdownRect.height };
+    }
+    return positionData;
+  }
+
+  function getScrollParent(element) {
+    var style = self.window.getComputedStyle(element);
+    var excludeStaticParent = style.position === "absolute";
+    var overflowRegex = /(auto|scroll)/;
+
+    if (style.position === "fixed") return document.body;
+    for (var parent = element; parent = parent.parentElement;) {
+      style = self.window.getComputedStyle(parent);
+      if (excludeStaticParent && style.position === "static") {
+        continue;
+      }
+      if (overflowRegex.test(style.overflow + style.overflowY + style.overflowX)) {
+        return parent;
+      }
+    }
+
+    return document.body;
+  }
+});
+;define('ember-basic-dropdown/utils/computed-fallback-if-undefined', ['exports', 'ember-computed'], function (exports, _emberComputed) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = computedFallbackIfUndefined;
+  function computedFallbackIfUndefined(fallback) {
+    return (0, _emberComputed.default)({
+      get: function get() {
+        return fallback;
+      },
+      set: function set(_, v) {
+        return v === undefined ? fallback : v;
+      }
+    });
+  }
+});
 ;define('ember-cli-app-version/initializer-factory', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
@@ -64747,7 +65763,7 @@ createDeprecatedModule('resolver');
   });
 });
 ;define("ember-component-css/pod-names", ["exports"], function (exports) {
-  exports["default"] = { "roster-list": "__roster-list__9630d" };
+  exports["default"] = { "presence-selector": "__presence-selector__9dfc2", "roster-list": "__roster-list__9630d", "user-status-bar": "__user-status-bar__e09c0" };
 });
 ;define("ember-data/-private/adapters", ["exports", "ember-data/adapters/json-api", "ember-data/adapters/rest"], function (exports, _jsonApi, _rest) {
   "use strict";
@@ -82926,5 +83942,207 @@ define("ember-resolver/features", [], function () {
   exports.__esModule = true;
   exports.default = Ember.HTMLBars.template({ "id": "t1+kJFex", "block": "{\"statements\":[[11,\"div\",[]],[15,\"id\",\"ember-welcome-page-id-selector\"],[16,\"data-ember-version\",[34,[[26,[\"emberVersion\"]]]]],[13],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"columns\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"tomster\"],[13],[0,\"\\n      \"],[11,\"img\",[]],[15,\"src\",\"ember-welcome-page/images/construction.png\"],[15,\"alt\",\"Under construction\"],[13],[14],[0,\"\\n    \"],[14],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"welcome\"],[13],[0,\"\\n      \"],[11,\"h2\",[]],[15,\"id\",\"title\"],[13],[0,\"Congratulations, you made it!\"],[14],[0,\"\\n\\n      \"],[11,\"p\",[]],[13],[0,\"You’ve officially spun up your very first Ember app :-)\"],[14],[0,\"\\n      \"],[11,\"p\",[]],[13],[0,\"You’ve got one more decision to make: what do you want to do next? We’d suggest one of the following to help you get going:\"],[14],[0,\"\\n      \"],[11,\"ol\",[]],[13],[0,\"\\n        \"],[11,\"li\",[]],[13],[11,\"a\",[]],[16,\"href\",[34,[\"https://guides.emberjs.com/v\",[26,[\"emberVersion\"]],\"/getting-started/quick-start/\"]]],[13],[0,\"Quick Start\"],[14],[0,\" - a quick introduction to how Ember works. Learn about defining your first route, writing a UI component and deploying your application.\"],[14],[0,\"\\n        \"],[11,\"li\",[]],[13],[11,\"a\",[]],[16,\"href\",[34,[\"https://guides.emberjs.com/v\",[26,[\"emberVersion\"]],\"/tutorial/ember-cli/\"]]],[13],[0,\"Ember Guides\"],[14],[0,\" - this is our more thorough, hands-on intro to Ember. Your crash course in Ember philosophy, background and some in-depth discussion of how things work (and why they work the way they do).\"],[14],[0,\"\\n      \"],[14],[0,\"\\n      \"],[11,\"p\",[]],[13],[0,\"If you run into problems, you can check \"],[11,\"a\",[]],[15,\"href\",\"http://stackoverflow.com/questions/tagged/ember.js\"],[13],[0,\"Stack Overflow\"],[14],[0,\" or \"],[11,\"a\",[]],[15,\"href\",\"http://discuss.emberjs.com/\"],[13],[0,\"our forums\"],[14],[0,\"  for ideas and answers—someone’s probably been through the same thing and already posted an answer.  If not, you can post your \"],[11,\"strong\",[]],[13],[0,\"own\"],[14],[0,\" question. People love to help new Ember developers get started, and our community is incredibly supportive \"],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n    \"],[11,\"p\",[]],[15,\"class\",\"postscript\"],[13],[0,\"To remove this welcome message, remove the \"],[11,\"code\",[]],[13],[0,\"{{welcome-page}}\"],[14],[0,\" component from your \"],[11,\"code\",[]],[13],[0,\"application.hbs\"],[14],[0,\" file.\"],[11,\"br\",[]],[13],[14],[0,\"You'll see this page update soon after!\"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "ember-welcome-page/templates/components/welcome-page.hbs" } });
 });
+;define('ember-wormhole/components/ember-wormhole', ['exports', 'ember', 'ember-wormhole/templates/components/ember-wormhole', 'ember-wormhole/utils/dom'], function (exports, _ember, _emberWormholeTemplatesComponentsEmberWormhole, _emberWormholeUtilsDom) {
+  var Component = _ember['default'].Component;
+  var computed = _ember['default'].computed;
+  var observer = _ember['default'].observer;
+  var run = _ember['default'].run;
+  exports['default'] = Component.extend({
+    layout: _emberWormholeTemplatesComponentsEmberWormhole['default'],
+
+    /*
+     * Attrs
+     */
+    to: computed.alias('destinationElementId'),
+    destinationElementId: null,
+    destinationElement: computed('destinationElementId', 'renderInPlace', function () {
+      var renderInPlace = this.get('renderInPlace');
+      if (renderInPlace) {
+        return this._element;
+      }
+      var id = this.get('destinationElementId');
+      if (!id) {
+        return null;
+      }
+      return (0, _emberWormholeUtilsDom.findElementById)(this._dom, id);
+    }),
+    renderInPlace: false,
+
+    /*
+     * Lifecycle
+     */
+    init: function init() {
+      this._super.apply(this, arguments);
+
+      this._dom = (0, _emberWormholeUtilsDom.getDOM)(this);
+
+      // Create text nodes used for the head, tail
+      this._wormholeHeadNode = this._dom.createTextNode('');
+      this._wormholeTailNode = this._dom.createTextNode('');
+
+      // A prop to help in the mocking of didInsertElement timing for Fastboot
+      this._didInsert = false;
+    },
+
+    /*
+     * didInsertElement does not fire in Fastboot. Here we use willRender and
+     * a _didInsert property to approximate the timing. Importantly we want
+     * to run appendToDestination after the child nodes have rendered.
+     */
+    willRender: function willRender() {
+      var _this = this;
+
+      this._super.apply(this, arguments);
+      if (!this._didInsert) {
+        this._didInsert = true;
+        run.schedule('afterRender', function () {
+          if (_this.isDestroyed) {
+            return;
+          }
+          _this._element = _this._wormholeHeadNode.parentNode;
+          if (!_this._element) {
+            throw new Error('The head node of a wormhole must be attached to the DOM');
+          }
+          _this._appendToDestination();
+        });
+      }
+    },
+
+    willDestroyElement: function willDestroyElement() {
+      var _this2 = this;
+
+      // not called in fastboot
+      this._super.apply(this, arguments);
+      this._didInsert = false;
+      var _wormholeHeadNode = this._wormholeHeadNode;
+      var _wormholeTailNode = this._wormholeTailNode;
+
+      run.schedule('render', function () {
+        _this2._removeRange(_wormholeHeadNode, _wormholeTailNode);
+      });
+    },
+
+    _destinationDidChange: observer('destinationElement', function () {
+      var destinationElement = this.get('destinationElement');
+      if (destinationElement !== this._wormholeHeadNode.parentNode) {
+        run.schedule('render', this, '_appendToDestination');
+      }
+    }),
+
+    _appendToDestination: function _appendToDestination() {
+      var destinationElement = this.get('destinationElement');
+      if (!destinationElement) {
+        var destinationElementId = this.get('destinationElementId');
+        if (destinationElementId) {
+          throw new Error('ember-wormhole failed to render into \'#' + this.get('destinationElementId') + '\' because the element is not in the DOM');
+        }
+        throw new Error('ember-wormhole failed to render content because the destinationElementId was set to an undefined or falsy value.');
+      }
+
+      var currentActiveElement = (0, _emberWormholeUtilsDom.getActiveElement)();
+      this._appendRange(destinationElement, this._wormholeHeadNode, this._wormholeTailNode);
+      if (currentActiveElement && (0, _emberWormholeUtilsDom.getActiveElement)() !== currentActiveElement) {
+        currentActiveElement.focus();
+      }
+    },
+
+    _appendRange: function _appendRange(destinationElement, firstNode, lastNode) {
+      while (firstNode) {
+        destinationElement.insertBefore(firstNode, null);
+        firstNode = firstNode !== lastNode ? lastNode.parentNode.firstChild : null;
+      }
+    },
+
+    _removeRange: function _removeRange(firstNode, lastNode) {
+      var node = lastNode;
+      do {
+        var next = node.previousSibling;
+        if (node.parentNode) {
+          node.parentNode.removeChild(node);
+          if (node === firstNode) {
+            break;
+          }
+        }
+        node = next;
+      } while (node);
+    }
+
+  });
+});
+;define("ember-wormhole/templates/components/ember-wormhole", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
+  exports.default = Ember.HTMLBars.template({ "id": "kfOuAXbY", "block": "{\"statements\":[[1,[33,[\"unbound\"],[[28,[\"_wormholeHeadNode\"]]],null],false],[18,\"default\"],[1,[33,[\"unbound\"],[[28,[\"_wormholeTailNode\"]]],null],false]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"hasPartials\":false}", "meta": { "moduleName": "ember-wormhole/templates/components/ember-wormhole.hbs" } });
+});
+;define('ember-wormhole/utils/dom', ['exports', 'ember'], function (exports, _ember) {
+  exports.getActiveElement = getActiveElement;
+  exports.findElementById = findElementById;
+  exports.getDOM = getDOM;
+
+  var getOwner = _ember['default'].getOwner;
+
+  function getActiveElement() {
+    if (typeof document === 'undefined') {
+      return null;
+    } else {
+      return document.activeElement;
+    }
+  }
+
+  function childNodesOfElement(element) {
+    var children = [];
+    var child = element.firstChild;
+    while (child) {
+      children.push(child);
+      child = child.nextSibling;
+    }
+    return children;
+  }
+
+  function findElementById(doc, id) {
+    if (doc.getElementById) {
+      return doc.getElementById(id);
+    }
+
+    var nodes = childNodesOfElement(doc);
+    var node = undefined;
+
+    while (nodes.length) {
+      node = nodes.shift();
+
+      if (node.getAttribute && node.getAttribute('id') === id) {
+        return node;
+      }
+
+      nodes = childNodesOfElement(node).concat(nodes);
+    }
+  }
+
+  // Private Ember API usage. Get the dom implementation used by the current
+  // renderer, be it native browser DOM or Fastboot SimpleDOM
+
+  function getDOM(context) {
+    var container = getOwner ? getOwner(context) : context.container;
+    var documentService = container.lookup('service:-document');
+
+    if (documentService) {
+      return documentService;
+    }
+
+    var renderer = container.lookup('renderer:-dom');
+
+    if (renderer._dom && renderer._dom.document) {
+      // pre Ember 2.6
+      return renderer._dom.document;
+    } else {
+      throw new Error('ember-wormhole could not get DOM');
+    }
+  }
+});
+/*
+ * Implement some helpers methods for interacting with the DOM,
+ * be it Fastboot's SimpleDOM or the browser's version.
+ */
 ;
 //# sourceMappingURL=vendor.map

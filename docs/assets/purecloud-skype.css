@@ -1,12 +1,220 @@
-.__roster-list__9630d {
-  color: red;
+.__presence-selector__9dfc2 .presence {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 2px 4px;
+}
+.__presence-selector__9dfc2 .presence:hover {
+  cursor: pointer;
+}
+.__presence-selector__9dfc2 .presence:first-child {
+  padding-top: 4px;
+}
+.__presence-selector__9dfc2 .presence:last-child {
+  padding-bottom: 4px;
+}
+.__presence-selector__9dfc2 .selector {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #d5d5d5;
+  border-radius: 50%;
+  background-color: #eee;
+}
+.__presence-selector__9dfc2 .selector:before {
+  position: absolute;
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  top: 2px;
+  left: 2px;
+  border-radius: 50%;
+  background-color: transparent;
+}
+.__presence-selector__9dfc2 .Available .active:before {
+  background-color: greenyellow;
+}
+.__presence-selector__9dfc2 .Busy .active:before,
+.__presence-selector__9dfc2 .DoNotDisturb .active:before {
+  background-color: red;
+}
+.__presence-selector__9dfc2 .Away .active:before {
+  background-color: yellow;
+}
+.__presence-selector__9dfc2 .label {
+  padding-left: 8px;
+}
+.__roster-list__9630d .search {
+  display: flex;
+  flex-direction: column;
+}
+.__roster-list__9630d .search .search-result {
+  flex-basis: 25px;
+  border: 1px solid lightgrey;
+}
+.__roster-list__9630d .groups {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0 0 10px;
+  color: #333;
+}
+.__roster-list__9630d .groups .group-entry {
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid #e6eff6;
+  margin-bottom: 30px;
+}
+.__roster-list__9630d .groups .group-name {
+  padding: 0 10px 10px 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.__roster-list__9630d .groups .group-member {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  border-right: 5px solid rgba(0, 0, 0, 0);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px 0 10px 20px;
+}
+.__roster-list__9630d .groups .group-member:hover {
+  background-color: #e6eff6;
+  border-right: 5px solid #6eafb6;
+}
+.__roster-list__9630d .groups .group-member .avatar {
+  width: 25px;
+  height: 25px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  overflow: hidden;
+  display: block;
+  margin-right: 15px;
+}
+.__roster-list__9630d .groups .group-member .avatar img {
+  width: 100%;
+  height: 100%;
+}
+.__roster-list__9630d .groups .no-members {
+  padding-left: 25px;
+  font-style: italic;
+}
+.__roster-list__9630d .search-container {
+  padding: 4px;
+}
+.__roster-list__9630d .roster-container {
+  padding: 4px;
+}
+.__user-status-bar__e09c0 {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  background-color: #0f465d;
+}
+.__user-status-bar__e09c0 .profile-picture {
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  border: 3px solid #000;
+  border-radius: 50%;
+}
+.__user-status-bar__e09c0 .profile-picture img {
+  width: 100%;
+}
+.__user-status-bar__e09c0 .profile-picture.available {
+  border-color: greenyellow;
+}
+.__user-status-bar__e09c0 .profile-picture.busy,
+.__user-status-bar__e09c0 .profile-picture.donotdisturb {
+  border-color: red;
+}
+.__user-status-bar__e09c0 .profile-picture.away {
+  border-color: yellow;
+}
+.__user-status-bar__e09c0 .information {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding-left: 8px;
+  font-size: 13px;
+  color: #ffffff;
+}
+.__user-status-bar__e09c0 .information .status {
+  font-size: 12px;
+}
+.ember-basic-dropdown {
+  position: relative;
+}
+.ember-basic-dropdown,
+.ember-basic-dropdown-content,
+.ember-basic-dropdown-content * {
+  box-sizing: border-box;
+}
+.ember-basic-dropdown-content {
+  position: absolute;
+  width: auto;
+  z-index: 1000;
+  background-color: #FFF;
+}
+.ember-basic-dropdown-content--left {
+  left: 0;
+}
+.ember-basic-dropdown-content--right {
+  right: 0;
+}
+.ember-basic-dropdown-overlay {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+html,
+body {
+  height: 100%;
+}
+html > div.ember-view,
+body > div.ember-view {
+  height: 100%;
+}
+html .skype-for-business-app,
+body .skype-for-business-app {
+  height: 100%;
 }
 body {
-  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 body div {
   display: inline-block;
   box-sizing: border-box;
+}
+body > div {
+  display: block;
+}
+.skype-for-business-app {
+  display: flex;
+}
+.skype-for-business-app .roster-list {
+  width: 250px;
+  min-width: 0;
+}
+.skype-for-business-app .conversation-pane {
+  flex: 1;
+  min-width: 0;
+}
+.ember-basic-dropdown-content {
+  border-radius: 3px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 }
 /*# sourceMappingURL=/assets/purecloud-skype.css.map */

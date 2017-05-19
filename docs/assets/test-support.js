@@ -7265,6 +7265,896 @@ define('ember-cli-test-loader/test-support/index', ['exports'], function (export
   exports.default = TestLoader;
   ;
 });
+define('ember-native-dom-helpers/-private/get-element-with-assert', ['exports', 'ember-native-dom-helpers/-private/get-element'], function (exports, _getElement) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = getElementWithAssert;
+
+
+  /*
+    @method getElementWithAssert
+    @param {String|HTMLElement} selectorOrElement
+    @param {HTMLElement} contextEl to query within, query from its contained DOM
+    @return {Error|HTMLElement} element if found, or raises an error
+    @private
+  */
+  function getElementWithAssert(selectorOrElement, contextEl) {
+    var el = (0, _getElement.default)(selectorOrElement, contextEl);
+    if (el) {
+      return el;
+    }
+    throw new Error('Element ' + selectorOrElement + ' not found.');
+  }
+});
+define('ember-native-dom-helpers/-private/get-element', ['exports', 'ember-native-dom-helpers/settings'], function (exports, _settings) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = getElement;
+
+
+  /*
+    @method getElement
+    @param {String|HTMLElement} selectorOrElement
+    @param {HTMLElement} contextEl to query within, query from its contained DOM
+    @return HTMLElement
+    @private
+  */
+  function getElement(selectorOrElement, contextEl) {
+    if (selectorOrElement instanceof HTMLElement) {
+      return selectorOrElement;
+    }
+    var result = void 0;
+    if (contextEl instanceof HTMLElement) {
+      result = contextEl.querySelector(selectorOrElement);
+    } else {
+      result = document.querySelector(_settings.default.rootElement + ' ' + selectorOrElement);
+    }
+    return result;
+  }
+});
+define('ember-native-dom-helpers/-private/is-focusable', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = isFocusable;
+  function isFocusable(el) {
+    var focusableTags = ['INPUT', 'BUTTON', 'LINK', 'SELECT', 'A', 'TEXTAREA'];
+    var tagName = el.tagName,
+        type = el.type;
+
+
+    if (type === 'hidden') {
+      return false;
+    }
+
+    return focusableTags.indexOf(tagName) > -1 || el.contentEditable;
+  }
+});
+define('ember-native-dom-helpers/blur', ['exports', 'ember', 'ember-native-dom-helpers/-private/get-element-with-assert', 'ember-native-dom-helpers/-private/is-focusable', 'ember-native-dom-helpers/fire-event', 'ember-test-helpers/wait'], function (exports, _ember, _getElementWithAssert, _isFocusable, _fireEvent, _wait) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.blur = blur;
+  var run = _ember.default.run;
+
+
+  /*
+    @method blur
+    @param {String|HTMLElement} selector
+    @return {RSVP.Promise}
+    @public
+  */
+  function blur(selector) {
+    if (!selector) {
+      return;
+    }
+
+    var el = (0, _getElementWithAssert.default)(selector);
+
+    if ((0, _isFocusable.default)(el)) {
+      run(null, function () {
+        var browserIsNotFocused = document.hasFocus && !document.hasFocus();
+
+        // makes `document.activeElement` be `body`.
+        // If the browser is focused, it also fires a blur event
+        el.blur();
+
+        // Chrome/Firefox does not trigger the `blur` event if the window
+        // does not have focus. If the document does not have focus then
+        // fire `blur` event via native event.
+        if (browserIsNotFocused) {
+          (0, _fireEvent.fireEvent)(el, 'blur', { bubbles: false });
+        }
+      });
+    }
+
+    return (window.wait || _wait.default)();
+  }
+});
+define('ember-native-dom-helpers/click', ['exports', 'ember', 'ember-native-dom-helpers/-private/get-element-with-assert', 'ember-native-dom-helpers/fire-event', 'ember-native-dom-helpers/focus', 'ember-test-helpers/wait'], function (exports, _ember, _getElementWithAssert, _fireEvent, _focus, _wait) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.clickEventSequence = clickEventSequence;
+  exports.click = click;
+  var run = _ember.default.run;
+
+
+  /*
+    @method clickEventSequence
+    @private
+  */
+  function clickEventSequence(el, options) {
+    run(function () {
+      return (0, _fireEvent.fireEvent)(el, 'mousedown', options);
+    });
+    (0, _focus.focus)(el);
+    run(function () {
+      return (0, _fireEvent.fireEvent)(el, 'mouseup', options);
+    });
+    run(function () {
+      return (0, _fireEvent.fireEvent)(el, 'click', options);
+    });
+  }
+
+  /*
+    @method click
+    @param {String|HTMLElement} selector
+    @param {Object} options
+    @return {RSVP.Promise}
+    @public
+  */
+  function click(selector) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    clickEventSequence((0, _getElementWithAssert.default)(selector), options);
+    return (window.wait || _wait.default)();
+  }
+});
+define('ember-native-dom-helpers/current-path', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.currentPath = currentPath;
+  function currentPath() {
+    var _window;
+
+    if (!window.currentPath) {
+      throw new Error('currentPath is only available during acceptance tests');
+    }
+
+    return (_window = window).currentPath.apply(_window, arguments);
+  }
+});
+define('ember-native-dom-helpers/current-route-name', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.currentRouteName = currentRouteName;
+  function currentRouteName() {
+    var _window;
+
+    if (!window.currentRouteName) {
+      throw new Error('currentRouteName is only available during acceptance tests');
+    }
+
+    return (_window = window).currentRouteName.apply(_window, arguments);
+  }
+});
+define('ember-native-dom-helpers/current-url', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.currentURL = currentURL;
+  function currentURL() {
+    var _window;
+
+    if (!window.currentURL) {
+      throw new Error('currentURL is only available during acceptance tests');
+    }
+
+    return (_window = window).currentURL.apply(_window, arguments);
+  }
+});
+define('ember-native-dom-helpers/fill-in', ['exports', 'ember', 'ember-native-dom-helpers/-private/get-element-with-assert', 'ember-native-dom-helpers/focus', 'ember-native-dom-helpers/fire-event', 'ember-test-helpers/wait'], function (exports, _ember, _getElementWithAssert, _focus, _fireEvent, _wait) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.fillIn = fillIn;
+  var run = _ember.default.run;
+
+
+  /*
+    @method fillIn
+    @param {String|HTMLElement} selector
+    @param {String} text
+    @return {RSVP.Promise}
+    @public
+  */
+  function fillIn(selector, text) {
+    var el = (0, _getElementWithAssert.default)(selector);
+    run(function () {
+      return (0, _focus.focus)(el);
+    });
+    run(function () {
+      return el.value = text;
+    });
+    run(function () {
+      return (0, _fireEvent.fireEvent)(el, 'input');
+    });
+    run(function () {
+      return (0, _fireEvent.fireEvent)(el, 'change');
+    });
+    return (window.wait || _wait.default)();
+  }
+});
+define('ember-native-dom-helpers/find-all', ['exports', 'ember-native-dom-helpers/settings'], function (exports, _settings) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.findAll = findAll;
+
+
+  /*
+    The findAll test helper uses `querySelectorAll` to search inside the test
+    DOM (based on app configuration for the rootElement).
+  
+    Alternalively, a second argument may be passed which is an element as the
+    DOM context to search within.
+  
+    @method findAll
+    @param {String} CSS selector to find elements in the test DOM
+    @param {HTMLElement} contextEl to query within, query from its contained DOM
+    @return {NodeList} A (non-live) list of zero or more HTMLElement objects
+    @public
+  */
+  function findAll(selector, contextEl) {
+    var result = void 0;
+    if (contextEl instanceof HTMLElement) {
+      result = contextEl.querySelectorAll(selector);
+    } else {
+      result = document.querySelectorAll(_settings.default.rootElement + ' ' + selector);
+    }
+    return result;
+  }
+});
+define('ember-native-dom-helpers/find-with-assert', ['exports', 'ember-native-dom-helpers/-private/get-element-with-assert'], function (exports, _getElementWithAssert) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.findWithAssert = findWithAssert;
+
+
+  /*
+    @method findWithAssert
+    @param {String} CSS selector to find elements in the test DOM
+    @param {HTMLElement} contextEl to query within, query from its contained DOM
+    @return {Error|HTMLElement} element if found, or raises an error
+    @public
+  */
+  function findWithAssert(selector, contextEl) {
+    return (0, _getElementWithAssert.default)(selector, contextEl);
+  }
+});
+define('ember-native-dom-helpers/find', ['exports', 'ember-native-dom-helpers/-private/get-element'], function (exports, _getElement) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.find = find;
+
+
+  /*
+    The find test helper uses `querySelector` to search inside the test
+    DOM (based on app configuration for the rootElement).
+  
+    Alternalively, a second argument may be passed which is an element as the
+    DOM context to search within.
+  
+    @method find
+    @param {String} CSS selector to find one or more elements in the test DOM
+    @param {HTMLElement} contextEl to query within, query from its contained DOM
+    @return {null|HTMLElement} null or an element
+    @public
+  */
+  function find(selector, contextEl) {
+    return (0, _getElement.default)(selector, contextEl);
+  }
+});
+define('ember-native-dom-helpers/fire-event', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.fireEvent = fireEvent;
+  var merge = _ember.default.merge;
+
+  var DEFAULT_EVENT_OPTIONS = { bubbles: true, cancelable: true };
+  var KEYBOARD_EVENT_TYPES = ['keydown', 'keypress', 'keyup'];
+  var MOUSE_EVENT_TYPES = ['click', 'mousedown', 'mouseup', 'dblclick', 'mouseenter', 'mouseleave', 'mousemove', 'mouseout', 'mouseover'];
+
+  /*
+    @method fireEvent
+    @param {HTMLElement} element
+    @param {String} type
+    @param {Object} (optional) options
+    @return {Event} The dispatched event
+    @private
+  */
+  function fireEvent(element, type) {
+    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    if (!element) {
+      return;
+    }
+    var event = void 0;
+    if (KEYBOARD_EVENT_TYPES.indexOf(type) > -1) {
+      event = buildKeyboardEvent(type, options);
+    } else if (MOUSE_EVENT_TYPES.indexOf(type) > -1) {
+      var rect = element.getBoundingClientRect();
+      var x = rect.left + 1;
+      var y = rect.top + 1;
+      var simulatedCoordinates = {
+        screenX: x + 5,
+        screenY: y + 95,
+        clientX: x,
+        clientY: y
+      };
+      event = buildMouseEvent(type, merge(simulatedCoordinates, options));
+    } else {
+      event = buildBasicEvent(type, options);
+    }
+    element.dispatchEvent(event);
+    return event;
+  }
+
+  /*
+    @method buildBasicEvent
+    @param {String} type
+    @param {Object} (optional) options
+    @return {Event}
+    @private
+  */
+  function buildBasicEvent(type) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var event = document.createEvent('Events');
+
+    var bubbles = options.bubbles !== undefined ? options.bubbles : true;
+    var cancelable = options.cancelable !== undefined ? options.cancelable : true;
+
+    delete options.bubbles;
+    delete options.cancelable;
+
+    // bubbles and cancelable are readonly, so they can be
+    // set when initializing event
+    event.initEvent(type, bubbles, cancelable);
+    merge(event, options);
+    return event;
+  }
+
+  /*
+    @method buildMouseEvent
+    @param {String} type
+    @param {Object} (optional) options
+    @return {Event}
+    @private
+  */
+  function buildMouseEvent(type) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var event = void 0;
+    try {
+      event = document.createEvent('MouseEvents');
+      var eventOpts = merge(merge({}, DEFAULT_EVENT_OPTIONS), options);
+      event.initMouseEvent(type, eventOpts.bubbles, eventOpts.cancelable, window, eventOpts.detail, eventOpts.screenX, eventOpts.screenY, eventOpts.clientX, eventOpts.clientY, eventOpts.ctrlKey, eventOpts.altKey, eventOpts.shiftKey, eventOpts.metaKey, eventOpts.button, eventOpts.relatedTarget);
+    } catch (e) {
+      event = buildBasicEvent(type, options);
+    }
+    return event;
+  }
+
+  /*
+    @method buildKeyboardEvent
+    @param {String} type
+    @param {Object} (optional) options
+    @return {Event}
+    @private
+  */
+  function buildKeyboardEvent(type) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var eventOpts = merge(merge({}, DEFAULT_EVENT_OPTIONS), options);
+    var event = void 0,
+        eventMethodName = void 0;
+
+    try {
+      event = new KeyboardEvent(type, eventOpts);
+
+      // Property definitions are required for B/C for keyboard event usage
+      // If this properties are not defined, when listening for key events
+      // keyCode/which will be 0. Also, keyCode and which now are string
+      // and if app compare it with === with integer key definitions,
+      // there will be a fail.
+      //
+      // https://w3c.github.io/uievents/#interface-keyboardevent
+      // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
+      Object.defineProperty(event, 'keyCode', {
+        get: function get() {
+          return parseInt(this.key);
+        }
+      });
+
+      Object.defineProperty(event, 'which', {
+        get: function get() {
+          return parseInt(this.key);
+        }
+      });
+
+      return event;
+    } catch (e) {
+      // left intentionally blank
+    }
+
+    try {
+      event = document.createEvent('KeyboardEvents');
+      eventMethodName = 'initKeyboardEvent';
+    } catch (e) {
+      // left intentionally blank
+    }
+
+    if (!event) {
+      try {
+        event = document.createEvent('KeyEvents');
+        eventMethodName = 'initKeyEvent';
+      } catch (e) {
+        // left intentionally blank
+      }
+    }
+
+    if (event) {
+      event[eventMethodName](type, eventOpts.bubbles, eventOpts.cancelable, window, eventOpts.ctrlKey, eventOpts.altKey, eventOpts.shiftKey, eventOpts.metaKey, eventOpts.keyCode, eventOpts.charCode);
+    } else {
+      event = buildBasicEvent(type, options);
+    }
+
+    return event;
+  }
+});
+define('ember-native-dom-helpers/focus', ['exports', 'ember', 'ember-native-dom-helpers/-private/get-element-with-assert', 'ember-native-dom-helpers/-private/is-focusable', 'ember-native-dom-helpers/fire-event', 'ember-test-helpers/wait'], function (exports, _ember, _getElementWithAssert, _isFocusable, _fireEvent, _wait) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.focus = focus;
+  var run = _ember.default.run;
+
+
+  /*
+    @method focus
+    @param {String|HTMLElement} selector
+    @return {RSVP.Promise}
+    @public
+  */
+  function focus(selector) {
+    if (!selector) {
+      return;
+    }
+
+    var el = (0, _getElementWithAssert.default)(selector);
+
+    if ((0, _isFocusable.default)(el)) {
+      run(null, function () {
+        var browserIsNotFocused = document.hasFocus && !document.hasFocus();
+
+        // Firefox does not trigger the `focusin` event if the window
+        // does not have focus. If the document does not have focus then
+        // fire `focusin` event as well.
+        if (browserIsNotFocused) {
+          (0, _fireEvent.fireEvent)(el, 'focusin', {
+            bubbles: false
+          });
+        }
+
+        // makes `document.activeElement` be `el`. If the browser is focused, it also fires a focus event
+        el.focus();
+
+        // if the browser is not focused the previous `el.focus()` didn't fire an event, so we simulate it
+        if (browserIsNotFocused) {
+          (0, _fireEvent.fireEvent)(el, 'focus', {
+            bubbles: false
+          });
+        }
+      });
+    }
+
+    return (window.wait || _wait.default)();
+  }
+});
+define('ember-native-dom-helpers/index', ['exports', 'ember-native-dom-helpers/find', 'ember-native-dom-helpers/find-all', 'ember-native-dom-helpers/find-with-assert', 'ember-native-dom-helpers/click', 'ember-native-dom-helpers/tap', 'ember-native-dom-helpers/fill-in', 'ember-native-dom-helpers/key-event', 'ember-native-dom-helpers/trigger-event', 'ember-native-dom-helpers/visit', 'ember-native-dom-helpers/wait-until', 'ember-native-dom-helpers/current-url', 'ember-native-dom-helpers/current-path', 'ember-native-dom-helpers/focus', 'ember-native-dom-helpers/blur', 'ember-native-dom-helpers/scroll-to', 'ember-native-dom-helpers/current-route-name', 'ember-native-dom-helpers/settings'], function (exports, _find, _findAll, _findWithAssert, _click, _tap, _fillIn, _keyEvent, _triggerEvent, _visit, _waitUntil, _currentUrl, _currentPath, _focus, _blur, _scrollTo, _currentRouteName, _settings) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'find', {
+    enumerable: true,
+    get: function () {
+      return _find.find;
+    }
+  });
+  Object.defineProperty(exports, 'findAll', {
+    enumerable: true,
+    get: function () {
+      return _findAll.findAll;
+    }
+  });
+  Object.defineProperty(exports, 'findWithAssert', {
+    enumerable: true,
+    get: function () {
+      return _findWithAssert.findWithAssert;
+    }
+  });
+  Object.defineProperty(exports, 'click', {
+    enumerable: true,
+    get: function () {
+      return _click.click;
+    }
+  });
+  Object.defineProperty(exports, 'tap', {
+    enumerable: true,
+    get: function () {
+      return _tap.tap;
+    }
+  });
+  Object.defineProperty(exports, 'fillIn', {
+    enumerable: true,
+    get: function () {
+      return _fillIn.fillIn;
+    }
+  });
+  Object.defineProperty(exports, 'keyEvent', {
+    enumerable: true,
+    get: function () {
+      return _keyEvent.keyEvent;
+    }
+  });
+  Object.defineProperty(exports, 'triggerEvent', {
+    enumerable: true,
+    get: function () {
+      return _triggerEvent.triggerEvent;
+    }
+  });
+  Object.defineProperty(exports, 'visit', {
+    enumerable: true,
+    get: function () {
+      return _visit.visit;
+    }
+  });
+  Object.defineProperty(exports, 'waitUntil', {
+    enumerable: true,
+    get: function () {
+      return _waitUntil.waitUntil;
+    }
+  });
+  Object.defineProperty(exports, 'currentURL', {
+    enumerable: true,
+    get: function () {
+      return _currentUrl.currentURL;
+    }
+  });
+  Object.defineProperty(exports, 'currentPath', {
+    enumerable: true,
+    get: function () {
+      return _currentPath.currentPath;
+    }
+  });
+  Object.defineProperty(exports, 'focus', {
+    enumerable: true,
+    get: function () {
+      return _focus.focus;
+    }
+  });
+  Object.defineProperty(exports, 'blur', {
+    enumerable: true,
+    get: function () {
+      return _blur.blur;
+    }
+  });
+  Object.defineProperty(exports, 'scrollTo', {
+    enumerable: true,
+    get: function () {
+      return _scrollTo.scrollTo;
+    }
+  });
+  Object.defineProperty(exports, 'currentRouteName', {
+    enumerable: true,
+    get: function () {
+      return _currentRouteName.currentRouteName;
+    }
+  });
+  Object.defineProperty(exports, 'settings', {
+    enumerable: true,
+    get: function () {
+      return _settings.default;
+    }
+  });
+});
+define('ember-native-dom-helpers/key-event', ['exports', 'ember-native-dom-helpers/trigger-event', 'ember'], function (exports, _triggerEvent, _ember) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.keyEvent = keyEvent;
+  var merge = _ember.default.merge;
+
+
+  /**
+   * @public
+   * @param selector
+   * @param type
+   * @param keyCode
+   * @param modifiers
+   * @return {*}
+   */
+  function keyEvent(selector, type, keyCode) {
+    var modifiers = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : { ctrlKey: false, altKey: false, shiftKey: false, metaKey: false };
+
+    return (0, _triggerEvent.triggerEvent)(selector, type, merge({ keyCode: keyCode, which: keyCode, key: keyCode }, modifiers));
+  }
+});
+define('ember-native-dom-helpers/scroll-to', ['exports', 'ember', 'ember-native-dom-helpers/-private/get-element-with-assert', 'ember-test-helpers/wait'], function (exports, _ember, _getElementWithAssert, _wait) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.scrollTo = scrollTo;
+  var RSVP = _ember.default.RSVP;
+
+  var rAF = window.requestAnimationFrame || function (cb) {
+    setTimeout(cb, 17);
+  };
+
+  /*
+    Triggers a paint (and therefore flushes any queued up scroll events).
+  
+    @method triggerFlushWithPromise
+    @return {RSVP.Promise}
+    @private
+  */
+  function waitForScrollEvent() {
+    var waitForEvent = new RSVP.Promise(function (resolve) {
+      rAF(resolve);
+    });
+    return waitForEvent.then(function () {
+      return (0, _wait.default)();
+    });
+  }
+
+  /*
+    Scrolls DOM element or selector to the given coordinates (if the DOM element is currently overflowed).
+    The promise resolves after the scroll event has been triggered.
+    @method scrollTo
+    @param {String|HTMLElement} selector
+    @param {Number} x
+    @param {Number} y
+    @return {RSVP.Promise}
+    @public
+  */
+  function scrollTo(selector, x, y) {
+    var el = (0, _getElementWithAssert.default)(selector);
+    el.scrollTop = y;
+    el.scrollLeft = x;
+    return waitForScrollEvent();
+  }
+});
+define('ember-native-dom-helpers/settings', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+  var TestSupportSettings = function () {
+    function TestSupportSettings() {
+      var init = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { rootElement: '#ember-testing' };
+
+      _classCallCheck(this, TestSupportSettings);
+
+      this._rootElement = init.rootElement;
+    }
+
+    /*
+      Setting for Ember app root element, default is #ember-testing
+       @public rootElement
+      @type String
+    */
+
+
+    _createClass(TestSupportSettings, [{
+      key: 'rootElement',
+      get: function get() {
+        return this._rootElement;
+      },
+      set: function set(value) {
+        this._rootElement = value;
+      }
+    }]);
+
+    return TestSupportSettings;
+  }();
+
+  var settings = new TestSupportSettings();
+
+  exports.default = settings;
+});
+define('ember-native-dom-helpers/tap', ['exports', 'ember', 'ember-native-dom-helpers/-private/get-element-with-assert', 'ember-native-dom-helpers/fire-event', 'ember-native-dom-helpers/click', 'ember-test-helpers/wait'], function (exports, _ember, _getElementWithAssert, _fireEvent, _click, _wait) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.tap = tap;
+  var run = _ember.default.run;
+
+
+  /*
+    @method tap
+    @param {String|HTMLElement} selector
+    @param {Object} options
+    @return {RSVP.Promise}
+    @public
+  */
+  function tap(selector) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var el = (0, _getElementWithAssert.default)(selector);
+    var touchstartEv = void 0,
+        touchendEv = void 0;
+    run(function () {
+      return touchstartEv = (0, _fireEvent.fireEvent)(el, 'touchstart', options);
+    });
+    run(function () {
+      return touchendEv = (0, _fireEvent.fireEvent)(el, 'touchend', options);
+    });
+    if (!touchstartEv.defaultPrevented && !touchendEv.defaultPrevented) {
+      (0, _click.clickEventSequence)(el);
+    }
+    return (window.wait || _wait.default)();
+  }
+});
+define('ember-native-dom-helpers/trigger-event', ['exports', 'ember', 'ember-native-dom-helpers/-private/get-element-with-assert', 'ember-native-dom-helpers/fire-event', 'ember-test-helpers/wait'], function (exports, _ember, _getElementWithAssert, _fireEvent, _wait) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.triggerEvent = triggerEvent;
+  var run = _ember.default.run;
+
+
+  /*
+    @method triggerEvent
+    @param {String|HTMLElement} selector
+    @param {String} type
+    @param {Object} options
+    @return {RSVP.Promise}
+    @public
+  */
+  function triggerEvent(selector, type, options) {
+    var el = (0, _getElementWithAssert.default)(selector);
+    run(function () {
+      return (0, _fireEvent.fireEvent)(el, type, options);
+    });
+    return (window.wait || _wait.default)();
+  }
+});
+define('ember-native-dom-helpers/visit', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.visit = visit;
+  function visit() {
+    var _window;
+
+    if (!window.visit) {
+      throw new Error('visit is only available during acceptance tests');
+    }
+
+    return (_window = window).visit.apply(_window, arguments);
+  }
+});
+define('ember-native-dom-helpers/wait-until', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.waitUntil = waitUntil;
+  var run = _ember.default.run,
+      RSVP = _ember.default.RSVP;
+  function waitUntil(callback) {
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref$timeout = _ref.timeout,
+        timeout = _ref$timeout === undefined ? 1000 : _ref$timeout;
+
+    return new RSVP.Promise(function (resolve, reject) {
+      var value = run(callback);
+      if (value) {
+        resolve(value);
+        return;
+      }
+      var time = 0;
+      var tick = function tick() {
+        time += 10;
+        var value = run(callback);
+        if (value) {
+          resolve(value);
+        } else if (time < timeout) {
+          setTimeout(tick, 10);
+        } else {
+          reject('waitUntil timed out');
+        }
+      };
+      setTimeout(tick, 10);
+    });
+  }
+});
 define('ember-qunit', ['exports', 'qunit', 'ember-qunit/module-for', 'ember-qunit/module-for-component', 'ember-qunit/module-for-model', 'ember-qunit/adapter', 'ember-test-helpers'], function (exports, _qunit, _moduleFor, _moduleForComponent, _moduleForModel, _adapter, _emberTestHelpers) {
   'use strict';
 
