@@ -45,7 +45,15 @@ export default Component.extend({
 
         searchHandler (event) {
             let val = event.target.value;
-            Ember.run.debounce(this, this.handleSearch, val, 500);
+            if (val !== '') {
+                this.set('searchLoading', true);
+                this.set('hideSearch', false);
+                Ember.run.debounce(this, this.handleSearch, val, 500);
+            } else {
+                this.set('searchLoading', false);
+                this.set('hideSearch', true);
+                this.set('searchResults', []);
+            }
         },
 
         addContact(person) {
@@ -68,8 +76,6 @@ export default Component.extend({
 
         Logger.warn(`Starting search for ${input}`);
 
-        this.set('searchLoading', true);
-
         query.getMore().then((results) => {
             let list = results.map((result) => {
                 return result.result;
@@ -81,12 +87,8 @@ export default Component.extend({
                 }, getOwner(this).ownerInjection());
 
                 this.get('searchResults').pushObject(personModel);
-
-                // person.id.get().then(() => personModel.set('id', person.id()));
-                // person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
-                // person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
             });
-
+            this.set('searchLoading', false);
             Logger.log(list);
         },
         (err) => {
@@ -119,11 +121,17 @@ export default Component.extend({
     },
 
     addPerson(person) {
+<<<<<<< HEAD
         let personModel = User.create({
             person
         }, getOwner(this).ownerInjection());
 
         this.get('generalContacts').pushObject(personModel);
+=======
+        person.displayName.get().then(name => {
+            Logger.log('ROSTER: addPerson', name, person.id());
+        })
+>>>>>>> Search improvements
     },
 
     addConversation(conversation) {
