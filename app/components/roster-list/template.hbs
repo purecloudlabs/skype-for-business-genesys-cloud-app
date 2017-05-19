@@ -5,7 +5,7 @@
         <input class="search-input"
                type="text"
                placeholder="Search For People"
-               onchange={{action "searchHandler"}}>
+               onkeyup={{action "searchHandler"}}>
         {{#each searchResults as |result|}}
             <div class="search-result" {{action "addContact"}}>{{result.name}}</div>
         {{/each}}

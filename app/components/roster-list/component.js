@@ -39,11 +39,16 @@ export default Component.extend({
 
         searchHandler (event) {
             let val = event.target.value;
-            Ember.run.throttle(this, this.handleSearch, val, 500);
+            Ember.run.debounce(this, this.handleSearch, val, 500);
         },
     },
 
     handleSearch(input) {
+        if (!input) {
+            this.set('searchResults', null);
+            return;
+        }
+
         let query = this.get('skype').application.personsAndGroupsManager.createPersonSearchQuery();
         query.limit(50);
         query.text(input);
