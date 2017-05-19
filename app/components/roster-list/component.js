@@ -34,7 +34,7 @@ export default Component.extend({
 
     actions: {
         clickContact(person) {
-            this.get('skype').startConversation(person.get('id'));
+            this.get('skype').startConversation(person.skypePerson);
         },
 
         searchHandler (event) {
@@ -90,8 +90,10 @@ export default Component.extend({
             console.log('ROSTER: addPerson', name, person.id());
         })
     },
+
     addConversation(conversation) {
     },
+
     addGroup(group) {
         let groupModel = Ember.Object.create();
         this.get('groups').unshiftObject(groupModel);
@@ -106,7 +108,9 @@ export default Component.extend({
             }
 
             group.persons().forEach(person => {
-                let personModel = Ember.Object.create();
+                let personModel = Ember.Object.create({
+                    skypePerson: person
+                });
                 groupModel.get('persons').pushObject(personModel);
 
                 person.id.get().then(() => personModel.set('id', person.id()));

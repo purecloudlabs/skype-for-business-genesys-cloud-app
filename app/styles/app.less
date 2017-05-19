@@ -1,6 +1,18 @@
 @import "pod-styles";
 @import "ember-basic-dropdown";
 
+html, body {
+    height: 100%;
+
+    > div.ember-view {
+        height: 100%;
+    }
+
+    .skype-for-business-app {
+        height: 100%;
+    }
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -10,6 +22,10 @@ body {
     div {
         display: inline-block;
         box-sizing: border-box;
+    }
+
+    > div {
+        display: block;
     }
 }
 

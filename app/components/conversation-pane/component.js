@@ -9,9 +9,18 @@ export default Component.extend({
     classNames: ['conversation-pane'],
     skype: inject.service(),
 
+    conversation: null,
+
     init() {
         this._super(...arguments);
+    },
 
-        this.get('skype'); // dummy...
+    didUpdateAttrs() {
+        Ember.run.scheduleOnce('afterRender', this, this.renderConversation);
+    },
+
+    renderConversation() {
+        const conversation = this.get('conversation');
+        this.get('skype').api.renderConversation(this.element, { conversation });
     }
 })

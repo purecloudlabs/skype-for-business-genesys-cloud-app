@@ -194,7 +194,8 @@ export default Service.extend(Evented, {
         });
     },
 
-    startConversation(personSip) {
-
+    startConversation(person) {
+        const conversation = this.application.conversationsManager.getConversation(person);
+        this.set('activeConversation', conversation);
     }
 });
