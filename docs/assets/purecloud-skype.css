@@ -106,14 +106,11 @@
 .__roster-list__9630d .search-container {
   padding: 4px;
 }
-.__roster-list__9630d .roster-container {
-  padding: 4px;
-}
 .__user-status-bar__e09c0 {
   display: flex;
   width: 100%;
   padding: 10px;
-  background-color: #0f465d;
+  background-color: #fff;
 }
 .__user-status-bar__e09c0 .profile-picture {
   width: 32px;
@@ -142,7 +139,7 @@
   min-width: 0;
   padding-left: 8px;
   font-size: 13px;
-  color: #ffffff;
+  color: #000;
 }
 .__user-status-bar__e09c0 .information .status {
   font-size: 12px;
@@ -208,6 +205,8 @@ body > div {
 .skype-for-business-app .roster-list {
   width: 250px;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 .skype-for-business-app .conversation-pane {
   flex: 1;
