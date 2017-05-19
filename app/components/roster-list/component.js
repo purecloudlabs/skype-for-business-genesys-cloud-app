@@ -20,6 +20,8 @@ export default Component.extend({
         this._super(...arguments);
 
         this.set('groups', []);
+        this.set('generalContacts', []);
+
         window.GROUPS = this.get('groups');
         window.roster = this;
     },
@@ -117,9 +119,11 @@ export default Component.extend({
     },
 
     addPerson(person) {
-        person.displayName.get().then(name => {
-            console.log('ROSTER: addPerson', name, person.id());
-        })
+        let personModel = User.create({
+            person
+        }, getOwner(this).ownerInjection());
+
+        this.get('generalContacts').pushObject(personModel);
     },
 
     addConversation(conversation) {
@@ -136,6 +140,10 @@ export default Component.extend({
 
             if (groupModel.get('name') === 'pinnedGroup') {
                 groupModel.set('name', 'Favorites');
+            }
+            if (groupModel.get('name') === 'Other Contacts') {
+                groupModel.set('name', 'Contacts');
+                groupModel.set('persons', this.get('generalContacts'));
             }
 
             group.persons().forEach(person => {
