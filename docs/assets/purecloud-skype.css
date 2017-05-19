@@ -1,3 +1,21 @@
+.__conversation-pane__2f7b5 .roster {
+  width: 100%;
+}
+.__conversation-pane__2f7b5 .roster .grid {
+  width: 100%;
+}
+.__conversation-pane__2f7b5 .roster .grid .conversation-topic {
+  width: 100%;
+}
+.__conversation-pane__2f7b5 .roster .grid .conversation-topic .tileText {
+  width: 100%;
+}
+.__conversation-pane__2f7b5 .roster .grid .conversation-topic .tileText .tileName {
+  width: 100%;
+}
+.__conversation-pane__2f7b5 .headerControls {
+  display: none !important;
+}
 .__presence-selector__9dfc2 .presence {
   display: flex;
   align-items: center;
@@ -44,6 +62,44 @@
 }
 .__presence-selector__9dfc2 .label {
   padding-left: 8px;
+}
+.__profile-image__7af31 {
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  overflow: hidden;
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.__profile-image__7af31.available {
+  border-color: #47ce3c;
+}
+.__profile-image__7af31.busy,
+.__profile-image__7af31.do.not.disturb {
+  border-color: #f30e5b;
+}
+.__profile-image__7af31.away {
+  border-color: #fbba33;
+}
+.__profile-image__7af31 img {
+  width: 100%;
+  height: 100%;
+}
+.__profile-image__7af31 .initials {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 100;
+  text-align: center;
+  background-color: #42a1f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .__roster-list__9630d .search {
   display: flex;
@@ -104,17 +160,9 @@
   border-right: 5px solid #6eafb6;
 }
 .__roster-list__9630d .groups .group-member .avatar {
-  width: 25px;
-  height: 25px;
-  border: 1px solid #ddd;
-  border-radius: 50%;
-  overflow: hidden;
-  display: block;
+  width: 35px;
+  height: 35px;
   margin-right: 15px;
-}
-.__roster-list__9630d .groups .group-member .avatar img {
-  width: 100%;
-  height: 100%;
 }
 .__roster-list__9630d .groups .no-members {
   padding-left: 25px;
@@ -130,24 +178,11 @@
   background-color: #fff;
 }
 .__user-status-bar__e09c0 .profile-picture {
-  width: 32px;
-  height: 32px;
-  overflow: hidden;
-  border: 3px solid #000;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
 }
-.__user-status-bar__e09c0 .profile-picture img {
-  width: 100%;
-}
-.__user-status-bar__e09c0 .profile-picture.available {
-  border-color: greenyellow;
-}
-.__user-status-bar__e09c0 .profile-picture.busy,
-.__user-status-bar__e09c0 .profile-picture.donotdisturb {
-  border-color: red;
-}
-.__user-status-bar__e09c0 .profile-picture.away {
-  border-color: yellow;
+.__user-status-bar__e09c0 .profile-picture .initials {
+  font-weight: 400;
 }
 .__user-status-bar__e09c0 .information {
   display: flex;

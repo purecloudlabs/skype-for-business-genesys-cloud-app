@@ -231,14 +231,110 @@ define("purecloud-skype/components/presence-selector/template", ["exports"], fun
   });
   exports.default = Ember.HTMLBars.template({ "id": "pxvu2vlm", "block": "{\"statements\":[[6,[\"each\"],[[28,[\"presenceList\"]]],null,{\"statements\":[[0,\"    \"],[11,\"div\",[]],[16,\"class\",[34,[\"presence \",[28,[\"presence\",\"key\"]]]]],[5,[\"action\"],[[28,[null]],\"setStatus\",[28,[\"presence\",\"key\"]]]],[13],[0,\"\\n        \"],[11,\"div\",[]],[16,\"class\",[34,[\"selector \",[33,[\"if\"],[[28,[\"presence\",\"active\"]],\"active\"],null]]]],[13],[14],[0,\"\\n        \"],[11,\"div\",[]],[15,\"class\",\"label\"],[13],[0,\"\\n            \"],[1,[28,[\"presence\",\"label\"]],false],[0,\"\\n        \"],[14],[0,\"\\n    \"],[14],[0,\"\\n\"]],\"locals\":[\"presence\"]},null]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/presence-selector/template.hbs" } });
 });
-define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 'purecloud-skype/services/skype'], function (exports, _ember, _skype) {
+define('purecloud-skype/components/profile-image/component', ['exports', 'ember'], function (exports, _ember) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    var Component = _ember.default.Component,
-        inject = _ember.default.inject;
+
+    var _slicedToArray = function () {
+        function sliceIterator(arr, i) {
+            var _arr = [];
+            var _n = true;
+            var _d = false;
+            var _e = undefined;
+
+            try {
+                for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+                    _arr.push(_s.value);
+
+                    if (i && _arr.length === i) break;
+                }
+            } catch (err) {
+                _d = true;
+                _e = err;
+            } finally {
+                try {
+                    if (!_n && _i["return"]) _i["return"]();
+                } finally {
+                    if (_d) throw _e;
+                }
+            }
+
+            return _arr;
+        }
+
+        return function (arr, i) {
+            if (Array.isArray(arr)) {
+                return arr;
+            } else if (Symbol.iterator in Object(arr)) {
+                return sliceIterator(arr, i);
+            } else {
+                throw new TypeError("Invalid attempt to destructure non-iterable instance");
+            }
+        };
+    }();
+
+    var computed = _ember.default.computed,
+        Component = _ember.default.Component;
+    exports.default = Component.extend({
+        classNameBindings: ['person.presenceClass'],
+        person: null,
+
+        photoUrl: computed.reads('person.photoUrl'),
+
+        showInitials: false,
+
+        didInsertElement: function didInsertElement() {
+            var _this = this;
+
+            this._super.apply(this, arguments);
+
+            this.$('img').on('load', function (event) {
+                if (event.target.naturalHeight < 32) {
+                    // hax
+                    _this.set('showInitials', true);
+                }
+            }).on('error', function () {
+                _this.set('showInitials', true);
+            });
+        },
+
+
+        initials: computed('person.displayName', function () {
+            var name = this.get('person.displayName');
+            if (!name) {
+                return '';
+            }
+
+            var _name$split = name.split(' '),
+                _name$split2 = _slicedToArray(_name$split, 2),
+                first = _name$split2[0],
+                last = _name$split2[1];
+
+            return '' + first.charAt(0) + last.charAt(0);
+        })
+    });
+});
+define("purecloud-skype/components/profile-image/template", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "+9fwmF4J", "block": "{\"statements\":[[11,\"img\",[]],[16,\"src\",[26,[\"photoUrl\"]],null],[13],[14],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"showInitials\"]]],null,{\"statements\":[[0,\"    \"],[11,\"div\",[]],[15,\"class\",\"initials\"],[13],[0,\"\\n        \"],[1,[26,[\"initials\"]],false],[0,\"\\n    \"],[14],[0,\"\\n\"]],\"locals\":[]},null]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/profile-image/template.hbs" } });
+});
+define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 'purecloud-skype/services/skype', 'purecloud-skype/models/user'], function (exports, _ember, _skype, _user) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var inject = _ember.default.inject,
+        getOwner = _ember.default.getOwner,
+        Logger = _ember.default.Logger,
+        Component = _ember.default.Component;
     exports.default = Component.extend({
         classNames: ['roster-list'],
 
@@ -268,19 +364,24 @@ define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 
 
         actions: {
             clickContact: function clickContact(person) {
-                this.get('skype').startConversation(person.skypePerson);
+                this.get('skype').startConversation(person.get('person'));
             },
             searchHandler: function searchHandler(event) {
                 var val = event.target.value;
                 _ember.default.run.debounce(this, this.handleSearch, val, 500);
             },
             addContact: function addContact(person) {
-                this.get('skype').addContact(person);
+                var _this = this;
+
+                this.get('skype').addContact(person).then(function () {
+                    var group = _this.get('groups').filterBy('name', "Other Contacts")[0];
+                    group.get('persons').pushObject(person);
+                });
             }
         },
 
         handleSearch: function handleSearch(input) {
-            var _this = this;
+            var _this2 = this;
 
             if (!input) {
                 this.set('searchResults', null);
@@ -290,33 +391,31 @@ define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 
             var query = this.get('skype').application.personsAndGroupsManager.createPersonSearchQuery();
             query.limit(50);
             query.text(input);
-            console.warn('Starting search for ' + input);
+
+            Logger.warn('Starting search for ' + input);
+
             this.set('searchLoading', true);
+
             query.getMore().then(function (results) {
                 var list = results.map(function (result) {
                     return result.result;
                 });
-                _this.set('searchResults', []);
+                _this2.set('searchResults', []);
                 list.forEach(function (person) {
-                    var personModel = _ember.default.Object.create({
-                        skypePerson: person
-                    });
+                    var personModel = _user.default.create({
+                        person: person
+                    }, getOwner(_this2).ownerInjection());
 
-                    _this.get('searchResults').pushObject(personModel);
+                    _this2.get('searchResults').pushObject(personModel);
 
-                    person.id.get().then(function () {
-                        return personModel.set('id', person.id());
-                    });
-                    person.displayName.get().then(function () {
-                        return personModel.set('displayName', person.displayName());
-                    });
-                    person.avatarUrl.get().then(function () {
-                        return personModel.set('avatarUrl', person.avatarUrl());
-                    });
+                    // person.id.get().then(() => personModel.set('id', person.id()));
+                    // person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
+                    // person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
                 });
-                console.log(list);
+
+                Logger.log(list);
             }, function (err) {
-                console.error(err);
+                Logger.error(err);
             });
         },
         fetchData: function fetchData() {
@@ -349,6 +448,8 @@ define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 
         },
         addConversation: function addConversation(conversation) {},
         addGroup: function addGroup(group) {
+            var _this3 = this;
+
             var groupModel = _ember.default.Object.create();
             this.get('groups').unshiftObject(groupModel);
 
@@ -362,20 +463,14 @@ define('purecloud-skype/components/roster-list/component', ['exports', 'ember', 
                 }
 
                 group.persons().forEach(function (person) {
-                    var personModel = _ember.default.Object.create({
-                        skypePerson: person
-                    });
+                    var personModel = _user.default.create({
+                        person: person
+                    }, getOwner(_this3).ownerInjection());
                     groupModel.get('persons').pushObject(personModel);
 
-                    person.id.get().then(function () {
-                        return personModel.set('id', person.id());
-                    });
-                    person.displayName.get().then(function () {
-                        return personModel.set('displayName', person.displayName());
-                    });
-                    person.avatarUrl.get().then(function () {
-                        return personModel.set('avatarUrl', person.avatarUrl());
-                    });
+                    // person.id.get().then(() => personModel.set('id', person.id()));
+                    // person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
+                    // person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
                 });
             });
         }
@@ -387,7 +482,7 @@ define("purecloud-skype/components/roster-list/template", ["exports"], function 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "/v6X1b74", "block": "{\"statements\":[[1,[33,[\"user-status-bar\"],null,[[\"user\"],[[28,[\"skype\",\"user\"]]]]],false],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"search-container\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"search\"],[13],[0,\"\\n        \"],[11,\"input\",[]],[15,\"class\",\"search-input\"],[15,\"type\",\"text\"],[15,\"placeholder\",\"Search For People\"],[16,\"onkeyup\",[33,[\"action\"],[[28,[null]],\"searchHandler\"],null],null],[13],[14],[0,\"\\n\"],[6,[\"each\"],[[28,[\"searchResults\"]]],null,{\"statements\":[[0,\"            \"],[11,\"div\",[]],[15,\"class\",\"search-result\"],[5,[\"action\"],[[28,[null]],\"addContact\",[28,[\"result\"]]]],[13],[0,\"\\n                \"],[11,\"span\",[]],[15,\"class\",\"avatar\"],[13],[11,\"img\",[]],[16,\"src\",[28,[\"result\",\"avatarUrl\"]],null],[13],[14],[14],[0,\"\\n                \"],[11,\"span\",[]],[15,\"class\",\"name\"],[13],[1,[28,[\"result\",\"displayName\"]],false],[14],[0,\"\\n            \"],[14],[0,\"\\n\"]],\"locals\":[\"result\"]},null],[0,\"    \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"groups\"],[13],[0,\"\\n\"],[6,[\"each\"],[[28,[\"groups\"]]],null,{\"statements\":[[0,\"        \"],[11,\"div\",[]],[15,\"class\",\"group-entry\"],[13],[0,\"\\n\\n            \"],[11,\"div\",[]],[15,\"class\",\"group-name\"],[13],[1,[28,[\"group\",\"name\"]],false],[14],[0,\"\\n\\n\"],[6,[\"each\"],[[28,[\"group\",\"persons\"]]],null,{\"statements\":[[0,\"                \"],[11,\"button\",[]],[15,\"class\",\"group-member\"],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"clickContact\",[28,[\"person\"]]],null],null],[13],[0,\"\\n\\n                    \"],[11,\"span\",[]],[15,\"class\",\"avatar\"],[13],[11,\"img\",[]],[16,\"src\",[28,[\"person\",\"avatarUrl\"]],null],[13],[14],[14],[0,\"\\n                    \"],[11,\"span\",[]],[15,\"class\",\"person-name\"],[13],[1,[28,[\"person\",\"displayName\"]],false],[14],[0,\"\\n\\n                \"],[14],[0,\"\\n\"]],\"locals\":[\"person\"]},{\"statements\":[[0,\"                \"],[11,\"div\",[]],[15,\"class\",\"no-members\"],[13],[0,\"No members\"],[14],[0,\"\\n\"]],\"locals\":[]}],[0,\"\\n        \"],[14],[0,\"\\n\"]],\"locals\":[\"group\"]},null],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/roster-list/template.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "lGrFq5Dw", "block": "{\"statements\":[[1,[33,[\"user-status-bar\"],null,[[\"user\"],[[28,[\"skype\",\"user\"]]]]],false],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"search-container\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"search\"],[13],[0,\"\\n        \"],[11,\"input\",[]],[15,\"class\",\"search-input\"],[15,\"type\",\"text\"],[15,\"placeholder\",\"Search For People\"],[16,\"onkeyup\",[33,[\"action\"],[[28,[null]],\"searchHandler\"],null],null],[13],[14],[0,\"\\n\"],[6,[\"each\"],[[28,[\"searchResults\"]]],null,{\"statements\":[[0,\"            \"],[11,\"div\",[]],[15,\"class\",\"search-result\"],[5,[\"action\"],[[28,[null]],\"addContact\",[28,[\"result\"]]]],[13],[0,\"\\n                \"],[11,\"span\",[]],[15,\"class\",\"avatar\"],[13],[0,\"\\n                    \"],[1,[33,[\"profile-image\"],null,[[\"person\"],[[28,[\"person\"]]]]],false],[0,\"\\n                \"],[14],[0,\"\\n                \"],[11,\"span\",[]],[15,\"class\",\"name\"],[13],[1,[28,[\"result\",\"displayName\"]],false],[14],[0,\"\\n            \"],[14],[0,\"\\n\"]],\"locals\":[\"result\"]},null],[0,\"    \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"groups\"],[13],[0,\"\\n\"],[6,[\"each\"],[[28,[\"groups\"]]],null,{\"statements\":[[0,\"        \"],[11,\"div\",[]],[15,\"class\",\"group-entry\"],[13],[0,\"\\n\\n            \"],[11,\"div\",[]],[15,\"class\",\"group-name\"],[13],[1,[28,[\"group\",\"name\"]],false],[14],[0,\"\\n\\n\"],[6,[\"each\"],[[28,[\"group\",\"persons\"]]],null,{\"statements\":[[0,\"                \"],[11,\"button\",[]],[15,\"class\",\"group-member\"],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"clickContact\",[28,[\"person\"]]],null],null],[13],[0,\"\\n                    \"],[11,\"span\",[]],[15,\"class\",\"avatar\"],[13],[0,\"\\n                        \"],[1,[33,[\"profile-image\"],null,[[\"person\"],[[28,[\"person\"]]]]],false],[0,\"\\n                    \"],[14],[0,\"\\n                    \"],[11,\"span\",[]],[15,\"class\",\"person-name\"],[13],[0,\"\\n                        \"],[1,[28,[\"person\",\"displayName\"]],false],[0,\"\\n                    \"],[14],[0,\"\\n                \"],[14],[0,\"\\n\"]],\"locals\":[\"person\"]},{\"statements\":[[0,\"                \"],[11,\"div\",[]],[15,\"class\",\"no-members\"],[13],[0,\"No members\"],[14],[0,\"\\n\"]],\"locals\":[]}],[0,\"\\n        \"],[14],[0,\"\\n\"]],\"locals\":[\"group\"]},null],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/roster-list/template.hbs" } });
 });
 define("purecloud-skype/components/user-status-bar/template", ["exports"], function (exports) {
   "use strict";
@@ -395,7 +490,7 @@ define("purecloud-skype/components/user-status-bar/template", ["exports"], funct
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "8eGM93R1", "block": "{\"statements\":[[6,[\"basic-dropdown\"],null,null,{\"statements\":[[6,[\"component\"],[[28,[\"dropdown\",\"trigger\"]]],null,{\"statements\":[[0,\"        \"],[11,\"div\",[]],[16,\"class\",[34,[\"profile-picture \",[28,[\"user\",\"presenceClass\"]]]]],[13],[0,\"\\n            \"],[11,\"img\",[]],[16,\"src\",[34,[[28,[\"user\",\"photoUrl\"]]]]],[13],[14],[0,\"\\n        \"],[14],[0,\"\\n\"]],\"locals\":[]},null],[6,[\"component\"],[[28,[\"dropdown\",\"content\"]]],null,{\"statements\":[[0,\"        \"],[1,[26,[\"presence-selector\"]],false],[0,\"\\n\"]],\"locals\":[]},null]],\"locals\":[\"dropdown\"]},null],[0,\"\\n\"],[11,\"div\",[]],[15,\"class\",\"information\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"name\"],[13],[0,\"\\n        \"],[1,[28,[\"user\",\"displayName\"]],false],[0,\"\\n    \"],[14],[0,\"\\n\\n    \"],[11,\"div\",[]],[16,\"class\",[34,[\"presence \",[28,[\"user\",\"presenceClass\"]]]]],[13],[0,\"\\n        \"],[1,[28,[\"user\",\"presence\"]],false],[0,\"\\n    \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/user-status-bar/template.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "EdcQtwtS", "block": "{\"statements\":[[6,[\"basic-dropdown\"],null,null,{\"statements\":[[6,[\"component\"],[[28,[\"dropdown\",\"trigger\"]]],null,{\"statements\":[[0,\"        \"],[11,\"div\",[]],[15,\"class\",\"profile-picture\"],[13],[0,\"\\n            \"],[1,[33,[\"profile-image\"],null,[[\"person\"],[[28,[\"user\"]]]]],false],[0,\"\\n        \"],[14],[0,\"\\n\"]],\"locals\":[]},null],[6,[\"component\"],[[28,[\"dropdown\",\"content\"]]],null,{\"statements\":[[0,\"        \"],[1,[26,[\"presence-selector\"]],false],[0,\"\\n\"]],\"locals\":[]},null]],\"locals\":[\"dropdown\"]},null],[0,\"\\n\"],[11,\"div\",[]],[15,\"class\",\"information\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"name\"],[13],[0,\"\\n        \"],[1,[28,[\"user\",\"displayName\"]],false],[0,\"\\n    \"],[14],[0,\"\\n\\n    \"],[11,\"div\",[]],[16,\"class\",[34,[\"presence \",[28,[\"user\",\"presenceClass\"]]]]],[13],[0,\"\\n        \"],[1,[28,[\"user\",\"presence\"]],false],[0,\"\\n    \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/user-status-bar/template.hbs" } });
 });
 define('purecloud-skype/components/welcome-page', ['exports', 'ember-welcome-page/components/welcome-page'], function (exports, _welcomePage) {
   'use strict';
@@ -707,27 +802,96 @@ define('purecloud-skype/models/user', ['exports', 'ember'], function (exports, _
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
-    var computed = _ember.default.computed;
+
+    var _slicedToArray = function () {
+        function sliceIterator(arr, i) {
+            var _arr = [];
+            var _n = true;
+            var _d = false;
+            var _e = undefined;
+
+            try {
+                for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+                    _arr.push(_s.value);
+
+                    if (i && _arr.length === i) break;
+                }
+            } catch (err) {
+                _d = true;
+                _e = err;
+            } finally {
+                try {
+                    if (!_n && _i["return"]) _i["return"]();
+                } finally {
+                    if (_d) throw _e;
+                }
+            }
+
+            return _arr;
+        }
+
+        return function (arr, i) {
+            if (Array.isArray(arr)) {
+                return arr;
+            } else if (Symbol.iterator in Object(arr)) {
+                return sliceIterator(arr, i);
+            } else {
+                throw new TypeError("Invalid attempt to destructure non-iterable instance");
+            }
+        };
+    }();
+
+    var inject = _ember.default.inject,
+        computed = _ember.default.computed;
     exports.default = _ember.default.Object.extend({
-        me: null,
+        ajax: inject.service(),
+        skype: inject.service(),
+
+        person: null,
 
         init: function init() {
+            var _this = this;
+
             this._super.apply(this, arguments);
 
-            var me = this.get('me');
-            this.setProperties({
-                id: me.id(),
-                avatar: me.avatarUrl(),
-                email: me.email(),
-                displayName: me.displayName()
+            var person = this.get('person');
+
+            person.id.get().then(function () {
+                return _this.set('id', person.id());
+            });
+            person.displayName.get().then(function () {
+                return _this.set('displayName', person.displayName());
+            });
+            person.avatarUrl.get().then(function () {
+                return _this.set('avatarUrl', person.avatarUrl());
+            });
+            if (!person.email) {
+                person.emails.get().then(function (_ref) {
+                    var _ref2 = _slicedToArray(_ref, 1),
+                        email = _ref2[0];
+
+                    return _this.set('email', email.emailAddress());
+                });
+            } else {
+                person.email.get().then(function () {
+                    return _this.set('email', person.email());
+                });
+            }
+            person.status.get().then(function () {
+                return _this.set('rawPresence', person.status());
             });
 
             this.subscribeToProperties();
+            this.setupPhoto();
         },
 
 
-        presence: computed(function () {
-            var status = this.get('me').status();
+        rawPresence: computed(function () {
+            return 'Offline';
+        }),
+
+        presence: computed('rawPresence', function () {
+            var status = this.get('person').status();
             var map = {
                 Online: 'Available',
                 Busy: 'Busy',
@@ -743,19 +907,39 @@ define('purecloud-skype/models/user', ['exports', 'ember'], function (exports, _
         }),
 
         presenceClass: computed('presence', function () {
-            return this.get('presence').toLowerCase();
+            var presence = this.get('presence');
+            if (presence) {
+                return presence.toLowerCase();
+            } else {
+                return 'Offline';
+            }
         }),
 
-        photoUrl: computed(function () {
+        photoUrl: computed('email', function () {
             var email = this.get('email');
-            return 'https://outlook.office365.com/owa/service.svc/s/GetPersonaPhoto?email=' + email + '&UA=0&size=HR64x64';
+            if (!email) {
+                return null;
+            }
+            return 'https://outlook.office.com/owa/service.svc/s/GetPersonaPhoto?email=' + email + '&UA=0&size=HR64x64';
         }),
 
-        subscribeToProperties: function subscribeToProperties() {
-            var _this = this;
+        setupPhoto: function setupPhoto() {
+            var _this2 = this;
 
-            this.get('me').status.changed(function () {
-                return _this.notifyPropertyChange('presence');
+            var ajax = this.get('ajax');
+            this.get('person').avatarUrl.get().then(function () {
+                ajax.request(_this2.get('avatarUrl'), {
+                    headers: {
+                        Authorization: 'Bearer ' + _this2.get('skype.authData.access_token')
+                    }
+                });
+            });
+        },
+        subscribeToProperties: function subscribeToProperties() {
+            var _this3 = this;
+
+            this.get('person').status.changed(function () {
+                return _this3.notifyPropertyChange('presence');
             });
         }
     });
@@ -984,7 +1168,7 @@ define('purecloud-skype/services/skype', ['exports', 'ember', 'purecloud-skype/m
             };
             return this.application.signInManager.signIn(options).then(function () {
                 var me = _this3.application.personsAndGroupsManager.mePerson;
-                var user = _user.default.create({ me: me }, getOwner(_this3).ownerInjection());
+                var user = _user.default.create({ person: me }, getOwner(_this3).ownerInjection());
                 _this3.set('user', user);
 
                 _this3.registerForEvents();
@@ -1027,10 +1211,10 @@ define('purecloud-skype/services/skype', ['exports', 'ember', 'purecloud-skype/m
                 return p.name();
             }).indexOf('Other Contacts')];
 
-            group.persons.add(person.get('id')).then(function () {
-                console.log('added ' + person.name + ' to ' + group.name);
+            return group.persons.add(person.get('id')).then(function () {
+                Logger.log('added ' + person.displayName + ' to ' + group.name());
             }, function (err) {
-                console.error(err);
+                Logger.error(err);
             });
         },
 
@@ -1090,6 +1274,7 @@ define('purecloud-skype/services/skype', ['exports', 'ember', 'purecloud-skype/m
             _ember.default.run.next(function () {
                 var conversation = _this5.application.conversationsManager.getConversation(person);
                 _this5.set('activeConversation', conversation);
+                window.CONVERSATION = conversation;
             });
         }
     });
@@ -1132,6 +1317,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+1c9464c3"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+2f2d083d"});
 }
 //# sourceMappingURL=purecloud-skype.map

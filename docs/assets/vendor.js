@@ -65763,7 +65763,7 @@ createDeprecatedModule('resolver');
   });
 });
 ;define("ember-component-css/pod-names", ["exports"], function (exports) {
-  exports["default"] = { "presence-selector": "__presence-selector__9dfc2", "roster-list": "__roster-list__9630d", "user-status-bar": "__user-status-bar__e09c0" };
+  exports["default"] = { "conversation-pane": "__conversation-pane__2f7b5", "presence-selector": "__presence-selector__9dfc2", "profile-image": "__profile-image__7af31", "roster-list": "__roster-list__9630d", "user-status-bar": "__user-status-bar__e09c0" };
 });
 ;define("ember-data/-private/adapters", ["exports", "ember-data/adapters/json-api", "ember-data/adapters/rest"], function (exports, _jsonApi, _rest) {
   "use strict";
