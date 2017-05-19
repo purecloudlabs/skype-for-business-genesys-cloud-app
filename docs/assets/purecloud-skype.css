@@ -54,8 +54,21 @@
   font-size: 14px;
 }
 .__roster-list__9630d .search .search-result {
-  flex-basis: 25px;
+  display: flex;
+  flex-basis: 40px;
+  align-items: center;
   border: 1px solid lightgrey;
+}
+.__roster-list__9630d .search .search-result .avatar {
+  flex: 0;
+  flex-basis: 40px;
+}
+.__roster-list__9630d .search .search-result .avatar img {
+  height: 30px;
+  padding: 2px;
+}
+.__roster-list__9630d .search .search-result .name {
+  flex: 1;
 }
 .__roster-list__9630d .groups {
   display: flex;

@@ -27,7 +27,7 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
 
   QUnit.test('components/roster-list/component.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'components/roster-list/component.js should pass ESLint\n\n55:9 - Unexpected console statement. (no-console)\n62:13 - Unexpected console statement. (no-console)\n65:13 - Unexpected console statement. (no-console)\n95:13 - Unexpected console statement. (no-console)\n99:21 - \'conversation\' is defined but never used. (no-unused-vars)');
+    assert.ok(false, 'components/roster-list/component.js should pass ESLint\n\n60:9 - Unexpected console statement. (no-console)\n78:13 - Unexpected console statement. (no-console)\n81:13 - Unexpected console statement. (no-console)\n111:13 - Unexpected console statement. (no-console)\n115:21 - \'conversation\' is defined but never used. (no-unused-vars)');
   });
 
   QUnit.test('controllers/index.js', function (assert) {
@@ -62,7 +62,7 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
 
   QUnit.test('services/skype.js', function (assert) {
     assert.expect(1);
-    assert.ok(true, 'services/skype.js should pass ESLint\n\n');
+    assert.ok(false, 'services/skype.js should pass ESLint\n\n155:13 - Unexpected console statement. (no-console)\n158:13 - Unexpected console statement. (no-console)');
   });
 });
 define('purecloud-skype/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {
