@@ -32,7 +32,7 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
 
   QUnit.test('components/roster-list/component.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'components/roster-list/component.js should pass ESLint\n\n129:21 - \'conversation\' is defined but never used. (no-unused-vars)');
+    assert.ok(false, 'components/roster-list/component.js should pass ESLint\n\n131:21 - \'conversation\' is defined but never used. (no-unused-vars)');
   });
 
   QUnit.test('controllers/index.js', function (assert) {

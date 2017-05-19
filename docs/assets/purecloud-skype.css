@@ -13,6 +13,28 @@
 .__conversation-pane__2f7b5 .roster .grid .conversation-topic .tileText .tileName {
   width: 100%;
 }
+.__conversation-pane__2f7b5 .fragment {
+  width: 100%;
+}
+.__conversation-pane__2f7b5 .themeLight.chat {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+.__conversation-pane__2f7b5 .conversationHeader:after {
+  margin: 0 !important;
+}
+.__conversation-pane__2f7b5 .messageHistory,
+.__conversation-pane__2f7b5 .typingIndicator {
+  max-width: 100% !important;
+}
+.__conversation-pane__2f7b5 .input.swx-chat-input::before {
+  margin: 0 !important;
+}
+.__conversation-pane__2f7b5 .input.swx-chat-input .tc {
+  width: 100%;
+}
+.__conversation-pane__2f7b5 .input.swx-chat-input .tc .form-holder.ChatInput--optimizeSpace {
+  max-width: 100%;
+}
 .__conversation-pane__2f7b5 .headerControls {
   display: none !important;
 }
@@ -108,16 +130,29 @@
 .__roster-list__9630d .search .search-input {
   padding: 10px 15px;
   font-size: 14px;
+  border: none;
+  border-bottom: 1px solid #D6E6EC;
+  border-top: 1px solid #D6E6EC;
+}
+.__roster-list__9630d .search .loading {
+  display: flex;
+  flex-basis: 50px;
+  align-items: center;
+  justify-content: center;
 }
 .__roster-list__9630d .search .search-result {
   display: flex;
-  flex-basis: 40px;
+  flex-basis: 50px;
   align-items: center;
   border: 1px solid lightgrey;
+}
+.__roster-list__9630d .search .search-result.hide-search {
+  display: none;
 }
 .__roster-list__9630d .search .search-result .avatar {
   flex: 0;
   flex-basis: 40px;
+  margin-right: 15px;
 }
 .__roster-list__9630d .search .search-result .avatar img {
   height: 30px;
@@ -167,9 +202,6 @@
 .__roster-list__9630d .groups .no-members {
   padding-left: 25px;
   font-style: italic;
-}
-.__roster-list__9630d .search-container {
-  padding: 4px;
 }
 .__user-status-bar__e09c0 {
   display: flex;
@@ -259,6 +291,7 @@ body > div {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  border-right: 1px solid #D6E6EC;
 }
 .skype-for-business-app .conversation-pane {
   flex: 1;
