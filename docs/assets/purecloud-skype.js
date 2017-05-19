@@ -143,7 +143,7 @@ define('purecloud-skype/components/conversation-pane/component', ['exports', 'em
         init: function init() {
             this._super.apply(this, arguments);
         },
-        didUpdateAttrs: function didUpdateAttrs() {
+        didInsertElement: function didInsertElement() {
             _ember.default.run.scheduleOnce('afterRender', this, this.renderConversation);
         },
         renderConversation: function renderConversation() {
@@ -158,7 +158,7 @@ define("purecloud-skype/components/conversation-pane/template", ["exports"], fun
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "l3mnnJC6", "block": "{\"statements\":[[0,\"Conversation pane\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/conversation-pane/template.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "GeOZWgvW", "block": "{\"statements\":[[0,\"Loading conversation...\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/conversation-pane/template.hbs" } });
 });
 define('purecloud-skype/components/ember-wormhole', ['exports', 'ember-wormhole/components/ember-wormhole'], function (exports, _emberWormhole) {
   'use strict';
@@ -361,7 +361,7 @@ define("purecloud-skype/components/roster-list/template", ["exports"], function 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "LH4uJGeE", "block": "{\"statements\":[[1,[33,[\"user-status-bar\"],null,[[\"user\"],[[28,[\"skype\",\"user\"]]]]],false],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"search-container\"],[13],[0,\"\\n    \"],[11,\"h4\",[]],[13],[0,\"Search\"],[14],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"search\"],[13],[0,\"\\n        \"],[11,\"input\",[]],[15,\"class\",\"search-input\"],[15,\"type\",\"text\"],[16,\"onchange\",[33,[\"action\"],[[28,[null]],\"searchHandler\"],null],null],[13],[14],[0,\"\\n\"],[6,[\"each\"],[[28,[\"searchResults\"]]],null,{\"statements\":[[0,\"            \"],[11,\"div\",[]],[15,\"class\",\"search-result\"],[5,[\"action\"],[[28,[null]],\"addContact\"]],[13],[1,[28,[\"result\",\"name\"]],false],[14],[0,\"\\n\"]],\"locals\":[\"result\"]},null],[0,\"    \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"roster-container\"],[13],[0,\"\\n    \"],[11,\"h2\",[]],[13],[0,\"Roster\"],[14],[0,\"\\n\\n    \"],[11,\"div\",[]],[15,\"class\",\"groups\"],[13],[0,\"\\n\"],[6,[\"each\"],[[28,[\"groups\"]]],null,{\"statements\":[[0,\"            \"],[11,\"div\",[]],[15,\"class\",\"group-entry\"],[13],[0,\"\\n\\n                \"],[11,\"div\",[]],[15,\"class\",\"group-name\"],[13],[1,[28,[\"group\",\"name\"]],false],[14],[0,\"\\n\\n\"],[6,[\"each\"],[[28,[\"group\",\"persons\"]]],null,{\"statements\":[[0,\"                    \"],[11,\"button\",[]],[15,\"class\",\"group-member\"],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"clickContact\",[28,[\"person\"]]],null],null],[13],[0,\"\\n\\n                        \"],[11,\"span\",[]],[15,\"class\",\"avatar\"],[13],[11,\"img\",[]],[16,\"src\",[28,[\"person\",\"avatarUrl\"]],null],[13],[14],[14],[0,\"\\n                        \"],[11,\"span\",[]],[15,\"class\",\"person-name\"],[13],[1,[28,[\"person\",\"displayName\"]],false],[14],[0,\"\\n\\n                    \"],[14],[0,\"\\n\"]],\"locals\":[\"person\"]},{\"statements\":[[0,\"                    \"],[11,\"div\",[]],[15,\"class\",\"no-members\"],[13],[0,\"No members\"],[14],[0,\"\\n\"]],\"locals\":[]}],[0,\"\\n            \"],[14],[0,\"\\n\"]],\"locals\":[\"group\"]},null],[0,\"    \"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/roster-list/template.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "bF9E01xU", "block": "{\"statements\":[[1,[33,[\"user-status-bar\"],null,[[\"user\"],[[28,[\"skype\",\"user\"]]]]],false],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"search-container\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"search\"],[13],[0,\"\\n        \"],[11,\"input\",[]],[15,\"class\",\"search-input\"],[15,\"type\",\"text\"],[15,\"placeholder\",\"Search For People\"],[16,\"onchange\",[33,[\"action\"],[[28,[null]],\"searchHandler\"],null],null],[13],[14],[0,\"\\n\"],[6,[\"each\"],[[28,[\"searchResults\"]]],null,{\"statements\":[[0,\"            \"],[11,\"div\",[]],[15,\"class\",\"search-result\"],[5,[\"action\"],[[28,[null]],\"addContact\"]],[13],[1,[28,[\"result\",\"name\"]],false],[14],[0,\"\\n\"]],\"locals\":[\"result\"]},null],[0,\"    \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"groups\"],[13],[0,\"\\n\"],[6,[\"each\"],[[28,[\"groups\"]]],null,{\"statements\":[[0,\"        \"],[11,\"div\",[]],[15,\"class\",\"group-entry\"],[13],[0,\"\\n\\n            \"],[11,\"div\",[]],[15,\"class\",\"group-name\"],[13],[1,[28,[\"group\",\"name\"]],false],[14],[0,\"\\n\\n\"],[6,[\"each\"],[[28,[\"group\",\"persons\"]]],null,{\"statements\":[[0,\"                \"],[11,\"button\",[]],[15,\"class\",\"group-member\"],[16,\"onclick\",[33,[\"action\"],[[28,[null]],\"clickContact\",[28,[\"person\"]]],null],null],[13],[0,\"\\n\\n                    \"],[11,\"span\",[]],[15,\"class\",\"avatar\"],[13],[11,\"img\",[]],[16,\"src\",[28,[\"person\",\"avatarUrl\"]],null],[13],[14],[14],[0,\"\\n                    \"],[11,\"span\",[]],[15,\"class\",\"person-name\"],[13],[1,[28,[\"person\",\"displayName\"]],false],[14],[0,\"\\n\\n                \"],[14],[0,\"\\n\"]],\"locals\":[\"person\"]},{\"statements\":[[0,\"                \"],[11,\"div\",[]],[15,\"class\",\"no-members\"],[13],[0,\"No members\"],[14],[0,\"\\n\"]],\"locals\":[]}],[0,\"\\n        \"],[14],[0,\"\\n\"]],\"locals\":[\"group\"]},null],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/components/roster-list/template.hbs" } });
 });
 define("purecloud-skype/components/user-status-bar/template", ["exports"], function (exports) {
   "use strict";
@@ -1044,8 +1044,14 @@ define('purecloud-skype/services/skype', ['exports', 'ember', 'purecloud-skype/m
             });
         },
         startConversation: function startConversation(person) {
-            var conversation = this.application.conversationsManager.getConversation(person);
-            this.set('activeConversation', conversation);
+            var _this5 = this;
+
+            this.set('activeConversation', null);
+
+            _ember.default.run.next(function () {
+                var conversation = _this5.application.conversationsManager.getConversation(person);
+                _this5.set('activeConversation', conversation);
+            });
         }
     });
 });
@@ -1063,7 +1069,7 @@ define("purecloud-skype/templates/index", ["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "I5pwqVIm", "block": "{\"statements\":[[6,[\"if\"],[[28,[\"loading\"]]],null,{\"statements\":[[0,\"    \"],[11,\"h2\",[]],[13],[0,\"Loading!\"],[14],[0,\"\\n\"]],\"locals\":[]},{\"statements\":[[0,\"    \"],[11,\"div\",[]],[15,\"class\",\"skype-for-business-app\"],[13],[0,\"\\n        \"],[1,[26,[\"roster-list\"]],false],[0,\"\\n        \"],[1,[33,[\"conversation-pane\"],null,[[\"conversation\"],[[28,[\"skype\",\"activeConversation\"]]]]],false],[0,\"\\n    \"],[14],[0,\"\\n\"]],\"locals\":[]}]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/index.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "ybTv6FLO", "block": "{\"statements\":[[6,[\"if\"],[[28,[\"loading\"]]],null,{\"statements\":[[0,\"    \"],[11,\"h2\",[]],[13],[0,\"Loading!\"],[14],[0,\"\\n\"]],\"locals\":[]},{\"statements\":[[0,\"    \"],[11,\"div\",[]],[15,\"class\",\"skype-for-business-app\"],[13],[0,\"\\n        \"],[1,[26,[\"roster-list\"]],false],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"skype\",\"activeConversation\"]]],null,{\"statements\":[[0,\"            \"],[1,[33,[\"conversation-pane\"],null,[[\"conversation\"],[[28,[\"skype\",\"activeConversation\"]]]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"    \"],[14],[0,\"\\n\"]],\"locals\":[]}]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/index.hbs" } });
 });
 
 
@@ -1087,6 +1093,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+039d49d1"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+564f29e8"});
 }
 //# sourceMappingURL=purecloud-skype.map
