@@ -146,6 +146,7 @@ export default Component.extend({
             if (groupModel.get('name') === 'Other Contacts') {
                 groupModel.set('name', 'Contacts');
                 groupModel.set('persons', this.get('generalContacts'));
+                return;
             }
 
             group.persons().forEach(person => {
@@ -153,10 +154,6 @@ export default Component.extend({
                     person
                 }, getOwner(this).ownerInjection());
                 groupModel.get('persons').pushObject(personModel);
-
-                // person.id.get().then(() => personModel.set('id', person.id()));
-                // person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
-                // person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
             });
         });
     }
