@@ -11,15 +11,27 @@
             border-top: 1px solid #D6E6EC;
         }
 
+        .loading {
+            display: flex;
+            flex-basis: 50px;
+            align-items: center;
+            justify-content: center;
+        }
+
         .search-result {
             display: flex;
-            flex-basis: 40px;
+            flex-basis: 50px;
             align-items: center;
             border: 1px solid lightgrey;
+
+            &.hide-search {
+                display: none;
+            }
 
             .avatar {
                 flex: 0;
                 flex-basis: 40px;
+                margin-right: 15px;
 
                 img {
                     height: 30px;

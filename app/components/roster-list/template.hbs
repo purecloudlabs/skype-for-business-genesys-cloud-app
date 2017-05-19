@@ -6,14 +6,20 @@
                type="text"
                placeholder="Search For People"
                onkeyup={{action "searchHandler"}}>
-        {{#each searchResults as |result|}}
-            <div class="search-result" {{action "addContact" result}}>
-                <span class="avatar">
-                    {{profile-image person=person}}
-                </span>
-                <span class="name">{{result.displayName}}</span>
+        {{#if searchLoading}}
+            <div class="loading">
+                <span>Loading Results...</span>
             </div>
-        {{/each}}
+        {{else}}
+            {{#each searchResults as |result|}}
+                <div class="search-result {{if hideSearch "hide-search"}}" {{action "addContact" result}}>
+                <span class="avatar">
+                    {{profile-image person=result}}
+                </span>
+                    <span class="name">{{result.displayName}}</span>
+                </div>
+            {{/each}}
+        {{/if}}
     </div>
 </div>
 
