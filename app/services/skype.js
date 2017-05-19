@@ -195,7 +195,11 @@ export default Service.extend(Evented, {
     },
 
     startConversation(person) {
-        const conversation = this.application.conversationsManager.getConversation(person);
-        this.set('activeConversation', conversation);
+        this.set('activeConversation', null);
+
+        Ember.run.next(() => {
+            const conversation = this.application.conversationsManager.getConversation(person);
+            this.set('activeConversation', conversation);
+        });
     }
 });

@@ -15,7 +15,7 @@ export default Component.extend({
         this._super(...arguments);
     },
 
-    didUpdateAttrs() {
+    didInsertElement() {
         Ember.run.scheduleOnce('afterRender', this, this.renderConversation);
     },
 

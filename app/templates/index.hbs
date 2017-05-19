@@ -3,6 +3,9 @@
 {{else}}
     <div class="skype-for-business-app">
         {{roster-list}}
-        {{conversation-pane conversation=skype.activeConversation}}
+
+        {{#if skype.activeConversation}}
+            {{conversation-pane conversation=skype.activeConversation}}
+        {{/if}}
     </div>
 {{/if}}
