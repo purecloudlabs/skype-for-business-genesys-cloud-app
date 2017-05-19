@@ -16,7 +16,11 @@ export default Component.extend({
         this._super(...arguments);
 
         this.$('img').on('load', event => {
-            debugger;
+            if (event.target.naturalHeight < 32) { // hax
+                this.set('showInitials', true);
+            }
+        }).on('error', () => {
+            this.set('showInitials', true);
         });
     },
 
