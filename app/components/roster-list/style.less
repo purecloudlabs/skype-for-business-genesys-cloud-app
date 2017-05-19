@@ -9,8 +9,24 @@
         }
 
         .search-result {
-            flex-basis: 25px;
+            display: flex;
+            flex-basis: 40px;
+            align-items: center;
             border: 1px solid lightgrey;
+
+            .avatar {
+                flex: 0;
+                flex-basis: 40px;
+
+                img {
+                    height: 30px;
+                    padding: 2px;
+                }
+            }
+
+            .name {
+                flex: 1;
+            }
         }
     }
 

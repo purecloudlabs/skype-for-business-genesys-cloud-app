@@ -18,6 +18,7 @@ export default Component.extend({
 
         this.set('groups', []);
         window.GROUPS = this.get('groups');
+        window.roster = this;
     },
 
     didInsertElement() {
@@ -41,6 +42,10 @@ export default Component.extend({
             let val = event.target.value;
             Ember.run.debounce(this, this.handleSearch, val, 500);
         },
+
+        addContact(person) {
+            this.get('skype').addContact(person);
+        }
     },
 
     handleSearch(input) {
@@ -58,7 +63,18 @@ export default Component.extend({
             let list = results.map((result) => {
                 return result.result;
             });
-            this.set('searchResults', list);
+            this.set('searchResults', []);
+            list.forEach( person => {
+                let personModel = Ember.Object.create({
+                    skypePerson: person
+                });
+
+                this.get('searchResults').pushObject(personModel);
+
+                person.id.get().then(() => personModel.set('id', person.id()));
+                person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
+                person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
+            })
             console.log(list);
         },
         (err) => {

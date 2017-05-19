@@ -7,7 +7,10 @@
                placeholder="Search For People"
                onkeyup={{action "searchHandler"}}>
         {{#each searchResults as |result|}}
-            <div class="search-result" {{action "addContact"}}>{{result.name}}</div>
+            <div class="search-result" {{action "addContact" result}}>
+                <span class="avatar"><img src={{result.avatarUrl}}/></span>
+                <span class="name">{{result.displayName}}</span>
+            </div>
         {{/each}}
     </div>
 </div>

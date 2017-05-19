@@ -147,6 +147,18 @@ export default Service.extend(Evented, {
         });
     },
 
+    addContact(person) {
+        let groups = this.get('application').personsAndGroupsManager.all.groups();
+        let group = groups[this.get('application').personsAndGroupsManager.all.groups().map(p => p.name()).indexOf('Other Contacts')];
+
+        group.persons.add(person.get('id')).then(() => {
+            console.log(`added ${person.name} to ${group.name}`);
+        },
+        (err) => {
+            console.error(err);
+        });
+    },
+
     // Chat
 
     startChat(id) {
