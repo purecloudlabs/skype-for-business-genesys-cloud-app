@@ -24,7 +24,7 @@
             {{#each group.persons as |person|}}
                 <button class="group-member" onclick={{action "clickContact" person}}>
 
-                    <span class="avatar"><img src={{person.avatarUrl}}/></span>
+                    <span class="avatar {{person.status}}"><img src={{person.avatarUrl}}/></span>
                     <span class="person-name">{{person.displayName}}</span>
 
                 </button>

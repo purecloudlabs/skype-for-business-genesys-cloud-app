@@ -69,11 +69,24 @@
             .avatar {
                 width: 25px;
                 height: 25px;
-                border: 1px solid #ddd;
+                border: 2px solid #ddd;
                 border-radius: 50%;
                 overflow: hidden;
                 display: block;
                 margin-right: 15px;
+
+                &.Online {
+                    border-color: #47ce3c;
+                }
+                &.Away {
+                    border-color: #fbba33;
+                }
+                &.Busy {
+                    border-color: #f30e5b;
+                }
+                &.Do.Not.Disturb {
+                    border-color: #333;
+                }
 
                 img {
                     width: 100%;
