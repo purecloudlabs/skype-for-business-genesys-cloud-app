@@ -1,36 +1,34 @@
 {{user-status-bar user=skype.user}}
 
 <div class="search-container">
-    <h4>Search</h4>
     <div class="search">
-        <input class="search-input" type="text" onchange={{action "searchHandler"}}>
+        <input class="search-input"
+               type="text"
+               placeholder="Search For People"
+               onchange={{action "searchHandler"}}>
         {{#each searchResults as |result|}}
             <div class="search-result" {{action "addContact"}}>{{result.name}}</div>
         {{/each}}
     </div>
 </div>
 
-<div class="roster-container">
-    <h2>Roster</h2>
+<div class="groups">
+    {{#each groups as |group|}}
+        <div class="group-entry">
 
-    <div class="groups">
-        {{#each groups as |group|}}
-            <div class="group-entry">
+            <div class="group-name">{{group.name}}</div>
 
-                <div class="group-name">{{group.name}}</div>
+            {{#each group.persons as |person|}}
+                <button class="group-member" onclick={{action "clickContact" person}}>
 
-                {{#each group.persons as |person|}}
-                    <button class="group-member" onclick={{action "clickContact" person}}>
+                    <span class="avatar"><img src={{person.avatarUrl}}/></span>
+                    <span class="person-name">{{person.displayName}}</span>
 
-                        <span class="avatar"><img src={{person.avatarUrl}} /></span>
-                        <span class="person-name">{{person.displayName}}</span>
+                </button>
+            {{else}}
+                <div class="no-members">No members</div>
+            {{/each}}
 
-                    </button>
-                {{else}}
-                    <div class="no-members">No members</div>
-                {{/each}}
-
-            </div>
-        {{/each}}
-    </div>
+        </div>
+    {{/each}}
 </div>
