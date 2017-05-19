@@ -44,7 +44,10 @@ export default Component.extend({
         },
 
         addContact(person) {
-            this.get('skype').addContact(person);
+            this.get('skype').addContact(person).then(() => {
+                let group = this.get('groups').filterBy('name', "Other Contacts")[0];
+                group.get('persons').pushObject(person);
+            });
         }
     },
 
