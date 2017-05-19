@@ -114,7 +114,7 @@ export default Service.extend(Evented, {
         };
         return this.application.signInManager.signIn(options).then(() => {
             const me = this.application.personsAndGroupsManager.mePerson;
-            const user = User.create({ me }, getOwner(this).ownerInjection());
+            const user = User.create({ person: me }, getOwner(this).ownerInjection());
             this.set('user', user);
 
             this.registerForEvents();
@@ -156,10 +156,10 @@ export default Service.extend(Evented, {
         let group = groups[this.get('application').personsAndGroupsManager.all.groups().map(p => p.name()).indexOf('Other Contacts')];
 
         return group.persons.add(person.get('id')).then(() => {
-            console.log(`added ${person.displayName} to ${group.name()}`);
+            Logger.log(`added ${person.displayName} to ${group.name()}`);
         },
         (err) => {
-            console.error(err);
+            Logger.error(err);
         });
     },
 
@@ -216,6 +216,7 @@ export default Service.extend(Evented, {
         Ember.run.next(() => {
             const conversation = this.application.conversationsManager.getConversation(person);
             this.set('activeConversation', conversation);
+            window.CONVERSATION = conversation;
         });
     }
 });

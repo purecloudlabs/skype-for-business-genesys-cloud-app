@@ -1,9 +1,12 @@
 import Ember from 'ember';
 import { EVENTS } from '../../services/skype';
+import User from '../../models/user';
 
 const {
-    Component,
-    inject
+    inject,
+    getOwner,
+    Logger,
+    Component
 } = Ember;
 
 export default Component.extend({
@@ -35,7 +38,7 @@ export default Component.extend({
 
     actions: {
         clickContact(person) {
-            this.get('skype').startConversation(person.skypePerson);
+            this.get('skype').startConversation(person.get('person'));
         },
 
         searchHandler (event) {
@@ -60,28 +63,32 @@ export default Component.extend({
         let query = this.get('skype').application.personsAndGroupsManager.createPersonSearchQuery();
         query.limit(50);
         query.text(input);
-        console.warn(`Starting search for ${input}`);
+
+        Logger.warn(`Starting search for ${input}`);
+
         this.set('searchLoading', true);
+
         query.getMore().then((results) => {
             let list = results.map((result) => {
                 return result.result;
             });
             this.set('searchResults', []);
             list.forEach( person => {
-                let personModel = Ember.Object.create({
-                    skypePerson: person
-                });
+                let personModel = User.create({
+                    person
+                }, getOwner(this).ownerInjection());
 
                 this.get('searchResults').pushObject(personModel);
 
-                person.id.get().then(() => personModel.set('id', person.id()));
-                person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
-                person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
-            })
-            console.log(list);
+                // person.id.get().then(() => personModel.set('id', person.id()));
+                // person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
+                // person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
+            });
+
+            Logger.log(list);
         },
         (err) => {
-            console.error(err);
+            Logger.error(err);
         });
     },
 
@@ -132,14 +139,14 @@ export default Component.extend({
             }
 
             group.persons().forEach(person => {
-                let personModel = Ember.Object.create({
-                    skypePerson: person
-                });
+                let personModel = User.create({
+                    person
+                }, getOwner(this).ownerInjection());
                 groupModel.get('persons').pushObject(personModel);
 
-                person.id.get().then(() => personModel.set('id', person.id()));
-                person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
-                person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
+                // person.id.get().then(() => personModel.set('id', person.id()));
+                // person.displayName.get().then(() => personModel.set('displayName', person.displayName()));
+                // person.avatarUrl.get().then(() => personModel.set('avatarUrl', person.avatarUrl()));
             });
         });
     }
