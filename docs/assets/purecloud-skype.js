@@ -883,7 +883,8 @@ define('purecloud-skype/services/skype', ['exports', 'ember', 'purecloud-skype/m
         apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // SDK+UI
     };
 
-    var redirectUri = 'https://mypurecloud.github.io/skype-for-business-purecloud-app/';
+    var redirectUri = window.location.host.indexOf('localhost') > -1 ? 'https://localhost:4200/skype-for-business-purecloud-app/' : 'https://mypurecloud.github.io/skype-for-business-purecloud-app/';
+
     var appConfigProperties = {
         "displayName": "purecloud-skype",
         "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
@@ -1131,6 +1132,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+df3994dc"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+1c9464c3"});
 }
 //# sourceMappingURL=purecloud-skype.map
