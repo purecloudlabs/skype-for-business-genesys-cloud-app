@@ -15,7 +15,7 @@ const config = {
     apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // SDK+UI
 };
 
-const redirectUri = 'https://localhost:4200/skype-for-business-purecloud-app/';
+const redirectUri = 'https://mypurecloud.github.io/skype-for-business-purecloud-app/';
 const appConfigProperties = {
     "displayName": "purecloud-skype",
     "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
