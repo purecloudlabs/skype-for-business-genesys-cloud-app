@@ -21,10 +21,15 @@ const redirectUri =
         'https://mypurecloud.github.io/skype-for-business-purecloud-app/';
 
 const appConfigProperties = {
-    "displayName": "purecloud-skype",
-    "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
+    // "displayName": "purecloud-skype",
+    // "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
+    // "applicationType": "Web app / API",
+    // "objectID": "bd59e8f7-7455-4bb5-8e5e-7a0f1988e144",
+    // "homePage": "https://mypurecloud.github.io/skype-for-business-purecloud-app/",
+    "displayName": "purecloudskype",
+    "applicationID": "ec744ffe-d332-454a-9f13-b9f7ebe8b249",
     "applicationType": "Web app / API",
-    "objectID": "bd59e8f7-7455-4bb5-8e5e-7a0f1988e144",
+    "objectID": "45185d32-9960-42ad-beed-6b02215f8ba2",
     "homePage": "https://mypurecloud.github.io/skype-for-business-purecloud-app/",
 };
 
@@ -35,7 +40,7 @@ export const EVENTS = {
     personRemoved: 'PERSON_REMOVED',
     conversationAdded: 'CONVERSATION_ADDED',
     conversationRemoved: 'CONVERSATION_REMOVED'
-}
+};
 
 export default Service.extend(Evented, {
     ajax: Ember.inject.service(),
