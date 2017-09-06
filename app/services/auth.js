@@ -21,8 +21,8 @@ export default Service.extend({
     // appId: '18758f68-8cf8-4f32-8785-059d4cd2e62e',
     appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
     urls: {
-        auth: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-        grant: 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+        auth: 'https://login.microsoftonline.com/common/oauth2/authorize',
+        grant: 'https://login.microsoftonline.com/common/oauth2/token'
     },
 
     idToken: null,
@@ -49,7 +49,7 @@ export default Service.extend({
         const base = this.get('urls.auth');
         const data = {
             client_id: this.get('appId'),
-            redirect_uri: window.location.origin,
+            redirect_uri: window.location.href,
             response_type: 'code',
             scope: this.get('scope').join(' '),
             nonce: 'msft',
@@ -106,10 +106,11 @@ export default Service.extend({
         const data = {
             code,
             client_id: this.get('appId'),
+            resource: 'https://graph.windows.net/',
             scope: this.get('scope').join(' '),
-            redirect_uri: window.location.origin,
+            redirect_uri: window.location.href,
             grant_type: 'authorization_code',
-            client_secret: '0EcZvAiLDGuwdwvVtczMP0M'
+            client_secret: 'qGPJgoQgN7ZBc8iz65SVnD8qJ5gQGHh7q3y4rF0Kn/g='
         };
         return this.get('ajax').post(this.get('urls.grant'), {
             contentType: 'application/x-www-form-urlencoded',
