@@ -26,7 +26,7 @@ export default Controller.extend({
                 console.log('TOKEN:', token);
                 return auth.exchangeCodeForToken(token);
             }).then(() => {
-                this.get('transitionToRoute')('index');
+                this.transitionToRoute('index');
             });
         }
     }
