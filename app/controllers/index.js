@@ -8,7 +8,7 @@ const {
 export default Controller.extend({
     auth: inject.service(),
 
-    // skype: inject.service(),
+    skype: inject.service(),
     //
     // loading: false,
     //
@@ -22,12 +22,16 @@ export default Controller.extend({
     actions: {
         startAuth() {
             const auth = this.get('auth');
-            auth.login().then(token => {
-                console.log('TOKEN:', token);
-                return auth.exchangeCodeForToken(token);
-            }).then(() => {
-                this.get('transitionToRoute')('index');
-            });
+            auth.login()
+                .then(token => {
+                    console.log('TOKEN:', token);
+                    return auth.exchangeCodeForToken(token);
+                })
+                .then(() => this.get('skype').get('promise'))
+                .then(() => this.get('skype').signIn())
+                .then(() => {
+                    console.log('done?', arguments);
+                });
         }
     }
 })

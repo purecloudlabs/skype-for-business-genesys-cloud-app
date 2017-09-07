@@ -70,42 +70,42 @@ export default Service.extend(Evented, {
         });
     },
 
-    startAuthentication() {
-        return this.promise.then(() => {
-            if (window.location.href.indexOf('#') > 0) {
-                return this.extractToken();
-            }
+    // startAuthentication() {
+    //     return this.promise.then(() => {
+    //         if (window.location.href.indexOf('#') > 0) {
+    //             return this.extractToken();
+    //         }
+    //
+    //         const baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
+    //         const authData = {
+    //             response_type: 'token',
+    //             client_id: appConfigProperties.applicationID,
+    //             state: 'dummy',
+    //             redirect_uri: redirectUri,
+    //             resource: 'https://webdir.online.lync.com'
+    //         };
+    //
+    //         const params = Object.keys(authData).map(key => {
+    //             const value = authData[key];
+    //             return `${key}=${value}`;
+    //         });
+    //
+    //         window.location.href = `${baseUrl}/?${params.join('&')}`;
+    //
+    //         return new RSVP.Promise(() => { }); // never resolve
+    //     });
+    // },
 
-            const baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
-            const authData = {
-                response_type: 'token',
-                client_id: appConfigProperties.applicationID,
-                state: 'dummy',
-                redirect_uri: redirectUri,
-                resource: 'https://webdir.online.lync.com'
-            };
-
-            const params = Object.keys(authData).map(key => {
-                const value = authData[key];
-                return `${key}=${value}`;
-            });
-
-            window.location.href = `${baseUrl}/?${params.join('&')}`;
-
-            return new RSVP.Promise(() => { }); // never resolve
-        });
-    },
-
-    extractToken() {
-        const hash = window.location.hash.substr(1).split('&');
-        const data = {};
-        hash.forEach(info => {
-            const [key, value] = info.split('=');
-            data[key] = value;
-        });
-        this.authData = data;
-        return this.signIn();
-    },
+    // extractToken() {
+    //     const hash = window.location.hash.substr(1).split('&');
+    //     const data = {};
+    //     hash.forEach(info => {
+    //         const [key, value] = info.split('=');
+    //         data[key] = value;
+    //     });
+    //     this.authData = data;
+    //     return this.signIn();
+    // },
 
     signIn() {
         const options = {
@@ -117,13 +117,19 @@ export default Service.extend(Evented, {
             version: 'PurecloudSkype/0.0.0',
             redirect_uri: redirectUri
         };
-        return this.application.signInManager.signIn(options).then(() => {
-            const me = this.application.personsAndGroupsManager.mePerson;
-            const user = User.create({ person: me }, getOwner(this).ownerInjection());
-            this.set('user', user);
 
-            this.registerForEvents();
-        });
+        return this.application.signInManager.signIn(options)
+            .then(() => {
+                console.log('SIGNIN-THEN', arguments);
+                const me = this.application.personsAndGroupsManager.mePerson;
+                const user = User.create({person: me}, getOwner(this).ownerInjection());
+                this.set('user', user);
+
+                this.registerForEvents();
+            })
+            .catch((err) => {
+                console.log('SIGNIN-CATCH', err, arguments);
+            })
     },
 
     registerForEvents() {
@@ -161,11 +167,11 @@ export default Service.extend(Evented, {
         let group = groups[this.get('application').personsAndGroupsManager.all.groups().map(p => p.name()).indexOf('Other Contacts')];
 
         return group.persons.add(person.get('id')).then(() => {
-            Logger.log(`added ${person.displayName} to ${group.name()}`);
-        },
-        (err) => {
-            Logger.error(err);
-        });
+                Logger.log(`added ${person.displayName} to ${group.name()}`);
+            },
+            (err) => {
+                Logger.error(err);
+            });
     },
 
     // Chat

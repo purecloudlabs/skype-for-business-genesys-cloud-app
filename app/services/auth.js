@@ -51,9 +51,10 @@ export default Service.extend({
             client_id: this.get('appId'),
             redirect_uri: window.location.href,
             response_type: 'code',
-            scope: this.get('scope').join(' '),
             nonce: 'msft',
-            response_mode: 'fragment'
+            response_mode: 'fragment',
+            // resource: 'https://webdir.online.lync.com',
+            scope: this.get('scope').join(' ')
         };
 
         return `${base}/?${objectToQueryParameters(data)}`;
@@ -62,7 +63,7 @@ export default Service.extend({
     login() {
         const deferred = RSVP.defer();
         const url = this.get('authorizationUrl');
-        const popup = window.open(url, 'auth', 'scrollbars=no,menubar=no,width=800,height=600')
+        const popup = window.open(url, 'auth', 'scrollbars=no,menubar=no,width=800,height=600');
         const interval = window.setInterval(() => {
             try {
                 const search = popup.window.location.hash;
@@ -112,16 +113,16 @@ export default Service.extend({
             grant_type: 'authorization_code',
             client_secret: 'qGPJgoQgN7ZBc8iz65SVnD8qJ5gQGHh7q3y4rF0Kn/g='
         };
+
         return this.get('ajax').post(this.get('urls.grant'), {
             contentType: 'application/x-www-form-urlencoded',
             data
-        })
-            .then(res => {
-                if (typeof res === 'string') {
-                    res = JSON.parse(res);
-                }
-                this.set('accessToken', res.access_token);
-                window.localStorage.setItem('accessToken', res.access_token);
-            });
+        }).then(res => {
+            if (typeof res === 'string') {
+                res = JSON.parse(res);
+            }
+            this.set('accessToken', res.access_token);
+            window.localStorage.setItem('accessToken', res.access_token);
+        });
     }
 });
