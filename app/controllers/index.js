@@ -22,13 +22,15 @@ export default Controller.extend({
     actions: {
         startAuth() {
             const auth = this.get('auth');
+            const skype = this.get('skype');
+
             auth.login()
                 .then(token => {
                     console.log('TOKEN:', token);
                     return auth.exchangeCodeForToken(token);
                 })
-                .then(() => this.get('skype').get('promise'))
-                .then(() => this.get('skype').signIn())
+                .then(() => skype.get('promise'))
+                .then(() => skype.signIn())
                 .then(() => {
                     console.log('done?', arguments);
                 });
