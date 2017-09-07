@@ -521,18 +521,31 @@ define('purecloud-skype/controllers/index', ['exports', 'ember'], function (expo
     var inject = _ember.default.inject,
         Controller = _ember.default.Controller;
     exports.default = Controller.extend({
-        skype: inject.service(),
+        auth: inject.service(),
 
-        loading: false,
+        // skype: inject.service(),
+        //
+        // loading: false,
+        //
+        // init() {
+        //     this.set('loading', true);
+        //
+        //     this.get('skype').startAuthentication().then(() => {
+        //         this.set('loading', false);
+        //     });
+        // }
+        actions: {
+            startAuth: function startAuth() {
+                var _this = this;
 
-        init: function init() {
-            var _this = this;
-
-            this.set('loading', true);
-
-            this.get('skype').startAuthentication().then(function () {
-                _this.set('loading', false);
-            });
+                var auth = this.get('auth');
+                auth.login().then(function (token) {
+                    console.log('TOKEN:', token);
+                    return auth.exchangeCodeForToken(token);
+                }).then(function () {
+                    _this.get('transitionToRoute')('index');
+                });
+            }
         }
     });
 });
@@ -976,18 +989,186 @@ define('purecloud-skype/router', ['exports', 'ember', 'purecloud-skype/config/en
 
   exports.default = Router;
 });
-define('purecloud-skype/services/ajax', ['exports', 'ember-ajax/services/ajax'], function (exports, _ajax) {
-  'use strict';
+define('purecloud-skype/routes/application', ['exports', 'ember'], function (exports, _ember) {
+    'use strict';
 
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  Object.defineProperty(exports, 'default', {
-    enumerable: true,
-    get: function () {
-      return _ajax.default;
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var inject = _ember.default.inject,
+        Route = _ember.default.Route,
+        Logger = _ember.default.Logger;
+    exports.default = Route.extend({
+        auth: inject.service(),
+
+        beforeModel: function beforeModel(transition) {
+            var _this = this;
+
+            this.get('auth').silentLogin().then(function () {
+                var target = transition.targetName;
+                // if (target === 'index' || target === 'application') {
+                //     target = 'calendar';
+                // }
+                _this.transitionTo(target);
+            }).catch(function (error) {
+                Logger.error('Error logging in silently', error);
+                _this.transitionTo('index');
+            });
+        }
+    });
+});
+define('purecloud-skype/services/ajax', ['exports', 'ember', 'ember-ajax/services/ajax'], function (exports, _ember, _ajax) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var inject = _ember.default.inject,
+        computed = _ember.default.computed;
+    exports.default = _ajax.default.extend({
+        auth: inject.service(),
+
+        contentType: 'application/json; charset=utf-8',
+
+        trustedHosts: [/graph.microsoft.com/],
+
+        headers: computed('auth.accessToken', function () {
+            var headers = {};
+            var token = this.get('auth.accessToken');
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+            }
+            return headers;
+        })
+    });
+});
+define('purecloud-skype/services/auth', ['exports', 'ember'], function (exports, _ember) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    var inject = _ember.default.inject,
+        computed = _ember.default.computed,
+        RSVP = _ember.default.RSVP,
+        Logger = _ember.default.Logger,
+        Service = _ember.default.Service;
+
+
+    function objectToQueryParameters(obj) {
+        return Object.keys(obj).map(function (key) {
+            var value = obj[key];
+            return key + '=' + value;
+        }).join('&');
     }
-  });
+
+    exports.default = Service.extend({
+        ajax: inject.service(),
+
+        // appId: '18758f68-8cf8-4f32-8785-059d4cd2e62e',
+        appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
+        urls: {
+            auth: 'https://login.microsoftonline.com/common/oauth2/authorize',
+            grant: 'https://login.microsoftonline.com/common/oauth2/token'
+        },
+
+        idToken: null,
+        accessToken: null,
+
+        init: function init() {
+            this._super.apply(this, arguments);
+
+            // this.application = new window.Msal.UserAgentApplication(this.get('appId'));
+        },
+
+
+        scope: computed(function () {
+            return ['Calendars.ReadWrite', 'Contacts.ReadWrite', 'User.ReadBasic.All', 'User.ReadWrite', 'Mail.ReadWrite', 'Mail.Send'];
+        }),
+
+        authorizationUrl: computed('urls.auth', 'scope.[]', function () {
+            var base = this.get('urls.auth');
+            var data = {
+                client_id: this.get('appId'),
+                redirect_uri: window.location.href,
+                response_type: 'code',
+                scope: this.get('scope').join(' '),
+                nonce: 'msft',
+                response_mode: 'fragment'
+            };
+
+            return base + '/?' + objectToQueryParameters(data);
+        }),
+
+        login: function login() {
+            var _this = this;
+
+            var deferred = RSVP.defer();
+            var url = this.get('authorizationUrl');
+            var popup = window.open(url, 'auth', 'scrollbars=no,menubar=no,width=800,height=600');
+            var interval = window.setInterval(function () {
+                try {
+                    var search = popup.window.location.hash;
+                    // const match = search.match(/id_token=(.*)&/);
+                    var match = search.match(/code=(.*)&/);
+                    if (match && match[1]) {
+                        popup.close();
+                        window.clearInterval(interval);
+
+                        _this.set('idToken', match[1]);
+                        deferred.resolve(match[1]);
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }, 10);
+            this.set('loginDeferred', deferred);
+            return deferred.promise;
+        },
+        silentLogin: function silentLogin() {
+            var _this2 = this;
+
+            var accessToken = localStorage.getItem('accessToken');
+            if (!accessToken) {
+                return RSVP.reject('no access token');
+            }
+
+            this.set('accessToken', accessToken);
+            return this.get('ajax').request('https://graph.microsoft.com/v1.0/me/', {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken
+                }
+            }).then(function () {
+                Logger.info('logged in!');
+            }).catch(function (err) {
+                _this2.set('accessToken', null);
+                return RSVP.reject(err);
+            });
+        },
+        exchangeCodeForToken: function exchangeCodeForToken(code) {
+            var _this3 = this;
+
+            var data = {
+                code: code,
+                client_id: this.get('appId'),
+                resource: 'https://graph.windows.net/',
+                scope: this.get('scope').join(' '),
+                redirect_uri: window.location.href,
+                grant_type: 'authorization_code',
+                client_secret: 'qGPJgoQgN7ZBc8iz65SVnD8qJ5gQGHh7q3y4rF0Kn/g='
+            };
+            return this.get('ajax').post(this.get('urls.grant'), {
+                contentType: 'application/x-www-form-urlencoded',
+                data: data
+            }).then(function (res) {
+                if (typeof res === 'string') {
+                    res = JSON.parse(res);
+                }
+                _this3.set('accessToken', res.access_token);
+                window.localStorage.setItem('accessToken', res.access_token);
+            });
+        }
+    });
 });
 define('purecloud-skype/services/presence', ['exports', 'ember'], function (exports, _ember) {
     'use strict';
@@ -1305,7 +1486,7 @@ define("purecloud-skype/templates/index", ["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "ybTv6FLO", "block": "{\"statements\":[[6,[\"if\"],[[28,[\"loading\"]]],null,{\"statements\":[[0,\"    \"],[11,\"h2\",[]],[13],[0,\"Loading!\"],[14],[0,\"\\n\"]],\"locals\":[]},{\"statements\":[[0,\"    \"],[11,\"div\",[]],[15,\"class\",\"skype-for-business-app\"],[13],[0,\"\\n        \"],[1,[26,[\"roster-list\"]],false],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"skype\",\"activeConversation\"]]],null,{\"statements\":[[0,\"            \"],[1,[33,[\"conversation-pane\"],null,[[\"conversation\"],[[28,[\"skype\",\"activeConversation\"]]]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"    \"],[14],[0,\"\\n\"]],\"locals\":[]}]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/index.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "UXcO2a8h", "block": "{\"statements\":[[6,[\"if\"],[[28,[\"auth\",\"accessToken\"]]],null,{\"statements\":[[0,\"    \"],[11,\"div\",[]],[15,\"class\",\"skype-for-business-app\"],[13],[0,\"\\n        \"],[1,[26,[\"roster-list\"]],false],[0,\"\\n\\n\"],[6,[\"if\"],[[28,[\"skype\",\"activeConversation\"]]],null,{\"statements\":[[0,\"            \"],[1,[33,[\"conversation-pane\"],null,[[\"conversation\"],[[28,[\"skype\",\"activeConversation\"]]]]],false],[0,\"\\n\"]],\"locals\":[]},null],[0,\"    \"],[14],[0,\"\\n\"]],\"locals\":[]},{\"statements\":[[0,\"    \"],[11,\"button\",[]],[5,[\"action\"],[[28,[null]],\"startAuth\"]],[13],[0,\"Login\"],[14],[0,\"\\n\"]],\"locals\":[]}]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "purecloud-skype/templates/index.hbs" } });
 });
 
 
@@ -1329,6 +1510,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+39373f4f"});
+  require("purecloud-skype/app")["default"].create({"name":"purecloud-skype","version":"0.0.0+42fe6a5a"});
 }
 //# sourceMappingURL=purecloud-skype.map
