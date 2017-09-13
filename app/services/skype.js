@@ -56,13 +56,10 @@ export default Service.extend(Evented, {
         this.promise = deferred.promise;
 
         window.Skype.initialize({
-            apiKey: config.apiKeyCC,
-            supportsAudio: true,
-            supportsVideo: true,
-            convLogSettings: true
+            apiKey: config.apiKey
         }, api => {
             this.api = api;
-            this.application = api.UIApplicationInstance;
+            this.application = new api.application();
 
             deferred.resolve();
         }, error => {
