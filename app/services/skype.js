@@ -108,7 +108,11 @@ export default Service.extend(Evented, {
 
         persons.added(person => {
             Logger.info('Person added', person);
-            this.trigger(EVENTS.personAdded, person);
+
+            let personModel = User.create({ person }, getOwner(this).ownerInjection());
+            personModel.get('loaded').then(() => {
+                this.trigger(EVENTS.personAdded, personModel);
+            });
         });
 
         conversations.added(conversation => {

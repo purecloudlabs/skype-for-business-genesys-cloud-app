@@ -2,7 +2,8 @@ import Ember from 'ember';
 
 const {
     inject,
-    computed
+    computed,
+    RSVP
 } = Ember;
 
 export default Ember.Object.extend({
@@ -16,18 +17,41 @@ export default Ember.Object.extend({
 
         const person = this.get('person');
 
-        person.id.get().then(() => this.set('id', person.id()));
-        person.displayName.get().then(() => this.set('displayName', person.displayName()));
-        person.avatarUrl.get().then(() => this.set('avatarUrl', person.avatarUrl()));
-        if (!person.email) {
-            person.emails.get().then(([email]) => this.set('email', email.emailAddress()));
+        let deferred = RSVP.defer();
+        this.set('loaded', deferred.promise);
+
+        if (typeof person.id.get === "function") {
+            person.id.get().then(() => {
+                this.set('id', person.id());
+                deferred.resolve(this);
+            });
+            person.displayName.get().then(() => this.set('displayName', person.displayName()));
+            person.avatarUrl.get().then(() => {
+                this.set('avatarUrl', person.avatarUrl())
+                this.setupPhoto();
+            });
+            if (!person.email) {
+                person.emails.get().then(([email]) => this.set('email', email.emailAddress()));
+            } else {
+                person.email.get().then(() => this.set('email', person.email()));
+            }
+            person.status.get().then(() => this.set('rawPresence', person.status()));
         } else {
-            person.email.get().then(() => this.set('email', person.email()));
+            this.set('id', person.id);
+            this.set('displayName', person.displayName);
+            if (person.emails) {
+                this.set('email', person.emails[0]);
+            } else {
+                this.set('email', person.email);
+            }
+            this.set('rawPresence', person.status);
+            this.set('avatarUrl', person.avatarUrl);
+            this.setupPhoto();
+
+            deferred.resolve(this);
         }
-        person.status.get().then(() => this.set('rawPresence', person.status()));
 
         this.subscribeToProperties();
-        this.setupPhoto();
     },
 
     rawPresence: computed(function () {
@@ -70,16 +94,20 @@ export default Ember.Object.extend({
 
     setupPhoto() {
         const ajax = this.get('ajax');
-        this.get('person').avatarUrl.get().then(() => {
-            ajax.request(this.get('avatarUrl'), {
-                headers: {
-                    Authorization: `Bearer ${this.get('skype.authData.access_token')}`
-                }
-            });
+        let url = this.get('avatarUrl');
+        if (!url) return;
+
+        ajax.request(url, {
+            headers: {
+                Authorization: `Bearer ${this.get('skype.authData.access_token')}`
+            }
         });
     },
 
     subscribeToProperties() {
-        this.get('person').status.changed(() => this.notifyPropertyChange('presence'));
+        let person = this.get('person');
+        if (person.status) {
+            person.status.changed(() => this.notifyPropertyChange('presence'));
+        }
     }
 });

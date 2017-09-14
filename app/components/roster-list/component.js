@@ -13,11 +13,14 @@ export default Component.extend({
     classNames: ['roster-list'],
 
     skype: inject.service(),
+    store: inject.service(),
 
     searchResults: [],
 
     init() {
         this._super(...arguments);
+
+        console.log(this.get('store'));
 
         this.set('groups', []);
         this.set('generalContacts', []);
@@ -119,42 +122,42 @@ export default Component.extend({
         //         console.log('roster person search error: ', error);
         //     });
     },
-
-    addPerson(person) {
-        let personModel = User.create({
-            person
-        }, getOwner(this).ownerInjection());
-
-        this.get('generalContacts').pushObject(personModel);
-    },
-
-    addConversation(conversation) {
-    },
-
-    addGroup(group) {
-        let groupModel = Ember.Object.create();
-        this.get('groups').unshiftObject(groupModel);
-
-        group.id.get().then(() => {
-            groupModel.set('id', group.id());
-            groupModel.set('name', group.name());
-            groupModel.set('persons', []);
-
-            if (groupModel.get('name') === 'pinnedGroup') {
-                groupModel.set('name', 'Favorites');
-            }
-            if (groupModel.get('name') === 'Other Contacts') {
-                groupModel.set('name', 'Contacts');
-                groupModel.set('persons', this.get('generalContacts'));
-                return;
-            }
-
-            group.persons().forEach(person => {
-                let personModel = User.create({
-                    person
-                }, getOwner(this).ownerInjection());
-                groupModel.get('persons').pushObject(personModel);
-            });
-        });
-    }
+    //
+    // addPerson(person) {
+    //     let personModel = User.create({
+    //         person
+    //     }, getOwner(this).ownerInjection());
+    //
+    //     this.get('generalContacts').pushObject(personModel);
+    // },
+    //
+    // addConversation(conversation) {
+    // },
+    //
+    // addGroup(group) {
+    //     let groupModel = Ember.Object.create();
+    //     this.get('groups').unshiftObject(groupModel);
+    //
+    //     group.id.get().then(() => {
+    //         groupModel.set('id', group.id());
+    //         groupModel.set('name', group.name());
+    //         groupModel.set('persons', []);
+    //
+    //         if (groupModel.get('name') === 'pinnedGroup') {
+    //             groupModel.set('name', 'Favorites');
+    //         }
+    //         if (groupModel.get('name') === 'Other Contacts') {
+    //             groupModel.set('name', 'Contacts');
+    //             groupModel.set('persons', this.get('generalContacts'));
+    //             return;
+    //         }
+    //
+    //         group.persons().forEach(person => {
+    //             let personModel = User.create({
+    //                 person
+    //             }, getOwner(this).ownerInjection());
+    //             groupModel.get('persons').pushObject(personModel);
+    //         });
+    //     });
+    // }
 });
