@@ -20,11 +20,6 @@ const redirectUri =
         'https://mypurecloud.github.io/skype-for-business-purecloud-app/';
 
 const appConfigProperties = {
-    // "displayName": "purecloud-skype",
-    // "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
-    // "applicationType": "Web app / API",
-    // "objectID": "bd59e8f7-7455-4bb5-8e5e-7a0f1988e144",
-    // "homePage": "https://mypurecloud.github.io/skype-for-business-purecloud-app/",
     "displayName": "purecloudskype",
     "applicationID": "ec744ffe-d332-454a-9f13-b9f7ebe8b249",
     "applicationType": "Web app / API",
@@ -66,43 +61,6 @@ export default Service.extend(Evented, {
         });
     },
 
-    // startAuthentication() {
-    //     return this.promise.then(() => {
-    //         if (window.location.href.indexOf('#') > 0) {
-    //             return this.extractToken();
-    //         }
-    //
-    //         const baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
-    //         const authData = {
-    //             response_type: 'token',
-    //             client_id: appConfigProperties.applicationID,
-    //             state: 'dummy',
-    //             redirect_uri: redirectUri,
-    //             resource: 'https://webdir.online.lync.com'
-    //         };
-    //
-    //         const params = Object.keys(authData).map(key => {
-    //             const value = authData[key];
-    //             return `${key}=${value}`;
-    //         });
-    //
-    //         window.location.href = `${baseUrl}/?${params.join('&')}`;
-    //
-    //         return new RSVP.Promise(() => { }); // never resolve
-    //     });
-    // },
-
-    // extractToken() {
-    //     const hash = window.location.hash.substr(1).split('&');
-    //     const data = {};
-    //     hash.forEach(info => {
-    //         const [key, value] = info.split('=');
-    //         data[key] = value;
-    //     });
-    //     this.authData = data;
-    //     return this.signIn();
-    // },
-
     signIn() {
         const options = {
             client_id: appConfigProperties.applicationID,
@@ -119,6 +77,7 @@ export default Service.extend(Evented, {
                 console.log('SIGNIN-THEN', arguments);
                 const me = this.application.personsAndGroupsManager.mePerson;
                 const user = User.create({person: me}, getOwner(this).ownerInjection());
+
                 this.set('user', user);
 
                 this.registerForEvents();
