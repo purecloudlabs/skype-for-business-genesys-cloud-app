@@ -1,5 +1,4 @@
 import Ember from 'ember';
-import { EVENTS } from '../../services/skype';
 import User from '../../models/user';
 
 const {
@@ -31,12 +30,6 @@ export default Component.extend({
 
     didInsertElement() {
         this._super(...arguments);
-
-        const skype = this.get('skype');
-
-        skype.on(EVENTS.personAdded, this.addPerson.bind(this));
-        skype.on(EVENTS.conversationAdded, this.addConversation.bind(this));
-        skype.on(EVENTS.groupAdded, this.addGroup.bind(this));
 
         Ember.run.scheduleOnce('afterRender', this, this.fetchData);
     },
@@ -100,6 +93,10 @@ export default Component.extend({
     },
 
     fetchData() {
+        const store = this.get('store');
+
+        this.set('generalContacts', store.get('contacts'));
+        console.log('RosterList.generalContacts - ', this.get('generalContacts'));
         // const skype = this.get('skype');
         //
         // console.log('roster group search started');

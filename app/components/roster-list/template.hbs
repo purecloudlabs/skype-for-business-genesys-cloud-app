@@ -24,7 +24,20 @@
 </div>
 
 <div class="groups">
-    {{#each groups as |group|}}
+    {{#each generalContacts as |person|}}
+        <button class="group-member" onclick={{action "clickContact" person}}>
+                    <span class="avatar">
+                        {{profile-image person=person}}
+                    </span>
+            <span class="person-name">
+                {{person.displayName}}
+            </span>
+        </button>
+    {{else}}
+        <div class="no-members">No members</div>
+    {{/each}}
+
+    <!-- {{#each groups as |group|}}
         <div class="group-entry">
 
             <div class="group-name">{{group.name}}</div>
@@ -43,5 +56,5 @@
             {{/each}}
 
         </div>
-    {{/each}}
+    {{/each}} -->
 </div>
