@@ -5,7 +5,8 @@ const {
     inject,
     getOwner,
     Logger,
-    Component
+    Component,
+    computed
 } = Ember;
 
 export default Component.extend({
@@ -16,22 +17,14 @@ export default Component.extend({
 
     searchResults: [],
 
+    generalContacts: computed.alias('store.contacts'),
+
     init() {
         this._super(...arguments);
 
         console.log(this.get('store'));
 
-        this.set('groups', []);
-        this.set('generalContacts', []);
-
-        window.GROUPS = this.get('groups');
         window.roster = this;
-    },
-
-    didInsertElement() {
-        this._super(...arguments);
-
-        Ember.run.scheduleOnce('afterRender', this, this.fetchData);
     },
 
     actions: {

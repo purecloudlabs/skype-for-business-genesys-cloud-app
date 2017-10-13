@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 import User from '../models/user';
+import Conversation from '../models/conversation';
 
 const {
     getOwner,
@@ -109,7 +110,7 @@ export default Service.extend(Evented, {
         persons.added(person => {
             Logger.info('Person added', person);
 
-            let personModel = User.create({ person }, getOwner(this).ownerInjection());
+            let personModel = this.getUserModelForSkypePerson(person);
             personModel.get('loaded').then(() => {
                 this.trigger(EVENTS.personAdded, personModel);
             });
@@ -117,8 +118,20 @@ export default Service.extend(Evented, {
 
         conversations.added(conversation => {
             Logger.info('Conversation added', conversation);
-            this.trigger(EVENTS.conversationAdded, conversation);
+
+            if (conversation.chatService.accept.enabled()) {
+                conversation.chatService.accept();
+
+                let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
+                conversationModel.get('loaded').then(() => {
+                    this.trigger(EVENTS.conversationAdded, conversationModel);
+                });
+            }
         });
+    },
+
+    getUserModelForSkypePerson(person) {
+        return User.create({ person }, getOwner(this).ownerInjection());
     },
 
     addContact(person) {

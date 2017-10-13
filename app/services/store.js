@@ -15,11 +15,13 @@ export default Service.extend({
     skype: inject.service(),
 
     contacts: null,
+    conversations: null,
 
     init() {
         this._super(...arguments);
 
         this.set('contacts', []);
+        this.set('conversations', []);
 
         const skype = this.get('skype');
 
@@ -27,6 +29,7 @@ export default Service.extend({
         skype.on(EVENTS.conversationAdded, this.addConversation.bind(this));
         skype.on(EVENTS.groupAdded, this.addGroup.bind(this));
 
+        window.STORE = this;
     },
 
     addPerson(person) {
@@ -35,8 +38,10 @@ export default Service.extend({
         this.get('contacts').pushObject(person);
     },
 
-    addConversation() {
+    addConversation(conversation) {
         console.log('Store.addConversation - ', arguments);
+
+        this.get('conversations').pushObject(conversation);
     },
 
     addGroup() {
