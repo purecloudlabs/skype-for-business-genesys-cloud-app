@@ -16,6 +16,7 @@ export default Service.extend({
 
     contacts: null,
     conversations: null,
+    activeConversation: null,
 
     init() {
         this._super(...arguments);
@@ -42,9 +43,17 @@ export default Service.extend({
         console.log('Store.addConversation - ', arguments);
 
         this.get('conversations').pushObject(conversation);
+
+        if (!this.get('activeConversation')) {
+            this.set('activeConversation', conversation);
+        }
     },
 
     addGroup() {
         console.log('Store.addGroup - ', arguments);
     },
+
+    setActiveConversation(conversation) {
+        this.set('activeConversation', conversation);
+    }
 });

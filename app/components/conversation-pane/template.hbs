@@ -1,1 +1,9 @@
-Loading conversation...
+{{#if conversation}}
+    {{#each conversation.messages as |message|}}
+        <div>
+            {{message.text}}
+        </div>
+    {{/each}}
+{{else}}
+    No active conversation
+{{/if}}

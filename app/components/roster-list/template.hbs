@@ -23,6 +23,14 @@
     </div>
 </div>
 
+<div class="conversations">
+    {{#each activeConversations as |conversation|}}
+        <button class="conversation" onclick={{action "clickConversation" conversation}}>
+            {{conversation.conversationTarget.name}}
+        </button>
+    {{/each}}
+</div>
+
 <div class="groups">
     {{#each generalContacts as |person|}}
         <button class="group-member" onclick={{action "clickContact" person}}>
@@ -30,7 +38,7 @@
                 {{profile-image person=person}}
             </span>
             <span class="person-name">
-                {{person.displayName}}
+                {{person.displayName}}1
             </span>
         </button>
     {{else}}

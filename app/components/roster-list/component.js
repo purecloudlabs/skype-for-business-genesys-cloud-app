@@ -18,6 +18,7 @@ export default Component.extend({
     searchResults: [],
 
     generalContacts: computed.alias('store.contacts'),
+    activeConversations: computed.alias('store.conversations'),
 
     init() {
         this._super(...arguments);
@@ -28,6 +29,10 @@ export default Component.extend({
     },
 
     actions: {
+        clickConversation(conversation) {
+            this.get('store').setActiveConversation(conversation);
+        },
+
         clickContact(person) {
             this.get('skype').startConversation(person.get('person'));
         },
