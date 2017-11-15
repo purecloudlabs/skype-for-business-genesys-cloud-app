@@ -78,6 +78,13 @@ export default Ember.Object.extend({
         });
 
         run.once(() => deferred.resolve()); // until i work out how to load history
+    },
+
+    sendMessage(message) {
+        this.get('conversation').chatService.sendMessage(message)
+            .then(function () {
+                log('Message sent.');
+            });
     }
 
 });
