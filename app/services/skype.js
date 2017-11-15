@@ -193,13 +193,14 @@ export default Service.extend(Evented, {
         });
     },
 
-    startConversation(person) {
-        this.set('activeConversation', null);
+    startConversation(sip) {
+        let conversation = this.application.conversationsManager.getConversation(sip);
+        let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
 
-        Ember.run.next(() => {
-            const conversation = this.application.conversationsManager.getConversation(person);
-            this.set('activeConversation', conversation);
-            window.CONVERSATION = conversation;
+        conversationModel.get('loaded').then(() => {
+            this.trigger(EVENTS.conversationAdded, conversationModel);
         });
+
+        return conversationModel;
     }
 });

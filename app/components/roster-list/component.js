@@ -34,7 +34,7 @@ export default Component.extend({
         },
 
         clickContact(person) {
-            this.get('skype').startConversation(person.get('person'));
+            this.get('store').startConversation(person);
         },
 
         searchHandler (event) {

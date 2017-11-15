@@ -55,5 +55,10 @@ export default Service.extend({
 
     setActiveConversation(conversation) {
         this.set('activeConversation', conversation);
+    },
+
+    startConversation({id}) {
+        let conversation = this.get('skype').startConversation(id);
+        this.set('activeConversation', conversation);
     }
 });
