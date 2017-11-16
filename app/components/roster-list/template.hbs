@@ -27,7 +27,9 @@
         {{else}}
             {{#each (await searchResults) as |result|}}
                 <div class="search-result">
-                    <span class="name">{{result.displayName}}</span>
+                    <a href="#" {{action "selectSearchResult" result}}>
+                        <span class="name">{{result.displayName}}</span>
+                    </a>
                 </div>
             {{else}}
                 <div class="search-result empty">

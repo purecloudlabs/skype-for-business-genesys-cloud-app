@@ -72,6 +72,18 @@
                 height: 25px;
                 padding: 0 15px;
 
+                a {
+                    display: block;
+                    width: 100%;
+                    color: @text-color;
+                    text-decoration: none;
+
+                    &:hover, &:active, &:focus {
+                        color: @text-color;
+                        text-decoration: none;
+                    }
+                }
+
                 &:hover {
                     cursor: pointer;
                     background-color: @bg-grey-light;

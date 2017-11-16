@@ -35,11 +35,8 @@ export default Component.extend({
             Ember.run.debounce(this, this.set, 'searchQuery', value, 500);
         },
 
-        addContact(person) {
-            this.get('skype').addContact(person).then(() => {
-                let group = this.get('groups').filterBy('name', "Other Contacts")[0];
-                group.get('persons').pushObject(person);
-            });
+        selectSearchResult(user) {
+
         }
     },
 
