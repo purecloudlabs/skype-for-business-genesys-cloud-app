@@ -25,7 +25,7 @@ export default Component.extend({
     },
 
     actions: {
-        clickConversation(conversation) {
+        selectConversation(conversation) {
             this.get('store').setActiveConversation(conversation);
         },
 
@@ -90,65 +90,6 @@ export default Component.extend({
         const store = this.get('store');
 
         this.set('generalContacts', store.get('contacts'));
-        console.log('RosterList.generalContacts - ', this.get('generalContacts'));
-        // const skype = this.get('skype');
-        //
-        // console.log('roster group search started');
-        // skype.getAllGroups().then(groups => {
-        //     console.log('roster groups: ', groups, groups.map(g => mapSkypeToPojo(g)));
-        //     setTimeout(() => {
-        //         console.log('roster groups delayed: ', groups, groups.map(g => mapSkypeToPojo(g)));
-        //     }, 1000);
-        //
-        //     window.GROUPS = groups;
-        //     // this.get('groups').addObjects(groups);
-        // });
-        //
-        // console.log('roster person search started');
-        // skype.get('application').personsAndGroupsManager.all.persons
-        //     .get().then(function (contacts) {
-        //         console.log('roster person search results: ', contacts, contacts.map(c => c.displayName()));
-        //
-        //     }, function (error) {
-        //         console.log('roster person search error: ', error);
-        //     });
-    },
-    //
-    // addPerson(person) {
-    //     let personModel = User.create({
-    //         person
-    //     }, getOwner(this).ownerInjection());
-    //
-    //     this.get('generalContacts').pushObject(personModel);
-    // },
-    //
-    // addConversation(conversation) {
-    // },
-    //
-    // addGroup(group) {
-    //     let groupModel = Ember.Object.create();
-    //     this.get('groups').unshiftObject(groupModel);
-    //
-    //     group.id.get().then(() => {
-    //         groupModel.set('id', group.id());
-    //         groupModel.set('name', group.name());
-    //         groupModel.set('persons', []);
-    //
-    //         if (groupModel.get('name') === 'pinnedGroup') {
-    //             groupModel.set('name', 'Favorites');
-    //         }
-    //         if (groupModel.get('name') === 'Other Contacts') {
-    //             groupModel.set('name', 'Contacts');
-    //             groupModel.set('persons', this.get('generalContacts'));
-    //             return;
-    //         }
-    //
-    //         group.persons().forEach(person => {
-    //             let personModel = User.create({
-    //                 person
-    //             }, getOwner(this).ownerInjection());
-    //             groupModel.get('persons').pushObject(personModel);
-    //         });
-    //     });
-    // }
+        Logger.log('RosterList.generalContacts - ', this.get('generalContacts'));
+    }
 });

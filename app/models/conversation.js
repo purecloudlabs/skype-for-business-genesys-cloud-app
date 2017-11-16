@@ -1,12 +1,11 @@
 import Ember from 'ember';
-import User from './user';
 
 const {
     inject,
     computed,
-    getOwner,
     run,
-    RSVP
+    RSVP,
+    Logger
 } = Ember;
 
 export default Ember.Object.extend({
@@ -18,6 +17,8 @@ export default Ember.Object.extend({
 
     messages: null,
 
+    name: computed.reads('conversationTarget.name'),
+
     init() {
         this._super(...arguments);
 
@@ -25,7 +26,7 @@ export default Ember.Object.extend({
 
         const conversation = this.get('conversation');
         if (!conversation) {
-            console.error("Conversation model created without skype conversation model to wrap");
+            Logger.error("Conversation model created without skype conversation model to wrap");
             return;
         }
 
@@ -33,7 +34,7 @@ export default Ember.Object.extend({
         this.set('loaded', deferred.promise);
 
         conversation.participants.added(person => {
-            console.log("conversation.participants.added", person);
+            Logger.log("conversation.participants.added", person);
 
             this.set('conversationTarget', Ember.Object.create({
                 id: person.uri(),
@@ -68,13 +69,13 @@ export default Ember.Object.extend({
                 senderSip: item.sender.id(),
                 timestamp: item.timestamp()
             });
-            console.log("conversation.chatService.messages.added", messageModel, item);
+            Logger.log("conversation.chatService.messages.added", messageModel, item);
 
             this.get('messages').pushObject(messageModel);
         });
 
         conversation.state.changed((newValue, reason, oldValue) => {
-            console.log('conversation.state.changed', newValue, reason, oldValue);
+            Logger.log('conversation.state.changed', newValue, reason, oldValue);
         });
 
         run.once(() => deferred.resolve()); // until i work out how to load history
@@ -83,7 +84,7 @@ export default Ember.Object.extend({
     sendMessage(message) {
         this.get('conversation').chatService.sendMessage(message)
             .then(function () {
-                log('Message sent.');
+                Logger.log('Message sent.');
             });
     }
 

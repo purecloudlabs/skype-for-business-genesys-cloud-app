@@ -3,11 +3,8 @@ import { EVENTS } from './skype';
 
 const {
     inject,
-    getOwner,
-    RSVP,
     Logger,
     Service,
-    Evented
 } = Ember;
 
 
@@ -34,13 +31,13 @@ export default Service.extend({
     },
 
     addPerson(person) {
-        console.log('Store.addPerson - ', arguments);
+        Logger.log('Store.addPerson - ', arguments);
 
         this.get('contacts').pushObject(person);
     },
 
     addConversation(conversation) {
-        console.log('Store.addConversation - ', arguments);
+        Logger.log('Store.addConversation - ', arguments);
 
         this.get('conversations').pushObject(conversation);
 
@@ -50,14 +47,14 @@ export default Service.extend({
     },
 
     addGroup() {
-        console.log('Store.addGroup - ', arguments);
+        Logger.log('Store.addGroup - ', arguments);
     },
 
     setActiveConversation(conversation) {
         this.set('activeConversation', conversation);
     },
 
-    startConversation({id}) {
+    startConversation({ id }) {
         let conversation = this.get('skype').startConversation(id);
         this.set('activeConversation', conversation);
     }

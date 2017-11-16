@@ -51,10 +51,14 @@ export default Service.extend(Evented, {
         this.promise = deferred.promise;
 
         window.Skype.initialize({
-            apiKey: config.apiKey
+            apiKey: config.apiKey,
         }, api => {
             this.api = api;
-            this.application =  new api.application();
+            this.application =  new api.application({
+                settings: {
+                    convLogSettings: true
+                }
+            });
             deferred.resolve();
         }, error => {
             Logger.error('There was an error loading the api:', error);
@@ -74,16 +78,19 @@ export default Service.extend(Evented, {
 
         return this.application.signInManager.signIn(options)
             .then(() => {
-                console.log('SIGNIN-THEN', arguments);
+                Logger.log('SIGNIN-THEN', arguments);
                 const me = this.application.personsAndGroupsManager.mePerson;
                 const user = User.create({person: me}, getOwner(this).ownerInjection());
 
                 this.set('user', user);
 
                 this.registerForEvents();
+
+                // Load current conversations
+                this.application.conversationsManager.getMoreConversations();
             })
             .catch((err) => {
-                console.log('SIGNIN-CATCH', err, arguments);
+                Logger.error('SIGNIN-CATCH', err, arguments);
             })
     },
 
@@ -118,14 +125,14 @@ export default Service.extend(Evented, {
         conversations.added(conversation => {
             Logger.info('Conversation added', conversation);
 
-            if (conversation.chatService.accept.enabled()) {
-                conversation.chatService.accept();
+            conversation.chatService.accept();
 
-                let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
-                conversationModel.get('loaded').then(() => {
-                    this.trigger(EVENTS.conversationAdded, conversationModel);
-                });
-            }
+            let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
+
+            this.trigger(EVENTS.conversationAdded, conversationModel);
+            // conversationModel.get('loaded').then(() => {
+            //     this.trigger(EVENTS.conversationAdded, conversationModel);
+            // });
         });
     },
 

@@ -45,12 +45,12 @@
     </div>
 
     <div class="roster-entries">
-        {{#each generalContacts as |person|}}
-            <div class="roster-entry" onclick={{action "clickContact" person}}>
+        {{#each activeConversations as |conversation|}}
+            <div class="roster-entry" {{action "selectConversation" conversation}}>
                 {{presence-indicator person=person}}
 
                 <div class="name">
-                    {{person.displayName}}
+                    {{conversation.name}}
                 </div>
 
                 <div class="close">
