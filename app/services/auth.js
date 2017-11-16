@@ -90,7 +90,7 @@ export default Service.extend({
             return RSVP.reject('no access token');
         }
 
-        this.set('accessToken', accessToken);
+        Ember.run.once(this, this.set, 'accessToken', accessToken);
         return this.get('ajax').request('https://graph.microsoft.com/v1.0/me/', {
             headers: {
                 Authorization: `Bearer ${accessToken}`
@@ -98,7 +98,7 @@ export default Service.extend({
         }).then(() => {
             Logger.info('logged in!');
         }).catch(err => {
-            this.set('accessToken', null);
+            Ember.run.once(this, this.set, 'accessToken', null);
             return RSVP.reject(err);
         });
     },
