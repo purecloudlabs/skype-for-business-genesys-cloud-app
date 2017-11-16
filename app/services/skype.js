@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 import User from '../models/user';
+import Conversation from '../models/conversation';
 
 const {
     getOwner,
@@ -12,7 +13,6 @@ const {
 
 const config = {
     apiKey: 'a42fcebd-5b43-4b89-a065-74450fb91255', // SDK
-    apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // SDK+UI
 };
 
 const redirectUri =
@@ -21,11 +21,6 @@ const redirectUri =
         'https://mypurecloud.github.io/skype-for-business-purecloud-app/';
 
 const appConfigProperties = {
-    // "displayName": "purecloud-skype",
-    // "applicationID": "521f4c8f-9048-4337-bf18-6495ca21e415",
-    // "applicationType": "Web app / API",
-    // "objectID": "bd59e8f7-7455-4bb5-8e5e-7a0f1988e144",
-    // "homePage": "https://mypurecloud.github.io/skype-for-business-purecloud-app/",
     "displayName": "purecloudskype",
     "applicationID": "ec744ffe-d332-454a-9f13-b9f7ebe8b249",
     "applicationType": "Web app / API",
@@ -59,50 +54,12 @@ export default Service.extend(Evented, {
             apiKey: config.apiKey
         }, api => {
             this.api = api;
-            this.application = new api.application();
-
+            this.application =  new api.application();
             deferred.resolve();
         }, error => {
             Logger.error('There was an error loading the api:', error);
         });
     },
-
-    // startAuthentication() {
-    //     return this.promise.then(() => {
-    //         if (window.location.href.indexOf('#') > 0) {
-    //             return this.extractToken();
-    //         }
-    //
-    //         const baseUrl = 'https://login.microsoftonline.com/common/oauth2/authorize';
-    //         const authData = {
-    //             response_type: 'token',
-    //             client_id: appConfigProperties.applicationID,
-    //             state: 'dummy',
-    //             redirect_uri: redirectUri,
-    //             resource: 'https://webdir.online.lync.com'
-    //         };
-    //
-    //         const params = Object.keys(authData).map(key => {
-    //             const value = authData[key];
-    //             return `${key}=${value}`;
-    //         });
-    //
-    //         window.location.href = `${baseUrl}/?${params.join('&')}`;
-    //
-    //         return new RSVP.Promise(() => { }); // never resolve
-    //     });
-    // },
-
-    // extractToken() {
-    //     const hash = window.location.hash.substr(1).split('&');
-    //     const data = {};
-    //     hash.forEach(info => {
-    //         const [key, value] = info.split('=');
-    //         data[key] = value;
-    //     });
-    //     this.authData = data;
-    //     return this.signIn();
-    // },
 
     signIn() {
         const options = {
@@ -120,6 +77,7 @@ export default Service.extend(Evented, {
                 console.log('SIGNIN-THEN', arguments);
                 const me = this.application.personsAndGroupsManager.mePerson;
                 const user = User.create({person: me}, getOwner(this).ownerInjection());
+
                 this.set('user', user);
 
                 this.registerForEvents();
@@ -150,13 +108,29 @@ export default Service.extend(Evented, {
 
         persons.added(person => {
             Logger.info('Person added', person);
-            this.trigger(EVENTS.personAdded, person);
+
+            let personModel = this.getUserModelForSkypePerson(person);
+            personModel.get('loaded').then(() => {
+                this.trigger(EVENTS.personAdded, personModel);
+            });
         });
 
         conversations.added(conversation => {
             Logger.info('Conversation added', conversation);
-            this.trigger(EVENTS.conversationAdded, conversation);
+
+            if (conversation.chatService.accept.enabled()) {
+                conversation.chatService.accept();
+
+                let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
+                conversationModel.get('loaded').then(() => {
+                    this.trigger(EVENTS.conversationAdded, conversationModel);
+                });
+            }
         });
+    },
+
+    getUserModelForSkypePerson(person) {
+        return User.create({ person }, getOwner(this).ownerInjection());
     },
 
     addContact(person) {
@@ -218,13 +192,14 @@ export default Service.extend(Evented, {
         });
     },
 
-    startConversation(person) {
-        this.set('activeConversation', null);
+    startConversation(sip) {
+        let conversation = this.application.conversationsManager.getConversation(sip);
+        let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
 
-        Ember.run.next(() => {
-            const conversation = this.application.conversationsManager.getConversation(person);
-            this.set('activeConversation', conversation);
-            window.CONVERSATION = conversation;
+        conversationModel.get('loaded').then(() => {
+            this.trigger(EVENTS.conversationAdded, conversationModel);
         });
+
+        return conversationModel;
     }
 });

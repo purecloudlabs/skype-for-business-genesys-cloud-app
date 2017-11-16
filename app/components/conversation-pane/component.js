@@ -2,25 +2,28 @@ import Ember from 'ember';
 
 const {
     inject,
+    computed,
     Component
 } = Ember;
 
 export default Component.extend({
     classNames: ['conversation-pane'],
-    skype: inject.service(),
 
-    conversation: null,
+    store: inject.service(),
+    conversation: computed.alias('store.activeConversation'),
 
-    init() {
-        this._super(...arguments);
-    },
+    target: computed.alias('conversation.conversationTarget'),
 
-    didInsertElement() {
-        Ember.run.scheduleOnce('afterRender', this, this.renderConversation);
-    },
+    actions: {
+        keyup({key, keyCode, shiftKey, target}) {
+            if ((key === "Enter" || keyCode === 13) && !shiftKey) {
+                let messageText = target.value;
 
-    renderConversation() {
-        const conversation = this.get('conversation');
-        this.get('skype').api.renderConversation(this.element, { conversation });
+                console.log("SEND", messageText);
+                this.get('conversation').sendMessage(messageText);
+
+                target.value = "";
+            }
+        }
     }
 })

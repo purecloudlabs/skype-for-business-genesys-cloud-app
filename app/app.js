@@ -20,6 +20,10 @@ App = Ember.Application.extend({
 
     serviceFor(name) {
         return this.__container__.lookup(`service:${name}`);
+    },
+
+    componentFor: function (id) {
+        return this.__container__.lookup('-view-registry:main')[id];
     }
 });
 

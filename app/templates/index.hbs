@@ -1,10 +1,7 @@
 {{#if auth.accessToken}}
     <div class="skype-for-business-app">
         {{roster-list}}
-
-        {{#if skype.activeConversation}}
-            {{conversation-pane conversation=skype.activeConversation}}
-        {{/if}}
+        {{conversation-pane}}
     </div>
 {{else}}
     <button {{action "startAuth"}}>Login</button>
