@@ -19,3 +19,5 @@ skype-for-business-purecloud-app.iml
 /libpeerconnection.log
 npm-debug.log*
 testem.log
+.npmrc
+yarn-error.log
