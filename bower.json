@@ -1,0 +1,6 @@
+{
+  "name": "purecloud-skype",
+  "dependencies": {
+    "ionicons": "^2.0.1"
+  }
+}
