@@ -35,6 +35,7 @@
     "ember-component-css": "^0.3.3",
     "ember-data": "^2.13.0",
     "ember-export-application-global": "^2.0.0",
+    "ember-ionicons": "^0.1.1",
     "ember-load-initializers": "^1.0.0",
     "ember-resolver": "^4.0.0",
     "ember-source": "~2.13.0",

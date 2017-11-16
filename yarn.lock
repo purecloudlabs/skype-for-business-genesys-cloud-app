@@ -2382,6 +2382,10 @@ ember-inflector@^2.0.0:
   dependencies:
     ember-cli-babel "^6.0.0"
 
+ember-ionicons@^0.1.1:
+  version "0.1.1"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ember-ionicons/-/ember-ionicons-0.1.1.tgz#58b1e4ce5551101cf96a293736d497b2ab99dee4"
+
 ember-load-initializers@^1.0.0:
   version "1.0.0"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ember-load-initializers/-/ember-load-initializers-1.0.0.tgz#4919eaf06f6dfeca7e134633d8c05a6c9921e6e7"

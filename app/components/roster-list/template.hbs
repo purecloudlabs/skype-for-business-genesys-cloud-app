@@ -1,11 +1,25 @@
-{{user-status-bar user=skype.user}}
+<div class="heading">
+    <h3>
+        Skype Contacts
+    </h3>
+
+    <div class="controls">
+        <i class="ion-gear-b"></i>
+        <i class="ion-plus"></i>
+    </div>
+</div>
 
 <div class="search-container">
     <div class="search">
-        <input class="search-input"
+        <div class="search-input">
+            <input class="search-input"
                type="text"
-               placeholder="Search For People"
+               placeholder="Start a conversation"
                onkeyup={{action "searchHandler"}}>
+
+            <i class="ion-search"></i>
+        </div>
+
         {{#if searchLoading}}
             <div class="loading">
                 <span>Loading Results...</span>
@@ -23,6 +37,35 @@
     </div>
 </div>
 
+<div class="roster-group direct-messages">
+    <div class="roster-heading">
+        <h3>
+            Direct Messages
+        </h3>
+    </div>
+
+    <div class="roster-entries">
+        {{#each generalContacts as |person|}}
+            <div class="roster-entry" onclick={{action "clickContact" person}}>
+                {{presence-indicator person=person}}
+
+                <div class="name">
+                    {{person.displayName}}
+                </div>
+
+                <div class="close">
+                    <i class="ion-close-circled"></i>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+<div class="roster-group person-groups">
+
+</div>
+
+{{!--
 <div class="conversations">
     {{#each activeConversations as |conversation|}}
         <button class="conversation" onclick={{action "clickConversation" conversation}}>
@@ -66,3 +109,4 @@
         </div>
     {{/each}} -->
 </div>
+--}}

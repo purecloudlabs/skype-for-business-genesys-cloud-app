@@ -1,14 +1,58 @@
+@import "variables";
+
 & {
+    background-color: @bg-blue-light;
+
+    > div {
+        padding: 0 20px;
+    }
+
+    h3 {
+        font-size: 1.15em;
+    }
+
+    .heading {
+        display: flex;
+        align-items: center;
+        margin: 20px 0 20px 0;
+
+        h3 {
+            flex: 1;
+            margin: 0;
+
+            color: @text-blue-grey;
+            font-weight: normal;
+        }
+
+        .controls {
+            i:first-child {
+                margin-right: 8px;
+            }
+        }
+    }
+
     .search {
         display: flex;
         flex-direction: column;
 
         .search-input {
-            padding: 10px 15px;
-            font-size: 14px;
-            border: none;
-            border-bottom: 1px solid #D6E6EC;
-            border-top: 1px solid #D6E6EC;
+            position: relative;
+
+            input {
+                width: 100%;
+                padding: 6px 18px;
+                font-size: 0.8em;
+                border: 1px solid @pc-blue-dark;
+                box-sizing: border-box;
+                outline: none;
+            }
+
+            i {
+                position: absolute;
+                left: 6px;
+                top: 8px;
+                color: @text-grey;
+            }
         }
 
         .loading {
@@ -45,52 +89,62 @@
         }
     }
 
-    .groups {
-        display: flex;
-        flex-direction: column;
-        padding: 10px 0 0 10px;
-        color: #333;
+    .roster-group {
+        padding: 0;
 
-        .group-entry {
-            display: flex;
-            flex-direction: column;
-            border-left: 5px solid #e6eff6;
-            margin-bottom: 30px;
+        .roster-heading, .roster-entries {
+            width: 100%;
         }
 
-        .group-name {
-            padding: 0 10px 10px 10px;
-            font-size: 16px;
-            font-weight: bold;
+        .roster-heading {
+            color: @text-blue-dark;
+            padding: 0 20px;
         }
 
-        .group-member {
-            background-color: rgba(0, 0, 0, 0);
-            border: none;
-            border-right: 5px solid rgba(0, 0, 0, 0);
-            cursor: pointer;
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: center;
-            font-size: 14px;
-            padding: 10px 0 10px 20px;
+        .roster-entries {
+            .roster-entry {
+                display: flex;
+                align-items: center;
 
-            &:hover {
-                background-color: #e6eff6;
-                border-right: 5px solid #6eafb6;
+                height: 25px;
+                font-size: 0.9em;
+
+                padding: 0 20px 0 40px;
+
+                .name {
+                    flex: 1;
+                }
+
+                .presence-indicator {
+                    margin-right: 8px;
+                }
+
+                .close {
+                    display: none;
+                    color: @text-grey;
+
+                    &:hover {
+                        color: red;
+                    }
+                }
+
+                &.active {
+                    background-color: @pc-blue-dark;
+
+                    .name {
+                        color: #fff;
+                    }
+                }
+
+                &:hover {
+                    background-color: @bg-grey-light;
+                    cursor: pointer;
+
+                    .close {
+                        display: block;
+                    }
+                }
             }
-
-            .avatar {
-                width: 35px;
-                height: 35px;
-                margin-right: 15px;
-            }
-        }
-
-        .no-members {
-            padding-left: 25px;
-            font-style: italic;
         }
     }
 }
