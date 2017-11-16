@@ -42,7 +42,7 @@ export default Service.extend({
         this.get('conversations').pushObject(conversation);
 
         if (!this.get('activeConversation')) {
-            this.set('activeConversation', conversation);
+            this.setActiveConversation(conversation);
         }
     },
 
@@ -51,11 +51,16 @@ export default Service.extend({
     },
 
     setActiveConversation(conversation) {
-        this.set('activeConversation', conversation);
+        if (conversation !== this.get('activeConversation')) {
+            this.set('activeConversation', conversation);
+
+            conversation.loadMessageHistory();
+        }
     },
 
     startConversation({ id }) {
         let conversation = this.get('skype').startConversation(id);
-        this.set('activeConversation', conversation);
+        this.setActiveConversation(conversation);
     }
+
 });
