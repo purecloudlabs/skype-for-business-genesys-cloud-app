@@ -36,7 +36,7 @@ export default Component.extend({
         },
 
         selectSearchResult(user) {
-
+            this.get('store').startConversation(user);
         }
     },
 

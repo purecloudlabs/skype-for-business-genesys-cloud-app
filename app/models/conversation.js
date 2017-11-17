@@ -16,9 +16,9 @@ export default Ember.Object.extend({
     conversationTarget: null,
 
     messages: null,
+    loadedHistory: false,
 
     name: computed.reads('conversationTarget.name'),
-    loadedHistory: false,
 
     init() {
         this._super(...arguments);
@@ -63,7 +63,7 @@ export default Ember.Object.extend({
             //     console.log(status);
             // });
 
-            console.log('HISTORY', message);
+            Logger.log('HISTORY', message);
 
             let messageModel = Ember.Object.create({
                 direction: message.direction(),
@@ -137,7 +137,7 @@ export default Ember.Object.extend({
     loadMessageHistory() {
         if (!this.get('loadedHistory')) {
             this.get('conversation').historyService.getMoreActivityItems().then(() => {
-                console.log('HISTORY LOADED');
+                Logger.log('HISTORY LOADED');
                 this.set('loadedHistory', true);
             });
         }

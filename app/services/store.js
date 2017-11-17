@@ -58,8 +58,16 @@ export default Service.extend({
         }
     },
 
-    startConversation({ id }) {
-        let conversation = this.get('skype').startConversation(id);
+    startConversation(user) {
+        const conversations = this.get('conversations');
+        const currentConversation = conversations.findBy('conversationTarget.id', user.id);
+
+        if (currentConversation) {
+            this.set('activeConversation', currentConversation);
+            return;
+        }
+
+        const conversation = this.get('skype').startConversation(user.id);
         this.setActiveConversation(conversation);
     }
 
