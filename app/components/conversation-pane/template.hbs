@@ -10,12 +10,11 @@
         {{#each conversation.messages as |message|}}
             <div class="message">
                 <div class="avatar">
-                    <img src={{message.senderAvatar}} />
-                    {{!profile-image person=person}}
+                    {{!profile-image sip=message.sender.email}}
                 </div>
                 <div class="body">
                     <div class="user">
-                        {{message.senderName}}
+                        {{message.sender.displayName}}
                         <span class="timestamp">{{message.timestamp}}</span>
                     </div>
                     <div class="text">{{message.text}}</div>

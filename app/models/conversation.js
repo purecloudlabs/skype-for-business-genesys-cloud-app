@@ -99,20 +99,14 @@ export default Ember.Object.extend({
         conversation.historyService.activityItems.added(message => {
             Logger.log('HISTORY', message);
 
+            let sender = this.get('store').getUserForPerson(message.sender);
+
             let messageModel = Ember.Object.create({
                 direction: message.direction(),
                 status: message.status(),
                 text: message.text(),
-                senderSip: message.sender.id(),
-                timestamp: message.timestamp()
-            });
-
-            message.sender.displayName.get().then(name => {
-                messageModel.set('senderName', name);
-            });
-
-            message.sender.avatarUrl.get().then(url => {
-                messageModel.set('senderAvatar', url);
+                timestamp: message.timestamp(),
+                sender
             });
 
             Logger.log("conversation.historyService.activityItems.added", messageModel);
