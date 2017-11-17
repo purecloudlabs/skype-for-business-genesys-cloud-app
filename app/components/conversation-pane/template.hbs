@@ -10,7 +10,7 @@
         {{#each conversation.messages as |message|}}
             <div class="message">
                 <div class="avatar">
-                    {{!profile-image sip=message.sender.email}}
+                    {{profile-image person=message.sender}}
                 </div>
                 <div class="body">
                     <div class="user">

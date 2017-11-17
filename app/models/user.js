@@ -84,24 +84,17 @@ export default Ember.Object.extend({
         }
     }),
 
-    photoUrl: computed('email', function () {
-        const email = this.get('email');
-        if (!email) {
-            return null;
-        }
-        return `https://outlook.office.com/owa/service.svc/s/GetPersonaPhoto?email=${email}&UA=0&size=HR64x64`
-    }),
+    photoUrl: "",
 
     setupPhoto() {
-        const ajax = this.get('ajax');
-        let url = this.get('avatarUrl');
-        if (!url) return;
+        let email = this.get('email');
+        this.get('ajax').request(`https://outlook.office.com/api/v2.0/Users/${email}/photo`)
+            .then(photoDescriptor => {
+                let avatarUrl = photoDescriptor["@odata.id"];
+                avatarUrl += "/$value";
 
-        ajax.request(url, {
-            headers: {
-                Authorization: `Bearer ${this.get('skype.authData.access_token')}`
-            }
-        });
+                this.set('photoUrl', avatarUrl);
+            });
     },
 
     subscribeToProperties() {
