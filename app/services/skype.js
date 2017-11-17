@@ -123,17 +123,12 @@ export default Service.extend(Evented, {
         });
 
         conversations.added(conversation => {
-            Logger.info('Conversation added', conversation);
+            Logger.info('Skype conversation added', { conversation });
 
             conversation.chatService.accept();
             conversation.chatService.start();
 
-            let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
-
-            this.trigger(EVENTS.conversationAdded, conversationModel);
-            // conversationModel.get('loaded').then(() => {
-            //     this.trigger(EVENTS.conversationAdded, conversationModel);
-            // });
+            this.trigger(EVENTS.conversationAdded, conversation);
         });
     },
 
@@ -155,19 +150,8 @@ export default Service.extend(Evented, {
 
     // Chat
 
-    startChat(id) {
-        var conversationManager;
-        var listeners;
-        var conversation = conversationManager.getConversation(id);
-        // do stuff with chat listeners
-        listeners.push(conversation.selfParticipant.chat.state.when('Connected', function () {
-            // Connected to chat
-        }));
-    },
-
-    sendMessage(message) {
-        var conversation;
-        conversation.chatService.sendMessage(message);
+    startConversation(sip) {
+        return this.application.conversationsManager.getConversation(sip);
     },
 
     // Audio & Video
@@ -190,24 +174,9 @@ export default Service.extend(Evented, {
         })
     },
 
-    endConversation(conversation) { //video, audio or chat (?)
-        conversation.leave();
-    },
-
     getAllGroups() {
         return this.application.personsAndGroupsManager.all.groups.get().then(groups => {
             return groups.filter(group => !!group.id());
         });
-    },
-
-    startConversation(sip) {
-        let conversation = this.application.conversationsManager.getConversation(sip);
-        let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
-
-        conversationModel.get('loaded').then(() => {
-            this.trigger(EVENTS.conversationAdded, conversationModel);
-        });
-
-        return conversationModel;
     }
 });

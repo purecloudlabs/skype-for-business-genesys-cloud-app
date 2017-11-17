@@ -1,8 +1,10 @@
 import Ember from 'ember';
 import { EVENTS } from './skype';
+import Conversation from '../models/conversation';
 
 const {
     inject,
+    getOwner,
     Logger,
     Service,
 } = Ember;
@@ -37,12 +39,11 @@ export default Service.extend({
     },
 
     addConversation(conversation) {
-        Logger.log('Store.addConversation - ', arguments);
+        Logger.info('Store.addConversation', { conversation });
 
-        this.get('conversations').pushObject(conversation);
-
+        const model = this.getConversation(conversation.id(), conversation);
         if (!this.get('activeConversation')) {
-            this.setActiveConversation(conversation);
+            this.setActiveConversation(model);
         }
     },
 
@@ -58,17 +59,37 @@ export default Service.extend({
         }
     },
 
-    startConversation(user) {
+    getConversation(id, skypeConversation = null) {
         const conversations = this.get('conversations');
-        const currentConversation = conversations.findBy('conversationTarget.id', user.id);
-
-        if (currentConversation) {
-            this.set('activeConversation', currentConversation);
-            return;
+        let conversation = conversations.findBy('id', id);
+        if (!conversation) {
+            conversation = Conversation.create({
+                id,
+                conversation: skypeConversation
+            }, getOwner(this).ownerInjection());
+            this.get('conversations').addObject(conversation);
+        }
+        if (!conversation.get('conversation') && skypeConversation) {
+            conversation.set('conversation', skypeConversation);
         }
 
-        const conversation = this.get('skype').startConversation(user.id);
-        this.setActiveConversation(conversation);
+        return conversation;
+    },
+
+    getConversationForUser(user) {
+        const conversation = this.get('conversations').findBy('conversationTarget.id', user.id);
+        if (!conversation) {
+            const skypeConversation = this.get('skype').startConversation(user.id);
+            return this.getConversation(skypeConversation.id(), skypeConversation);
+        }
+        return conversation;
+    },
+
+    startConversation(user) {
+        const conversation = this.getConversationForUser(user);
+        conversation.get('loaded').then(() => {
+            this.setActiveConversation(conversation);
+        });
     }
 
 });

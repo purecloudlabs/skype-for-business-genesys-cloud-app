@@ -1,68 +1,104 @@
 import Ember from 'ember';
+import User from './user';
 
 const {
+    get,
     inject,
+    getOwner,
     computed,
+    observer,
     run,
     RSVP,
     Logger
 } = Ember;
 
 export default Ember.Object.extend({
-
     skype: inject.service(),
 
     conversation: null,
-    conversationTarget: null,
 
     messages: null,
     loadedHistory: false,
 
-    name: computed.reads('conversationTarget.name'),
+    deferred: null,
+    _setupComplete: false,
+
+    name: computed.reads('conversationTarget.displayName'),
+
+    loaded: computed('deferred.promise', function () {
+        return this.get('deferred.promise');
+    }),
+
+    isReady: computed('_setupComplete', function () {
+        return this.get('_setupComplete');
+    }),
+
+    conversationTarget: computed('conversation', function () {
+        const person = get(this.get('conversation').participants(), 'firstObject.person');
+        if (!person) {
+            return {};
+        }
+        return User.create({
+            person
+        }, getOwner(this).ownerInjection());
+    }),
+
+    conversationChange: observer('conversation', function () {
+        run.once(this, this._setup);
+    }),
 
     init() {
         this._super(...arguments);
 
         this.set('messages', []);
+        this.set('deferred', RSVP.defer());
+
+        const id = this.get('id');
+        if (!id) {
+            throw new Error('Conversation id is required.');
+        }
 
         const conversation = this.get('conversation');
         if (!conversation) {
-            Logger.error("Conversation model created without skype conversation model to wrap");
+            Logger.warn('Conversation model created without skype conversation.');
             return;
         }
 
-        let deferred = RSVP.defer();
-        this.set('loaded', deferred.promise);
+        this._setup();
+    },
+
+    sendMessage(message) {
+        this.get('conversation').chatService.sendMessage(message)
+            .then(function () {
+                Logger.log('Message sent.');
+            });
+    },
+
+    loadMessageHistory() {
+        if (!this.get('loadedHistory')) {
+            this.get('conversation').historyService.getMoreActivityItems().then(() => {
+                Logger.log('HISTORY LOADED');
+                this.set('loadedHistory', true);
+            });
+        }
+    },
+
+    _setup() {
+        if (this.get('_setupComplete')) {
+            return;
+        }
+
+        this.set('_setupComplete', true);
+
+        const conversation = this.get('conversation');
 
         conversation.participants.added(person => {
-            Logger.log("conversation.participants.added", person);
-
-            this.set('conversationTarget', Ember.Object.create({
-                id: person.uri(),
-                name: person.displayName(),
-                model: person
-            }));
+            Logger.log('conversation.participants.added', person);
+            this.notifyPropertyChange('conversationTarget');
+            this.get('deferred').resolve();
         });
 
         conversation.historyService.activityItems.added(message => {
-            // message.direction();
-            // message.timestamp();
-            // message.text();
-            // message.html();
-            // message.sender.id(); // SIP URI
-
-            // fetch the display name from UCWA
-
-
-            // fetch the contact photo
-
-
-            // subscribe to the sender's presence status
-            // message.sender.availability.subscribe();
-            // message.sender.availability.changed(status => {
-            //     console.log(status);
-            // });
-
             Logger.log('HISTORY', message);
 
             let messageModel = Ember.Object.create({
@@ -86,61 +122,8 @@ export default Ember.Object.extend({
             this.get('messages').pushObject(messageModel);
         });
 
-        // turning off message events in favor of history events as an experiment.
-
-        // conversation.chatService.messages.added(item => {
-        //     console.log('MESSAGE', item);
-        //     /*
-        //     item.direction()
-        //     "Incoming"
-        //     item.html()
-        //     "test"
-        //     item.text()
-        //     "test"
-        //     item.status()
-        //     "Succeeded"
-        //     item.sender
-        //     BaseModel {displayName: ƒ, id: ƒ}
-        //     item.sender.displayName()
-        //     "Keri Lawrence"
-        //     item.sender.id()
-        //     "sip:kerilawrence@teamshia.onmicrosoft.com"
-        //      */
-        //
-        //     let messageModel = Ember.Object.create({
-        //         direction: item.direction(),
-        //         status: item.status(),
-        //         text: item.text(),
-        //         senderName: item.sender.displayName(),
-        //         senderSip: item.sender.id(),
-        //         timestamp: item.timestamp()
-        //     });
-        //     Logger.log("conversation.chatService.messages.added", messageModel, item);
-        //
-        //     this.get('messages').pushObject(messageModel);
-        // });
-
         conversation.state.changed((newValue, reason, oldValue) => {
             Logger.log('conversation.state.changed', newValue, reason, oldValue);
         });
-
-        run.once(() => deferred.resolve()); // until i work out how to load history
-    },
-
-    sendMessage(message) {
-        this.get('conversation').chatService.sendMessage(message)
-            .then(function () {
-                Logger.log('Message sent.');
-            });
-    },
-
-    loadMessageHistory() {
-        if (!this.get('loadedHistory')) {
-            this.get('conversation').historyService.getMoreActivityItems().then(() => {
-                Logger.log('HISTORY LOADED');
-                this.set('loadedHistory', true);
-            });
-        }
     }
-
 });
