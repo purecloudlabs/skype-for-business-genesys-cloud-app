@@ -93,16 +93,19 @@ export default Service.extend({
     },
 
     getUserForPerson(person) {
+        const id = person.id();
         const users = this.get('users');
-        let currentUser = users.find(user => {
-            return user.get('id') === person.id();
-        });
+        let currentUser = users.find(user => user.get('id') === id);
+
         if (!currentUser) {
             currentUser = User.create({
+                id,
                 person
             }, getOwner(this).ownerInjection());
-            this.get('users').addObject(currentUser);
+
+            users.addObject(currentUser);
         }
+
         return currentUser;
     },
 
