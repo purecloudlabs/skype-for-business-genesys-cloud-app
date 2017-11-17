@@ -1,3 +1,4 @@
+/* global localforage */
 import Ember from 'ember';
 
 const {
@@ -28,7 +29,8 @@ export default Service.extend({
     },
 
     accessCode: null,
-    accessToken: null,
+    skypeAccessToken: null,
+    purecloudAccessToken: null,
 
     init() {
         this._super(...arguments);
@@ -82,15 +84,15 @@ export default Service.extend({
     },
 
     silentLogin() {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) {
+        const skypeAccessToken = localStorage.getItem('skypeAccessToken');
+        if (!skypeAccessToken) {
             return RSVP.reject('no access token');
         }
 
-        Ember.run.once(this, this.set, 'accessToken', accessToken);
+        Ember.run.once(this, this.set, 'skypeAccessToken', skypeAccessToken);
         return this.get('ajax').request('https://graph.microsoft.com/v1.0/me/', {
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${skypeAccessToken}`
             }
         }).then(() => {
             Logger.info('logged in!');
@@ -98,7 +100,7 @@ export default Service.extend({
         }).then(() => {
             this.get('skype').signIn();
         }).catch(err => {
-            Ember.run.once(this, this.set, 'accessToken', null);
+            Ember.run.once(this, this.set, 'skypeAccessToken', null);
             return RSVP.reject(err);
         });
     },
@@ -120,8 +122,25 @@ export default Service.extend({
             if (typeof res === 'string') {
                 res = JSON.parse(res);
             }
-            this.set('accessToken', res.access_token);
-            window.localStorage.setItem('accessToken', res.access_token);
+            this.set('skypeAccessToken', res.access_token);
+            window.localStorage.setItem('skypeAccessToken', res.access_token);
+        });
+    },
+
+    purecloudAuth() {
+        const platform = window.require('platformClient');
+        const redirectUri = window.location.href;
+        const clientId = '9a529fd6-cb6c-4f8b-8fc9-e9288974f0c5';
+        let client = platform.ApiClient.instance;
+        client.setEnvironment('inindca.com');
+        client.loginImplicitGrant(clientId, redirectUri).catch((err) => {
+            Logger.error(err.error);
+        })
+    },
+
+    setTokenCookie(token, type) {
+        localforage.setItem(`forage.token.${type}`, token).then(() => {
+            console.log(`${type} cookie set`);
         });
     }
 });

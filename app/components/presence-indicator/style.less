@@ -1,14 +1,34 @@
 @import "variables";
 
 & {
-    @size: 10px;
+    @size: 14px;
 
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     height: @size;
     width: @size;
 
-    background-color: #fff;
-    border: 2px solid @pc-grey;
+    color: #ffffff;
+    font-size: 8px;
+
+    background-color: @status-offline;
     border-radius: 50%;
+}
+
+&.available {
+    background-color: @status-available;
+}
+
+&.busy {
+    background-color: @status-busy;
+}
+
+&.away {
+    background-color: @status-away;
+}
+
+&.offline {
+    background-color: @status-offline;
 }

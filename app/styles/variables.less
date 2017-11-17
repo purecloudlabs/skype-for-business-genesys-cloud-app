@@ -1,15 +1,273 @@
-@text-color: #111111;
+@font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@heading-font-family: @font-family;
+@secondary-font-family: "Lato", @font-family;
+@font-color: #4c4c4c;
+@text-color: @font-color;
 
-@pc-grey: #aaaaaa;
-@pc-blue-grey: rgb(90, 136, 157);
-@pc-blue-dark: rgb(15, 70, 94);
+@background-color: #F6F6F6;
+@modal-background-color: #FFF;
+
+@orgspan-green: #C1D82F;
+@orgspan-blue: #0e536f;
+@orgspan-blue-light: lighten(@orgspan-blue, 5%);
+@orgspan-blue-xlight: lighten(@orgspan-blue, 10%);
+@orgspan-blue-dark: #004466;
+
+@orgspan-blue-fade: #5CA4CA;
+@orgspan-blue-accent: #F5FCFF;
+@orgspan-blue-accent-border: #BAD7E0;
+
+@orgspan-grey: #777;
+@orgspan-grey-light: lighten(@orgspan-grey, 20%);
+
+@orgspan-grey-xlight: #efefef;
+@orgspan-grey-xlight-border: #d8d9d8;
+
+@border-color: #e0e0e0;
+@dropdown-border-color: @orgspan-grey-xlight-border;
+
+@link-color: #1997CA;
+
+@list-hover-color: #EEFFCC;
+
+@off-white: #f5f5f5;
+
+@pc-blue: #56aac6;
+@pc-black: #252525;
+@pc-lightblack: #333333;
+@pc-devil-grey: #666666;
+@pc-darkblue: #195F7A;
+@pc-headerblue: #4498b4;
+@pc-darkgrey: #b8b8b8;
+@pc-lightgrey: @background-color;
+@pc-lightblue: #e5eff1;
+@pc-green: #4f9325;
+@pc-brightgreen: #79ed45;
+@pc-red: #D2322D;
+@pc-lightred: #EAC3C2;
+@pc-yellow: #FDFCE5;
+@pc-white: #ffffff;
+@pc-grey: #cccccc;
+@pc-alto: #dddddd;
+@pc-mercury: #e5e5e5;
+@pc-emperor: #555555;
+@pc-silver-chalice: #aeaeae;
+@pc-dusty-gray: #999999;
+@pc-galliano: #c7a90b;
+@pc-candlelight: #ffda17;
+@pc-web-orange: #FFAA00;
+@pc-boulder: #7b7b7b;
+@pc-galliano: #c7a90b;
+@pc-candlelight: #ffda17;
+@pc-boston-blue: #3497bb;
+@pc-smalt-blue: #567b85;
+@pc-regent-blue: #aad4e3;
+@pc-eden: #0F465D;
+@pc-lima: #77dd22;
+@pc-global-red: #ff0000;
+@pc-hippie-blue: #53A1BC;
 
 // text colors
 @text-grey: @pc-grey;
-@text-blue-grey: @pc-blue-grey;
-@text-blue-dark: @pc-blue-dark;
+@text-blue-grey: @pc-smalt-blue;
+@text-blue-dark: @pc-darkblue;
 
 // background colors
 @bg-blue-light: #f5fcff;
 @bg-grey-light: #eeeeee;
+
+// chat status
+@status-available: #77DD22;
+@status-away: #FFBB33;
+@status-busy: #FF0000;
+@status-out-of-office: #ff1dce;
+@status-on-queue: #52cef8;
+@status-offline: #666666;
+@status-offline-icon: black;
+
+
+// extra bits
+@nav-bar-height: 60px;
+@nav-bar-background-color: #55A9C6;
+@nav-bar-link-color: #B4E2F2;
+@nav-bar-link-active-color: #4598B1;
+@nav-bar-link-active-background-color: #3F8BA2;
+
+@nav-tabs-border-color: #cacaca;
+@nav-tabs-active-color: @pc-boston-blue;
+@nav-tabs-active-border-width: 2px;
+
+@nav-tabs-panel-sidenav-color: #F6F8F9;
+@nav-tabs-panel-border-color: @pc-grey;
+@nav-tabs-panel-unread-background-color: @pc-global-red;
+
+@navigation-menu-width: 55px;
+@navigation-menu-height: 65px;
+
+@action-bar-active-conversation-color: #77fe65;
+@action-bar-background: @pc-eden;
+@action-bar-offline-color: #f43f39;
+
+@action-color: #56a6c1;
+@action-hover-color: #fff;
+@action-height: @navigation-menu-height;
+@action-height-compact: 45px;
+@action-icon-size: 24px;
+@action-icon-size-compact: 20px;
+
+@left-rail-width: 250px;
+@communications-drawer-width: 700px;
+
+@entity-image-default-width: 70px;
+@entity-image-person-border-radius: 50%;
+@entity-image-group-border-radius: 5px;
+@entity-image-default-border-radius: @entity-image-person-border-radius;
+
+@entity-contact-background: @nav-bar-background-color;
+@entity-contact-hover-background: darken(@entity-contact-background, 15%);
+
+@favorites-stroke-color: @pc-galliano;
+@favorites-fill-color: @pc-candlelight;
+
+@panel-background-color: #F4F4F4;
+@panel-border-color: @border-color;
+@panel-close-color: @pc-silver-chalice;
+@panel-active-background: #072c3d;
+@panel-header-text-color: #8b8b8b;
+
+@make-call-color: #62BC25;
+
+@search-pane-hover-background: rgb(225, 237, 242);
+@search-pane-active-background:  #072c3d;
+
+@roster-orange-red: #FF5A20;
+@roster-tangerine: #FB6508;
+@roster-fuchsia: #df00ff;
+@roster-entry-height: 28px;
+@roster-header-height: 40px;
+@roster-entry-active-background: @search-pane-active-background;
+@roster-entry-hover-background: @search-pane-hover-background;
+@roster-width: 220px;
+@roster-background-color: #F5FCFF;
+@roster-tab-background-color: #E1EEF4;
+@roster-tab-text-color: #568599;
+@roster-tab-active-text-color: #4F7787;
+@roster-divider-lines: #C0D7E1;
+@roster-hover-color: #F8FCEE;
+
+@roster-entry-text-color: #568599;
+@roster-section-header-color: #4F7787;
+@roster-entry-text-color-bold: @roster-orange-red;
+@roster-entry-badge-color: @roster-orange-red;
+@roster-new-chat-emphasis-color: @roster-orange-red;
+
+@roster-header-font: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+@roster-entry-font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+@chat-title-bar-text-color: @pc-devil-grey;
+@chat-title-bar-background: @background-color;
+@chat-title-bar-background-active: #39b54a;
+@chat-title-bar-background-hover: #e6e6e6;
+@chat-title-bar-background-selected: #fff;
+@chat-title-bar-divider-border-color: 1px solid @pc-grey;
+
+@chat-message-badge-color-you: #DCDCDC;
+@chat-message-badge-color-unread: @roster-new-chat-emphasis-color;
+@chat-border-color: @pc-alto;
+@chat-message-you-a-color: @link-color;
+@chat-message-you-a-font-weight: bold;
+@chat-message-other: #F3F3F3;
+@chat-unread-count-background-color: @status-available;
+@chat-unread-count-color: #222;
+@chat-controls-background: #e3e3e3;
+
+@failure-status: @pc-global-red;
+@success-status: @pc-lima;
+@started-status: #52cef8;
+@identified-status: #1589ff;
+@monitoring-status: #ffbb33;
+
+@input-height: 40px;
+@input-font-size: 15px;
+@input-placeholder-focus: #eee;
+
+@person-detail-header-general-color: #fff;
+@person-detail-header-general-font-family: @heading-font-family;
+@person-detail-header-entity-image-border-radius: 50%;
+@person-detail-header-border-top: 1px solid #96cadb;
+@person-detail-header-border-bottom: 1px solid #fff;
+@person-detail-header-background: #4498b4;
+@person-detail-header-background-size: 100%;
+@person-detail-header-box-shadow: 0px -3px 5px rgba(0,0,0,0.1) inset;
+@person-detail-header-a-color: #fff;
+@person-detail-header-a-text-decoration: none;
+@person-detail-header-a-hover-color: #FFB500;
+@person-detail-header-a-hover-text-decoration: underline;
+@person-detail-header-edit-action-a-hover-text-decoration: none;
+@person-detail-header-contact-info-show-overflow-background: #fff;
+@person-detail-header-label-color: #fff;
+@person-detail-header-number-extension-color: #fff;
+
+@field-section-background: #FFF;
+@field-section-border: 1px solid #dcdcdc;
+@field-section-border-radius: 4px;
+@field-section-header-border-bottom: 1px solid #dcdcdc;
+@field-section-default-spacing: 20px;
+
+@field-entry-validation-error-border: @pc-global-red;
+@field-entry-validation-error-background: #FFF0F0;
+@field-entry-validation-error-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(233, 102, 102, 0.6);
+
+@field-entry-label-width: 240px;
+@field-entry-value-width: 240px;
+@field-entry-extras-width: 90px;
+
+// Bootstrap Variable Overrides
+@primary: @orgspan-blue;
+@primary-shadow: darken(@primary, 8%);
+@primary-light: lighten(@primary, 18%);
+
+@danger: #e13c24;
+@danger-shadow: dark(@danger, 8%);
+
+@state-danger-text: @pc-global-red;
+@state-danger-bg: #FFF0F0;
+@state-danger-border: darken(spin(@state-danger-bg, -10), 5%);
+
+@suggest-search-icon-size: 18px;
+@suggest-search-input-width: 200px;
+@suggest-search-input-background: #8AC1D4;
+@suggest-search-results-width: 420px;
+
+@nav-sub-menu-text-gray: #6f6f6f;
+@nav-sub-menu-border-gray: #d8d8d8;
+@nav-sub-menu-toggle-gray: #ebebeb;
+@nav-sub-menu-active-a-blue: #1997ca;
+
+@chat-user-font-color: #417287;
+@chat-time-font-color: lighten(@chat-user-font-color, 11%);
+
+@reply-user-font-color: mix(@link-color, @reply-time-font-color, 40%);
+@reply-time-font-color: @chat-user-font-color;
+
+@interaction-responses-border: 1px solid @border-color;
+
+@fax-uploading: #ffbb33;
+@fax-converting: #ffbb33;
+@fax-transmitting: #ffbb33;
+@fax-dialing: #ffbb33;
+@fax-connected: #ffbb33;
+@fax-disconnected: @success-status;
+
+@acd-session-share-fullscreen-height: 65px;
+
+@fixtable-row-background-hover-color: #fdfceb;
+@fixtable-row-indicator-hover-background-color: #56aac6;
+@fixtable-row-background-danger-color: #f2dede;
+@fixtable-row-background-danger-hover-color: #ebcccc;
+
+
+//waveform
+@waveform-graph-height: 60px;
+@darkorange: #da6f27;
 
