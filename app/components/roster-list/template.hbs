@@ -50,7 +50,7 @@
     <div class="roster-entries">
         {{#each activeConversations as |conversation|}}
             <div class="roster-entry" {{action "selectConversation" conversation}}>
-                {{presence-indicator person=person}}
+                {{presence-indicator user=conversation.conversationTarget}}
 
                 <div class="name">
                     {{conversation.name}}
