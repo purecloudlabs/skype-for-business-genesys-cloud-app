@@ -93,6 +93,7 @@ export default Service.extend({
             }
         }).then(() => {
             Logger.info('logged in!');
+            this.get('skype').signIn();
         }).catch(err => {
             Ember.run.once(this, this.set, 'accessToken', null);
             return RSVP.reject(err);
