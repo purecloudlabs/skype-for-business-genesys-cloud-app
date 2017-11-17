@@ -4,9 +4,10 @@ import User from '../../models/user';
 const {
     inject,
     getOwner,
+    computed,
+    RSVP,
     Logger,
-    Component,
-    computed
+    Component
 } = Ember;
 
 export default Component.extend({
@@ -15,7 +16,7 @@ export default Component.extend({
     skype: inject.service(),
     store: inject.service(),
 
-    searchResults: [],
+    searchQuery: null,
 
     generalContacts: computed.alias('store.contacts'),
     activeConversations: computed.alias('store.conversations'),
@@ -29,67 +30,45 @@ export default Component.extend({
             this.get('store').setActiveConversation(conversation);
         },
 
-        clickContact(person) {
-            this.get('store').startConversation(person);
-        },
-
         searchHandler (event) {
-            let val = event.target.value;
-            if (val !== '') {
-                this.set('searchLoading', true);
-                this.set('hideSearch', false);
-                Ember.run.debounce(this, this.handleSearch, val, 500);
-            } else {
-                this.set('searchLoading', false);
-                this.set('hideSearch', true);
-                this.set('searchResults', []);
-            }
+            let value = event.target.value;
+            Ember.run.debounce(this, this.set, 'searchQuery', value, 500);
         },
 
-        addContact(person) {
-            this.get('skype').addContact(person).then(() => {
-                let group = this.get('groups').filterBy('name', "Other Contacts")[0];
-                group.get('persons').pushObject(person);
-            });
+        selectSearchResult(user) {
+            this.get('store').startConversation(user);
         }
     },
 
-    handleSearch(input) {
-        if (!input) {
-            this.set('searchResults', null);
-            return;
+    hideSearch: computed('searchQuery', function () {
+        return !this.get('searchQuery');
+    }),
+
+    searchResults: computed('searchQuery', function () {
+        const search = this.get('searchQuery');
+        if (!search) {
+            return RSVP.resolve([]);
         }
 
-        let query = this.get('skype').application.personsAndGroupsManager.createPersonSearchQuery();
-        query.limit(50);
-        query.text(input);
+        const query = this.get('skype').application.personsAndGroupsManager.createPersonSearchQuery();
+        query.limit(20);
+        query.text(search);
 
-        Logger.warn(`Starting search for ${input}`);
+        Logger.log('Starting search for', { query });
 
-        query.getMore().then((results) => {
-            let list = results.map((result) => {
-                return result.result;
+        return new RSVP.Promise((resolve, reject) => {
+            query.getMore().then((results) => {
+                const data = results.map((result) => {
+                    return User.create({
+                        person: result.result
+                    }, getOwner(this).ownerInjection());
+                });
+                Logger.log('Results:', { data });
+                resolve(data);
+            }, (error) => {
+                Logger.error('Failed loading results', { error });
+                reject({ error });
             });
-            this.set('searchResults', []);
-            list.forEach( person => {
-                let personModel = User.create({
-                    person
-                }, getOwner(this).ownerInjection());
-
-                this.get('searchResults').pushObject(personModel);
-            });
-            this.set('searchLoading', false);
-            Logger.log(list);
-        },
-        (err) => {
-            Logger.error(err);
-        });
-    },
-
-    fetchData() {
-        const store = this.get('store');
-
-        this.set('generalContacts', store.get('contacts'));
-        Logger.log('RosterList.generalContacts - ', this.get('generalContacts'));
-    }
+        })
+    })
 });

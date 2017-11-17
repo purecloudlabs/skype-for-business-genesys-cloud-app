@@ -126,6 +126,7 @@ export default Service.extend(Evented, {
             Logger.info('Conversation added', conversation);
 
             conversation.chatService.accept();
+            conversation.chatService.start();
 
             let conversationModel = Conversation.create({ conversation }, getOwner(this).ownerInjection());
 

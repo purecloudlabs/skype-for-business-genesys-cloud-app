@@ -22,12 +22,11 @@ export default Service.extend({
     // appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
     appId: '6dd45f0c-9db2-4c5b-93c3-3ff5c703184e',
     urls: {
-        // auth: 'https://login.microsoftonline.com/common/oauth2/authorize',
         auth: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-        grant: 'https://login.microsoftonline.com/common/oauth2/token'
+        grant: 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
     },
 
-    idToken: null,
+    accessCode: null,
     accessToken: null,
 
     init() {
@@ -38,12 +37,9 @@ export default Service.extend({
 
     scope: computed(function () {
         return [
-            'Calendars.ReadWrite',
             'Contacts.ReadWrite',
             'User.ReadBasic.All',
-            'User.ReadWrite',
-            'Mail.ReadWrite',
-            'Mail.Send'
+            'User.ReadWrite'
         ];
     }),
 
@@ -55,7 +51,6 @@ export default Service.extend({
             response_type: 'code',
             nonce: 'msft',
             response_mode: 'fragment',
-            // resource: 'https://webdir.online.lync.com',
             scope: this.get('scope').join(' ')
         };
 
@@ -69,13 +64,12 @@ export default Service.extend({
         const interval = window.setInterval(() => {
             try {
                 const search = popup.window.location.hash;
-                // const match = search.match(/id_token=(.*)&/);
                 const match = search.match(/code=(.*)&/);
                 if (match && match[1]) {
                     popup.close();
                     window.clearInterval(interval);
 
-                    this.set('idToken', match[1]);
+                    this.set('accessCode', match[1]);
                     deferred.resolve(match[1]);
                 }
             } catch (e) {
@@ -92,7 +86,7 @@ export default Service.extend({
             return RSVP.reject('no access token');
         }
 
-        this.set('accessToken', accessToken);
+        Ember.run.once(this, this.set, 'accessToken', accessToken);
         return this.get('ajax').request('https://graph.microsoft.com/v1.0/me/', {
             headers: {
                 Authorization: `Bearer ${accessToken}`
@@ -100,7 +94,7 @@ export default Service.extend({
         }).then(() => {
             Logger.info('logged in!');
         }).catch(err => {
-            this.set('accessToken', null);
+            Ember.run.once(this, this.set, 'accessToken', null);
             return RSVP.reject(err);
         });
     },
@@ -109,11 +103,10 @@ export default Service.extend({
         const data = {
             code,
             client_id: this.get('appId'),
-            resource: 'https://graph.windows.net/',
             scope: this.get('scope').join(' '),
             redirect_uri: window.location.href,
             grant_type: 'authorization_code',
-            client_secret: 'qGPJgoQgN7ZBc8iz65SVnD8qJ5gQGHh7q3y4rF0Kn/g='
+            client_secret: 'qbbaVO8>dmjRALXY8557<>-'
         };
 
         return this.get('ajax').post(this.get('urls.grant'), {

@@ -10,27 +10,30 @@
 </div>
 
 <div class="search-container">
-    <div class="search">
-        <div class="search-input">
-            <input class="search-input"
-               type="text"
-               placeholder="Start a conversation"
-               onkeyup={{action "searchHandler"}}>
+    <div class="search-input">
+        <input class="search-input"
+            type="text"
+            placeholder="Start a conversation"
+            onkeyup={{action "searchHandler"}}>
 
-            <i class="ion-search"></i>
-        </div>
+        <i class="ion-search"></i>
+    </div>
 
-        {{#if searchLoading}}
-            <div class="loading">
-                <span>Loading Results...</span>
+    <div class="search-results {{if hideSearch 'hide'}}">
+        {{#if (is-pending searchResults)}}
+            <div class="search-result loading">
+                Loading results...
             </div>
         {{else}}
-            {{#each searchResults as |result|}}
-                <div class="search-result {{if hideSearch "hide-search"}}" {{action "addContact" result}}>
-                <span class="avatar">
-                    {{profile-image person=result}}
-                </span>
-                    <span class="name">{{result.displayName}}</span>
+            {{#each (await searchResults) as |result|}}
+                <div class="search-result">
+                    <a href="#" {{action "selectSearchResult" result}}>
+                        <span class="name">{{result.displayName}}</span>
+                    </a>
+                </div>
+            {{else}}
+                <div class="search-result empty">
+                    No results...
                 </div>
             {{/each}}
         {{/if}}
