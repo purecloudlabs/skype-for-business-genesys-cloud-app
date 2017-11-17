@@ -22,25 +22,31 @@ export default Ember.Object.extend({
         this.set('loaded', deferred.promise);
 
         if (typeof person.id.get === "function") {
-            person.id.get().then(() => {
-                this.set('id', person.id());
-                this.set('displayName', person.displayName());
+            person.id.get()
+                .then(() => {
+                    this.set('id', person.id());
+                    this.set('displayName', person.displayName());
 
-                person.status.get().then(() => this.set('rawPresence', person.status()));
-                if (!person.email) {
-                    person.emails.get().then(([email]) => {
+                    return person.status.get()
+                })
+                .then(() => {
+                    this.set('rawPresence', person.status());
+
+                    return person.email ?
+                        person.email.get() :
+                        person.emails.get();
+
+                })
+                .then(([email]) => {
+                    if (email && email.emailAddress) {
                         this.set('email', email.emailAddress());
-                        this.setupPhoto();
-                    });
-                } else {
-                    person.email.get().then(() => {
+                    } else {
                         this.set('email', person.email());
-                        this.setupPhoto();
-                    });
-                }
+                    }
 
-                deferred.resolve(this);
-            });
+                    this.setupPhoto();
+                    deferred.resolve(this);
+                });
         } else {
             this.set('displayName', person.displayName);
             if (person.emails) {
