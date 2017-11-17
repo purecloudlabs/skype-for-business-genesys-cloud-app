@@ -19,9 +19,11 @@ export default Service.extend({
     ajax: inject.service(),
 
     // appId: '18758f68-8cf8-4f32-8785-059d4cd2e62e',
-    appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
+    // appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
+    appId: '6dd45f0c-9db2-4c5b-93c3-3ff5c703184e',
     urls: {
-        auth: 'https://login.microsoftonline.com/common/oauth2/authorize',
+        // auth: 'https://login.microsoftonline.com/common/oauth2/authorize',
+        auth: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
         grant: 'https://login.microsoftonline.com/common/oauth2/token'
     },
 

@@ -12,6 +12,7 @@ export default AjaxService.extend({
     contentType: 'application/json; charset=utf-8',
 
     trustedHosts: [
+        /outlook.office.com/,
         /graph.microsoft.com/
     ],
 

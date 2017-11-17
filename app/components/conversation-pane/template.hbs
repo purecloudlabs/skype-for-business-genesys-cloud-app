@@ -9,7 +9,10 @@
     <div class="messages-panel">
         {{#each conversation.messages as |message|}}
             <div class="message">
-                <div class="avatar">{{profile-image person=person}}</div>
+                <div class="avatar">
+                    <img src={{message.senderAvatar}} />
+                    {{!profile-image person=person}}
+                </div>
                 <div class="body">
                     <div class="user">
                         {{message.senderName}}
