@@ -1,9 +1,7 @@
 import Ember from 'ember';
-import User from '../../models/user';
 
 const {
     inject,
-    getOwner,
     computed,
     RSVP,
     Logger,
@@ -30,12 +28,15 @@ export default Component.extend({
             this.get('store').setActiveConversation(conversation);
         },
 
-        searchHandler (event) {
+        searchHandler(event) {
             let value = event.target.value;
             Ember.run.debounce(this, this.set, 'searchQuery', value, 500);
         },
 
         selectSearchResult(user) {
+            this.$('input').val('');
+            this.set('searchQuery', null);
+
             this.get('store').startConversation(user);
         }
     },
@@ -59,7 +60,7 @@ export default Component.extend({
         return new RSVP.Promise((resolve, reject) => {
             query.getMore().then((results) => {
                 const data = results.map((result) => {
-                    return this.getUserForPerson(result.result);
+                    return this.get('store').getUserForPerson(result.result);
                 });
                 Logger.log('Results:', { data });
                 resolve(data);
