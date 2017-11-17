@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { EVENTS } from './skype';
 import Conversation from '../models/conversation';
+import User from '../models/user';
 
 const {
     inject,
@@ -13,6 +14,7 @@ const {
 export default Service.extend({
     skype: inject.service(),
 
+    users: null,
     contacts: null,
     conversations: null,
     activeConversation: null,
@@ -20,6 +22,7 @@ export default Service.extend({
     init() {
         this._super(...arguments);
 
+        this.set('users', []);
         this.set('contacts', []);
         this.set('conversations', []);
 
@@ -33,13 +36,17 @@ export default Service.extend({
     },
 
     addPerson(person) {
-        Logger.log('Store.addPerson - ', arguments);
+        Logger.log('Store.addPerson:', { person });
 
-        this.get('contacts').pushObject(person);
+        const user = User.create({
+            person
+        }, getOwner(this).ownerInjection());
+
+        this.get('users').addObject(user);
     },
 
     addConversation(conversation) {
-        Logger.info('Store.addConversation', { conversation });
+        Logger.info('Store.addConversation:', { conversation });
 
         const model = this.getConversation(conversation.id(), conversation);
         if (!this.get('activeConversation')) {
@@ -83,6 +90,20 @@ export default Service.extend({
             return this.getConversation(skypeConversation.id(), skypeConversation);
         }
         return conversation;
+    },
+
+    getUserForPerson(person) {
+        const users = this.get('users');
+        let currentUser = users.find(user => {
+            return user.get('id') === person.id();
+        });
+        if (!currentUser) {
+            currentUser = User.create({
+                person
+            }, getOwner(this).ownerInjection());
+            this.get('users').addObject(currentUser);
+        }
+        return currentUser;
     },
 
     startConversation(user) {

@@ -14,7 +14,7 @@ export default AjaxService.extend({
     trustedHosts: [
         /outlook.office.com/,
         /graph.microsoft.com/,
-        /webdir2a.online.lync.com/
+        /online.lync.com/
     ],
 
     headers: computed('auth.accessToken', function () {

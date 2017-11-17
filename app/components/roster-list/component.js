@@ -59,9 +59,7 @@ export default Component.extend({
         return new RSVP.Promise((resolve, reject) => {
             query.getMore().then((results) => {
                 const data = results.map((result) => {
-                    return User.create({
-                        person: result.result
-                    }, getOwner(this).ownerInjection());
+                    return this.getUserForPerson(result.result);
                 });
                 Logger.log('Results:', { data });
                 resolve(data);

@@ -4,7 +4,6 @@ import User from './user';
 const {
     get,
     inject,
-    getOwner,
     computed,
     observer,
     run,
@@ -13,6 +12,7 @@ const {
 } = Ember;
 
 export default Ember.Object.extend({
+    store: inject.service(),
     skype: inject.service(),
 
     conversation: null,
@@ -38,9 +38,7 @@ export default Ember.Object.extend({
         if (!person) {
             return {};
         }
-        return User.create({
-            person
-        }, getOwner(this).ownerInjection());
+        return this.get('store').getUserForPerson(person);
     }),
 
     conversationChange: observer('conversation', function () {

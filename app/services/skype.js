@@ -116,9 +116,8 @@ export default Service.extend(Evented, {
         persons.added(person => {
             Logger.info('Person added', person);
 
-            let personModel = this.getUserModelForSkypePerson(person);
-            personModel.get('loaded').then(() => {
-                this.trigger(EVENTS.personAdded, personModel);
+            person.id.get().then(() => {
+                this.trigger(EVENTS.personAdded, person);
             });
         });
 
@@ -130,10 +129,6 @@ export default Service.extend(Evented, {
 
             this.trigger(EVENTS.conversationAdded, conversation);
         });
-    },
-
-    getUserModelForSkypePerson(person) {
-        return User.create({ person }, getOwner(this).ownerInjection());
     },
 
     addContact(person) {
