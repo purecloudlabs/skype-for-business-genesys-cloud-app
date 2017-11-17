@@ -17,6 +17,7 @@ function objectToQueryParameters(obj) {
 
 export default Service.extend({
     ajax: inject.service(),
+    skype: inject.service(),
 
     // appId: '18758f68-8cf8-4f32-8785-059d4cd2e62e',
     // appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
@@ -93,6 +94,8 @@ export default Service.extend({
             }
         }).then(() => {
             Logger.info('logged in!');
+            return this.get('skype.promise');
+        }).then(() => {
             this.get('skype').signIn();
         }).catch(err => {
             Ember.run.once(this, this.set, 'accessToken', null);
