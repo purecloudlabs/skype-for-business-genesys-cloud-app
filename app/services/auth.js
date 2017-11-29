@@ -38,6 +38,8 @@ export default Service.extend({
         // this.application = new window.Msal.UserAgentApplication(this.get('appId'));
     },
 
+    isLoggedIn: computed.and('purecloudAccessToken', 'skypeAccessToken'),
+
     scope: computed(function () {
         return [
             'Contacts.ReadWrite',
