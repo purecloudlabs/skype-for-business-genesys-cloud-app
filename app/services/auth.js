@@ -52,7 +52,7 @@ export default Service.extend({
         const base = this.get('urls.auth');
         const data = {
             client_id: this.get('appId'),
-            redirect_uri: window.location.href,
+            redirect_uri: `${window.location.origin}${window.location.pathname}`,
             response_type: 'code',
             nonce: 'msft',
             response_mode: 'fragment',
@@ -112,7 +112,7 @@ export default Service.extend({
             code,
             client_id: this.get('appId'),
             scope: this.get('scope').join(' '),
-            redirect_uri: window.location.href,
+            redirect_uri: `${window.location.origin}${window.location.pathname}`,
             grant_type: 'authorization_code',
             client_secret: 'qbbaVO8>dmjRALXY8557<>-'
         };
@@ -131,7 +131,7 @@ export default Service.extend({
 
     purecloudAuth() {
         const platform = window.require('platformClient');
-        const redirectUri = window.location.href;
+        const redirectUri = `${window.location.origin}${window.location.pathname}`;
         const clientId = '9a529fd6-cb6c-4f8b-8fc9-e9288974f0c5';
         let client = platform.ApiClient.instance;
         client.setEnvironment('inindca.com');
