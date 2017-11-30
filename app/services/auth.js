@@ -1,4 +1,4 @@
-/* global localforage */
+/* global localforage, Msal */
 import Ember from 'ember';
 
 const {
@@ -29,19 +29,38 @@ export default Service.extend({
     },
 
     accessCode: null,
-    skypeAccessToken: null,
+    msftAccessToken: null,
     purecloudAccessToken: null,
+
+    MSALDeferred: null,
 
     init() {
         this._super(...arguments);
 
-        // this.application = new window.Msal.UserAgentApplication(this.get('appId'));
+        const logger = new Msal.Logger((logLevel, message) => {
+            Ember.Logger.log('MSAL:', message);
+        }, { level: Msal.LogLevel.Verbose });
+
+        this.userAgentApplication = new Msal.UserAgentApplication(this.get('appId'), null, () => {
+            const deferred = RSVP.defer();
+            this.set('MSALDeferred', deferred);
+
+            this.userAgentApplication.acquireTokenSilent(this.get('scope')).then(token => {
+                this.set('msftAccessToken', token);
+            });
+        }, {
+            logger,
+            cacheLocation: 'localStorage'
+        });
+
+        window.auth = this;
     },
 
-    isLoggedIn: computed.and('purecloudAccessToken', 'skypeAccessToken'),
+    isLoggedIn: computed.and('purecloudAccessToken', 'msftAccessToken'),
 
     scope: computed(function () {
         return [
+            'openid',
             'Contacts.ReadWrite',
             'User.ReadBasic.All',
             'User.ReadWrite'
@@ -53,7 +72,7 @@ export default Service.extend({
         const data = {
             client_id: this.get('appId'),
             redirect_uri: `${window.location.origin}${window.location.pathname}`,
-            response_type: 'code',
+            response_type: 'id_token+token',
             nonce: 'msft',
             response_mode: 'fragment',
             scope: this.get('scope').join(' ')
@@ -62,7 +81,11 @@ export default Service.extend({
         return `${base}/?${objectToQueryParameters(data)}`;
     }),
 
-    login() {
+    microsoftUser: computed('msftAccessToken', function () {
+        return this.userAgentApplication.getUser();
+    }),
+
+    loginForCode() {
         const deferred = RSVP.defer();
         const url = this.get('authorizationUrl');
         const popup = window.open(url, 'auth', 'scrollbars=no,menubar=no,width=800,height=600');
@@ -85,16 +108,35 @@ export default Service.extend({
         return deferred.promise;
     },
 
+    loginMicrosoft() {
+        const deferred = RSVP.defer();
+
+        this.userAgentApplication.loginRedirect(this.get('scope'));
+
+        this.set('loginDeferred', deferred);
+        return deferred.promise;
+    },
+
     silentLogin() {
-        const skypeAccessToken = localStorage.getItem('skypeAccessToken');
-        if (!skypeAccessToken) {
+        if (this.get('MSALDeferred')) {
+            return this.get('MSALDeferred').promise;
+        }
+
+        if (this.userAgentApplication.getUser()) {
+            return this.get('skype.promise').then(() => {
+                this.get('skype').signIn();
+            })
+        }
+
+        const msftAccessToken = localStorage.getItem('msftAccessToken');
+        if (!msftAccessToken) {
             return RSVP.reject('no access token');
         }
 
-        Ember.run.once(this, this.set, 'skypeAccessToken', skypeAccessToken);
+        Ember.run.once(this, this.set, 'msftAccessToken', msftAccessToken);
         return this.get('ajax').request('https://graph.microsoft.com/v1.0/me/', {
             headers: {
-                Authorization: `Bearer ${skypeAccessToken}`
+                Authorization: `Bearer ${msftAccessToken}`
             }
         }).then(() => {
             Logger.info('logged in!');
@@ -102,7 +144,7 @@ export default Service.extend({
         }).then(() => {
             this.get('skype').signIn();
         }).catch(err => {
-            Ember.run.once(this, this.set, 'skypeAccessToken', null);
+            Ember.run.once(this, this.set, 'msftAccessToken', null);
             return RSVP.reject(err);
         });
     },
@@ -124,8 +166,8 @@ export default Service.extend({
             if (typeof res === 'string') {
                 res = JSON.parse(res);
             }
-            this.set('skypeAccessToken', res.access_token);
-            window.localStorage.setItem('skypeAccessToken', res.access_token);
+            this.set('msftAccessToken', res.access_token);
+            window.localStorage.setItem('msftAccessToken', res.access_token);
         });
     },
 
@@ -142,7 +184,7 @@ export default Service.extend({
 
     setTokenCookie(token, type) {
         localforage.setItem(`forage.token.${type}`, token).then(() => {
-            console.log(`${type} cookie set`);
+            Logger.log(`${type} cookie set`);
         });
     }
 });
