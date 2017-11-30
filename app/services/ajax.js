@@ -17,9 +17,9 @@ export default AjaxService.extend({
         /online.lync.com/
     ],
 
-    headers: computed('auth.accessToken', function () {
+    headers: computed('auth.msftAccessToken', function () {
         let headers = {};
-        const token = this.get('auth.accessToken');
+        const token = this.get('auth.msftAccessToken');
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
         }

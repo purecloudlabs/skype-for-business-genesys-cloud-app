@@ -34,9 +34,6 @@ export default Controller.extend({
                     Ember.log('done?', arguments);
                 }).catch(error => {
                     Ember.Logger.error('Error authenticating:', { error });
-                    return skype.get('promise');
-                }).then(() => {
-                    skype.signIn();
                 });
         }
     }
