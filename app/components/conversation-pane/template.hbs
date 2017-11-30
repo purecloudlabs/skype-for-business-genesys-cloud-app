@@ -1,7 +1,8 @@
 {{#if conversation}}
 
     <div class="user-header">
-        {{target.name}}
+        <div class="avatar">{{profile-image person=target}}</div>
+        <div class="name">{{target.displayName}}</div>
     </div>
     <div class="action-header">
         <button class="initiate-call">&nbsp;</button>
