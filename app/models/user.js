@@ -7,6 +7,7 @@ const {
 } = Ember;
 
 export default Ember.Object.extend({
+    auth: inject.service(),
     ajax: inject.service(),
     skype: inject.service(),
 
@@ -56,7 +57,6 @@ export default Ember.Object.extend({
             }
             this.set('rawPresence', person.status);
             this.set('avatarUrl', person.avatarUrl);
-            this.setupPhoto();
 
             deferred.resolve(this);
         }
@@ -94,18 +94,47 @@ export default Ember.Object.extend({
         }
     }),
 
-    photoUrl: "",
-
-    setupPhoto() {
-        let email = this.get('email');
-        this.get('ajax').request(`https://outlook.office.com/api/v2.0/Users/${email}/photo`)
+    photoUrl: computed('email', function () {
+        const email = this.get('email');
+        return this.get('ajax').request(`https://outlook.office.com/api/v2.0/Users/${email}/photo`)
             .then(photoDescriptor => {
-                let avatarUrl = photoDescriptor["@odata.id"];
-                avatarUrl += "/$value";
+                const avatarUrl = photoDescriptor['@odata.id'];
+                const requestUrl = `${avatarUrl}/$value`;
+                return fetch(requestUrl, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `bearer ${this.get('auth.msftAccessToken')}`
+                    }
+                }).then(response => {
+                    return response.blob();
+                }).then(blob => {
+                    return (window.URL || window.webkitURL).createObjectURL(blob);
+                });
+                // return new RSVP.Promise(resolve => {
+                //     // const xhr = new XMLHttpRequest();
+                //     // xhr.responseType = 'text';
+                //     // xhr.setRequestHeader('Authorization', `bearer ${this.get('auth.msftAccessToken')}`);
+                //     // xhr.onload = function() {
+                //     //     const blb = new Blob([xhr.response], {type: 'image/png'});
+                //     //     const url = (window.URL || window.webkitURL).createObjectURL(blb);
+                //     //     resolve(url);
+                //     // }
 
-                this.set('photoUrl', avatarUrl);
+                //     // xhr.open('GET', `${avatarUrl}/$value`);
+                //     // xhr.send();
+
+                //     // this.get('ajax').request(requestUrl, {
+                //     //     dataType: 'text',
+                //     //     contentType: 'text'
+                //     // }).then(data => {
+                //     //     window.imageData = data;
+                //     //     resolve('');
+                //     // });
+
+
+                // })
             });
-    },
+    }),
 
     subscribeToProperties() {
         let person = this.get('person');
