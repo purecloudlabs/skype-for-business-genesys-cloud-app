@@ -24,15 +24,19 @@ export default Controller.extend({
             const auth = this.get('auth');
             const skype = this.get('skype');
 
-            auth.login()
+            auth.loginMicrosoft()
                 .then(token => {
-                    console.log('TOKEN:', token);
-                    return auth.exchangeCodeForToken(token);
+                    Ember.Logger.log('TOKEN:', token);
                 })
                 .then(() => skype.get('promise'))
                 .then(() => skype.signIn())
                 .then(() => {
-                    console.log('done?', arguments);
+                    Ember.log('done?', arguments);
+                }).catch(error => {
+                    Ember.Logger.error('Error authenticating:', { error });
+                    return skype.get('promise');
+                }).then(() => {
+                    skype.signIn();
                 });
         }
     }
