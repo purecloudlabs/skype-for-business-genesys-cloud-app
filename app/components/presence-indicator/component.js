@@ -19,7 +19,11 @@ export default Component.extend({
     user: null,
 
     iconClass: computed('user.presence', function () {
-        const presence = this.get('user.presence').toLowerCase();
-        return ICON_MAPPING[presence];
+        const presence = this.get('user.presence');
+        if (presence) {
+            return ICON_MAPPING[presence.toLowerCase()];
+        } else {
+            return ICON_MAPPING['offline'];
+        }
     })
 });
