@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import PromiseObject from '../utils/promise-object';
 
 const {
     inject,
@@ -96,7 +97,10 @@ export default Ember.Object.extend({
 
     photoUrl: computed('email', function () {
         const email = this.get('email');
-        return this.get('ajax').request(`https://outlook.office.com/api/v2.0/Users/${email}/photo`)
+        if (!email) {
+            return RSVP.resolve('');
+        }
+        const promise = this.get('ajax').request(`https://outlook.office.com/api/v2.0/Users/${email}/photo`)
             .then(photoDescriptor => {
                 const avatarUrl = photoDescriptor['@odata.id'];
                 const requestUrl = `${avatarUrl}/$value`;
@@ -111,6 +115,10 @@ export default Ember.Object.extend({
                     return (window.URL || window.webkitURL).createObjectURL(blob);
                 });
             });
+
+        return PromiseObject.create({
+            promise
+        });
     }),
 
     subscribeToProperties() {

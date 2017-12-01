@@ -1,27 +1,24 @@
 import Ember from 'ember';
 
 const {
+    run,
+    observer,
     computed,
     Component,
-    inject
 } = Ember;
 
 export default Component.extend({
-    classNameBindings: ['person.presenceClass'],
+    classNameBindings: [],
 
     person: null,
-    showInitials: false,
+    showInitials: true,
+
+    enablePresenceIndicator: true,
 
     didInsertElement() {
         this._super(...arguments);
 
-        this.$('img').on('load', event => {
-            if (event.target.naturalHeight < 32) { // hax
-                this.set('showInitials', true);
-            }
-        }).on('error', () => {
-            this.set('showInitials', true);
-        });
+        this.processPhoto();
     },
 
     initials: computed('person.displayName', function () {
@@ -31,5 +28,17 @@ export default Component.extend({
         }
         const [first, last] = name.split(' ');
         return `${first.charAt(0)}${last.charAt(0)}`;
+    }),
+
+    processPhoto: observer('person.photoUrl', function () {
+        this.get('person.photoUrl').then(url => {
+            if (!url) {
+                run.scheduleOnce('afterRender', this, this.set, 'showInitials', true);
+            } else {
+                run.scheduleOnce('afterRender', this, this.set, 'showInitials', false);
+            }
+        }).catch(() => {
+            run.scheduleOnce('afterRender', this, this.set, 'showInitials', true);
+        });
     })
 });

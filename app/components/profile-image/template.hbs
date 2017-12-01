@@ -1,4 +1,10 @@
-<img src={{await person.photoUrl}}>
+<div class="image-container">
+    <img src={{await person.photoUrl}}>
+</div>
+
+{{#if enablePresenceIndicator}}
+    {{presence-indicator user=person}}
+{{/if}}
 
 {{#if showInitials}}
     <div class="initials">
