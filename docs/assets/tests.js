@@ -17,7 +17,22 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
 
   QUnit.test('components/conversation-pane/component.js', function (assert) {
     assert.expect(1);
-    assert.ok(true, 'components/conversation-pane/component.js should pass ESLint\n\n');
+    assert.ok(false, 'components/conversation-pane/component.js should pass ESLint\n\n22:17 - Unexpected console statement. (no-console)');
+  });
+
+  QUnit.test('components/message-body/component.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'components/message-body/component.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('components/messages-panel/component.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'components/messages-panel/component.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('components/presence-indicator/component.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'components/presence-indicator/component.js should pass ESLint\n\n');
   });
 
   QUnit.test('components/presence-selector/component.js', function (assert) {
@@ -32,17 +47,22 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
 
   QUnit.test('components/roster-list/component.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'components/roster-list/component.js should pass ESLint\n\n131:21 - \'conversation\' is defined but never used. (no-unused-vars)');
+    assert.ok(true, 'components/roster-list/component.js should pass ESLint\n\n');
   });
 
   QUnit.test('controllers/index.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'controllers/index.js should pass ESLint\n\n26:17 - Unexpected console statement. (no-console)');
+    assert.ok(true, 'controllers/index.js should pass ESLint\n\n');
   });
 
   QUnit.test('initializers/skype.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'initializers/skype.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('models/conversation.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'models/conversation.js should pass ESLint\n\n');
   });
 
   QUnit.test('models/user.js', function (assert) {
@@ -65,6 +85,11 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
     assert.ok(true, 'routes/application.js should pass ESLint\n\n');
   });
 
+  QUnit.test('routes/null.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/null.js should pass ESLint\n\n');
+  });
+
   QUnit.test('services/ajax.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'services/ajax.js should pass ESLint\n\n');
@@ -82,7 +107,17 @@ define('purecloud-skype/tests/app.lint-test', [], function () {
 
   QUnit.test('services/skype.js', function (assert) {
     assert.expect(1);
-    assert.ok(true, 'services/skype.js should pass ESLint\n\n');
+    assert.ok(false, 'services/skype.js should pass ESLint\n\n3:8 - \'User\' is defined but never used. (no-unused-vars)\n4:8 - \'Conversation\' is defined but never used. (no-unused-vars)\n7:5 - \'getOwner\' is assigned a value but never used. (no-unused-vars)');
+  });
+
+  QUnit.test('services/store.js', function (assert) {
+    assert.expect(1);
+    assert.ok(false, 'services/store.js should pass ESLint\n\n60:9 - Unexpected console statement. (no-console)');
+  });
+
+  QUnit.test('utils/promise-object.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'utils/promise-object.js should pass ESLint\n\n');
   });
 });
 define('purecloud-skype/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {
