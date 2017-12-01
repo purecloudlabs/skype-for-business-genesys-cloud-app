@@ -59,11 +59,13 @@ export default Service.extend({
     },
 
     setActiveConversation(conversation) {
+        console.log('store.setActiveConversation', conversation);
+
         if (conversation !== this.get('activeConversation')) {
             this.set('activeConversation', conversation);
-
-            conversation.loadMessageHistory();
         }
+
+        conversation.loadMessageHistory();
     },
 
     getConversation(id, skypeConversation = null) {

@@ -12,9 +12,9 @@
 <div class="search-container">
     <div class="search-input">
         <input class="search-input"
-            type="text"
-            placeholder="Start a conversation"
-            onkeyup={{action "searchHandler"}}>
+               type="text"
+               placeholder="Start a conversation"
+               onkeyup={{action "searchHandler"}}>
 
         <i class="ion-search"></i>
     </div>
@@ -64,52 +64,3 @@
     </div>
 </div>
 
-<div class="roster-group person-groups">
-
-</div>
-
-{{!--
-<div class="conversations">
-    {{#each activeConversations as |conversation|}}
-        <button class="conversation" onclick={{action "clickConversation" conversation}}>
-            {{conversation.conversationTarget.name}}
-        </button>
-    {{/each}}
-</div>
-
-<div class="groups">
-    {{#each generalContacts as |person|}}
-        <button class="group-member" onclick={{action "clickContact" person}}>
-            <span class="avatar">
-                {{profile-image person=person}}
-            </span>
-            <span class="person-name">
-                {{person.displayName}}1
-            </span>
-        </button>
-    {{else}}
-        <div class="no-members">No members</div>
-    {{/each}}
-
-    <!-- {{#each groups as |group|}}
-        <div class="group-entry">
-
-            <div class="group-name">{{group.name}}</div>
-
-            {{#each group.persons as |person|}}
-                <button class="group-member" onclick={{action "clickContact" person}}>
-                    <span class="avatar">
-                        {{profile-image person=person}}
-                    </span>
-                    <span class="person-name">
-                        {{person.displayName}}
-                    </span>
-                </button>
-            {{else}}
-                <div class="no-members">No members</div>
-            {{/each}}
-
-        </div>
-    {{/each}} -->
-</div>
---}}

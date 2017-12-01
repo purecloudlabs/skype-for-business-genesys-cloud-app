@@ -19,10 +19,6 @@ export default Component.extend({
     generalContacts: computed.alias('store.contacts'),
     activeConversations: computed.alias('store.conversations'),
 
-    init() {
-        this._super(...arguments);
-    },
-
     actions: {
         selectConversation(conversation) {
             this.get('store').setActiveConversation(conversation);
