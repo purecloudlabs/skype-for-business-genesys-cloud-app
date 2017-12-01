@@ -1,0 +1,12 @@
+<div class="avatar">
+    {{profile-image person=message.sender}}
+</div>
+<div class="body">
+    <div class="user">
+        {{message.sender.displayName}}
+        <span class="timestamp">
+            {{moment-calendar message.timestamp}}
+        </span>
+    </div>
+    <div class="text">{{message.text}}</div>
+</div>

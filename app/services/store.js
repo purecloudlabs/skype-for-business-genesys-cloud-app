@@ -28,21 +28,19 @@ export default Service.extend({
 
         const skype = this.get('skype');
 
-        skype.on(EVENTS.personAdded, this.addPerson.bind(this));
+        skype.on(EVENTS.signIn, this.signIn.bind(this));
+        skype.on(EVENTS.personAdded, this.getUserForPerson.bind(this));
         skype.on(EVENTS.conversationAdded, this.addConversation.bind(this));
         skype.on(EVENTS.groupAdded, this.addGroup.bind(this));
 
         window.STORE = this;
     },
 
-    addPerson(person) {
-        Logger.log('Store.addPerson:', { person });
+    signIn(user) {
+        Logger.log('Store.signIn:', user);
 
-        const user = User.create({
-            person
-        }, getOwner(this).ownerInjection());
-
-        this.get('users').addObject(user);
+        let me = this.getUserForPerson(user);
+        this.set('me', me);
     },
 
     addConversation(conversation) {

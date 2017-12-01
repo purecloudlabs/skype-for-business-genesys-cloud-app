@@ -29,6 +29,7 @@ const appConfigProperties = {
 };
 
 export const EVENTS = {
+    signIn: 'SIGN_IN',
     groupAdded: 'GROUP_ADDED',
     groupRemoved: 'GROUP_REMOVED',
     personAdded: 'PERSON_ADDED',
@@ -78,11 +79,10 @@ export default Service.extend(Evented, {
 
         return this.application.signInManager.signIn(options)
             .then(() => {
-                Logger.log('SIGNIN-THEN', arguments);
+                Logger.log('Skype.signIn.then', arguments);
                 const me = this.application.personsAndGroupsManager.mePerson;
-                const user = User.create({person: me}, getOwner(this).ownerInjection());
-
-                this.set('user', user);
+                this.set('me', me);
+                this.trigger(EVENTS.signIn, me);
 
                 this.registerForEvents();
 
@@ -90,7 +90,7 @@ export default Service.extend(Evented, {
                 this.application.conversationsManager.getMoreConversations();
             })
             .catch((err) => {
-                Logger.error('SIGNIN-CATCH', err, arguments);
+                Logger.error('Skype.signIn.catch', err, arguments);
             })
     },
 

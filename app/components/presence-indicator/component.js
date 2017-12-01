@@ -9,7 +9,7 @@ const ICON_MAPPING = {
     available: 'ion-checkmark-round',
     away: 'ion-clock',
     offline: 'ion-close-round'
-}
+};
 
 export default Component.extend({
     tagName: 'span',

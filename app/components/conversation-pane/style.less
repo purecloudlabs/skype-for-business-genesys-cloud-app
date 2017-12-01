@@ -1,4 +1,7 @@
 & {
+    @border-grey: @pc-mercury;
+    @background-grey: #F9F9F9;
+
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -21,22 +24,23 @@
         flex-shrink: 0;
         align-items: center;
         padding: 20px;
-        border-bottom: 1px solid rgb(213, 213, 213);
-        background-color: rgb(244, 244, 244);
+        border-bottom: 1px solid @pc-mercury;
+        background-color: @background-grey;
     }
 
     .action-header {
         display: flex;
         flex-shrink: 0;
         flex-direction: row;
-        background-color: rgb(244, 244, 244);
-        border-bottom: 1px solid rgb(213, 213, 213);
+        background-color: @background-grey;
+        border-bottom: 1px solid @pc-mercury;
 
         button {
             padding: 8px 18px;
             background-color: transparent;
             border: none;
-            border-right: 1px solid rgb(213, 213, 213);
+            border-radius: 0;
+            border-right: 1px solid @pc-mercury;
             cursor: pointer;
         }
     }
@@ -50,15 +54,15 @@
         flex-direction: row;
         flex-shrink: 0;
 
-        background-color: rgb(244, 244, 244);
-        border-top: 1px solid rgb(213, 213, 213);
+        background-color: @background-grey;
+        border-top: 1px solid @pc-mercury;
         padding: 20px;
 
         textarea {
             flex-grow: 1;
             min-height: 35px;
             border-radius: 5px;
-            border: 1px solid rgb(213, 213, 213);
+            border: 1px solid @pc-mercury;
             resize: none;
             padding: 10px 5px;
             font-size: 16px;
