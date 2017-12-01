@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import User from './user';
+import moment from 'moment';
 
 const {
     get,
@@ -105,7 +105,7 @@ export default Ember.Object.extend({
                 direction: message.direction(),
                 status: message.status(),
                 text: message.text(),
-                timestamp: message.timestamp(),
+                timestamp: moment(message.timestamp()),
                 sender
             });
 

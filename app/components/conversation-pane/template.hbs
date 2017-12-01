@@ -16,7 +16,9 @@
                 <div class="body">
                     <div class="user">
                         {{message.sender.displayName}}
-                        <span class="timestamp">{{message.timestamp}}</span>
+                        <span class="timestamp">
+                            {{moment-calendar message.timestamp}}
+                        </span>
                     </div>
                     <div class="text">{{message.text}}</div>
                 </div>
