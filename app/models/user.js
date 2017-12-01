@@ -110,29 +110,6 @@ export default Ember.Object.extend({
                 }).then(blob => {
                     return (window.URL || window.webkitURL).createObjectURL(blob);
                 });
-                // return new RSVP.Promise(resolve => {
-                //     // const xhr = new XMLHttpRequest();
-                //     // xhr.responseType = 'text';
-                //     // xhr.setRequestHeader('Authorization', `bearer ${this.get('auth.msftAccessToken')}`);
-                //     // xhr.onload = function() {
-                //     //     const blb = new Blob([xhr.response], {type: 'image/png'});
-                //     //     const url = (window.URL || window.webkitURL).createObjectURL(blb);
-                //     //     resolve(url);
-                //     // }
-
-                //     // xhr.open('GET', `${avatarUrl}/$value`);
-                //     // xhr.send();
-
-                //     // this.get('ajax').request(requestUrl, {
-                //     //     dataType: 'text',
-                //     //     contentType: 'text'
-                //     // }).then(data => {
-                //     //     window.imageData = data;
-                //     //     resolve('');
-                //     // });
-
-
-                // })
             });
     }),
 
