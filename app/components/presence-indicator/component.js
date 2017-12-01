@@ -8,7 +8,7 @@ const {
 const ICON_MAPPING = {
     available: 'ion-checkmark-round',
     away: 'ion-clock',
-    offline: 'ion-close-round'
+    offline: 'ion-ios-circle-outline'
 };
 
 export default Component.extend({

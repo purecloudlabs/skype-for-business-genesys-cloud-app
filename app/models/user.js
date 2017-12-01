@@ -91,7 +91,7 @@ export default Ember.Object.extend({
             return presence.toLowerCase();
         }
         else {
-            return 'Offline';
+            return 'offline';
         }
     }),
 
