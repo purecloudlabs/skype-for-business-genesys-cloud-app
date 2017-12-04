@@ -76,7 +76,10 @@ export default Ember.Object.extend({
         if (!this.get('loadedHistory')) {
             this.get('deferred.promise').then(() =>
                 this.get('conversation').historyService.getMoreActivityItems().then(() => {
-                    Logger.log('HISTORY LOADED');
+                    Logger.log('History loaded', {
+                        name: this.get('name'),
+                        conversationId: this.get('conversation.id')
+                    });
                     this.set('loadedHistory', true);
                 }));
         }

@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 const {
     inject,
+    Logger,
     Controller
 } = Ember;
 
@@ -26,14 +27,14 @@ export default Controller.extend({
 
             auth.loginMicrosoft()
                 .then(token => {
-                    Ember.Logger.log('TOKEN:', token);
+                    Logger.log('TOKEN:', token);
                 })
                 .then(() => skype.get('promise'))
                 .then(() => skype.signIn())
                 .then(() => {
-                    Ember.log('done?', arguments);
+                    Logger.log('done?', arguments);
                 }).catch(error => {
-                    Ember.Logger.error('Error authenticating:', { error });
+                    Logger.error('Error authenticating:', { error });
                 });
         }
     }

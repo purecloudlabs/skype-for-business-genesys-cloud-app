@@ -41,19 +41,32 @@ export default Service.extend({
             Ember.Logger.log('MSAL:', message);
         }, { level: Msal.LogLevel.Verbose });
 
-        this.userAgentApplication = new Msal.UserAgentApplication(this.get('appId'), null, () => {
+        this.userAgentApplication = new Msal.UserAgentApplication(this.get('appId'), null, (errDesc, token, error) => {
             const deferred = RSVP.defer();
             this.set('MSALDeferred', deferred);
 
-            this.userAgentApplication.acquireTokenSilent(this.get('scope')).then(token => {
+            if (!error && token) {
                 this.set('msftAccessToken', token);
+                deferred.resolve(token);
+
+                Logger.info('Retrieved token', {
+                    accessToken: token
+                });
+
+                return;
+            }
+
+            this.userAgentApplication.acquireTokenSilent(this.get('scope')).then(token => {
+                Logger.info('Retrieved token', {
+                    accessToken: token
+                });
+                this.set('msftAccessToken', token);
+                deferred.resolve(token);
             });
         }, {
             logger,
             cacheLocation: 'localStorage'
         });
-
-        window.auth = this;
     },
 
     isLoggedIn: computed.and('purecloudAccessToken', 'msftAccessToken'),
@@ -111,21 +124,30 @@ export default Service.extend({
     loginMicrosoft() {
         const deferred = RSVP.defer();
 
-        this.userAgentApplication.loginRedirect(this.get('scope'));
+        this.userAgentApplication.acquireTokenSilent(this.get('scope')).then(() => {
+            deferred.resolve();
+            return;
+        }).catch(error => {
+            Logger.error('Error acquiring silent token', { error });
+            this.userAgentApplication.loginPopup(this.get('scope')).then(token => {
+                this.set('msftAccessToken', token);
+                deferred.resolve();
+            });
+        });
 
         this.set('loginDeferred', deferred);
         return deferred.promise;
     },
 
     silentLogin() {
-        if (this.get('MSALDeferred')) {
-            return this.get('MSALDeferred').promise;
-        }
-
         if (this.userAgentApplication.getUser()) {
             return this.get('skype.promise').then(() => {
                 this.get('skype').signIn();
-            })
+            });
+        }
+
+        if (this.get('MSALDeferred')) {
+            return this.get('MSALDeferred').promise;
         }
 
         const msftAccessToken = localStorage.getItem('msftAccessToken');
