@@ -65,6 +65,18 @@ export default Ember.Object.extend({
         this.subscribeToProperties();
     },
 
+    name: computed('person', function () {
+        const person = this.get('person');
+        const name = person.displayName();
+        if (typeof name === 'string') {
+            return RSVP.resolve(name);
+        }
+
+        return new RSVP.Promise(resolve => {
+            person.displayName.get().then(resolve);
+        });
+    }),
+
     rawPresence: computed(function () {
         return 'Offline';
     }),

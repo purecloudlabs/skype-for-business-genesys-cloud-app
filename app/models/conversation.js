@@ -23,7 +23,7 @@ export default Ember.Object.extend({
     deferred: null,
     _setupComplete: false,
 
-    name: computed.reads('conversationTarget.displayName'),
+    name: computed.reads('conversationTarget.name'),
 
     loaded: computed('deferred.promise', function () {
         return this.get('deferred.promise');
