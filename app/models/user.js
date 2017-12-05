@@ -77,12 +77,23 @@ export default Ember.Object.extend({
         });
     }),
 
-    rawPresence: computed(function () {
-        return 'Offline';
+    rawPresence: computed('person', function () {
+        const person = this.get('person');
+        const status = person.status();
+        let promise = RSVP.resolve('Offline');
+        if (typeof status === 'string') {
+            promise = RSVP.resolve(status);
+        } else {
+            promise = new RSVP.Promise(resolve => {
+                person.status.get().then(resolve);
+            });
+        }
+
+        return PromiseObject.create({ promise });
     }),
 
-    presence: computed('rawPresence', function () {
-        const status = this.get('person').status();
+    presence: computed('rawPresence.isFulfilled', function () {
+        const status = this.get('rawPresence.content');
         const map = {
             Online: 'Available',
             Busy: 'Busy',
@@ -136,7 +147,8 @@ export default Ember.Object.extend({
     subscribeToProperties() {
         let person = this.get('person');
         if (person.status) {
-            person.status.changed(() => this.notifyPropertyChange('presence'));
+            person.status.subscribe();
+            person.status.changed(() => this.notifyPropertyChange('rawPresence'));
         }
     }
 });
