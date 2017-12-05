@@ -21,13 +21,14 @@ export default Component.extend({
         this.processPhoto();
     },
 
-    initials: computed('person.displayName', function () {
-        const name = this.get('person.displayName');
-        if (!name) {
-            return '';
-        }
-        const [first, last] = name.split(' ');
-        return `${first.charAt(0)}${last.charAt(0)}`;
+    initials: computed('person.name', function () {
+        return this.get('person.name').then(name => {
+            if (!name) {
+                return '';
+            }
+            const [first, last] = name.split(' ');
+            return `${first.charAt(0)}${last.charAt(0)}`;
+        });
     }),
 
     processPhoto: observer('person.photoUrl', function () {
