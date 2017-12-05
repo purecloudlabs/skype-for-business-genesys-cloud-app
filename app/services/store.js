@@ -37,14 +37,14 @@ export default Service.extend({
     },
 
     signIn(user) {
-        Logger.log('Store.signIn:', user);
+        Logger.log('Store.signIn', { user });
 
         let me = this.getUserForPerson(user);
         this.set('me', me);
     },
 
     addConversation(conversation) {
-        Logger.info('Store.addConversation:', { conversation });
+        Logger.info('Store.addConversation', { conversation });
 
         const model = this.getConversation(conversation.id(), conversation);
         if (!this.get('activeConversation')) {
@@ -57,7 +57,7 @@ export default Service.extend({
     },
 
     setActiveConversation(conversation) {
-        console.log('store.setActiveConversation', conversation);
+        Logger.log('Store.setActiveConversation', { conversation });
 
         if (conversation !== this.get('activeConversation')) {
             this.set('activeConversation', conversation);

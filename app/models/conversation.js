@@ -113,7 +113,7 @@ export default Ember.Object.extend({
                 sender
             });
 
-            Logger.log("conversation.historyService.activityItems.added", messageModel);
+            Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
 
             this.get('messages').pushObject(messageModel);
         });
