@@ -41,7 +41,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'apk add --no-cache git openssh'
                     sh 'rm -rf npm-utils && git clone git@bitbucket.org:inindca/npm-utils.git'
                     sh 'source ./npm-utils/scripts/jenkins-pre-build.sh ${NODE_VERSION} -m'
 
