@@ -1,10 +1,8 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:6.12.1-alpine'
-            args '-u root:root'
-            label 'dev_shared'
-        }
+    agent 'dev_shared'
+
+    tools {
+        nodejs '6.12.1'
     }
 
     options {
@@ -44,23 +42,12 @@ pipeline {
             steps {
                 script {
                     sh 'apk add --no-cache git openssh'
-
                     sh 'rm -rf npm-utils && git clone git@bitbucket.org:inindca/npm-utils.git'
                     sh 'source ./npm-utils/scripts/jenkins-pre-build.sh ${NODE_VERSION} -m'
 
                     sh 'yarn install --pure-lockfile'
                     sh 'yarn add bower'
                     sh 'yarn run bower install'
-
-                    // sh '''
-                    //     rm -rf npm-utils && git clone git@bitbucket.org:inindca/npm-utils.git
-                    //     source ./npm-utils/scripts/jenkins-pre-build.sh ${NODE_VERSION} -m
-                    //     npm install yarn
-
-                    //     yarn install --pure-lockfile
-                    //     yarn add bower
-                    //     yarn run bower install
-                    // '''
                 }
             }
         }
