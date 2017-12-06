@@ -3,6 +3,7 @@ import Ember from 'ember';
 const {
     inject,
     computed,
+    Logger,
     Component
 } = Ember;
 
@@ -19,7 +20,7 @@ export default Component.extend({
             if ((key === "Enter" || keyCode === 13) && !shiftKey) {
                 let messageText = target.value;
 
-                console.log("SEND", messageText);
+                Logger.log("SEND", messageText);
                 this.get('conversation').sendMessage(messageText);
 
                 target.value = "";

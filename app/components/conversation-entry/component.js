@@ -14,16 +14,14 @@ export default Component.extend({
         this._super(...arguments);
 
         const conversation = this.get('conversation');
-        conversation.historyService.activityItems.added(message => {
-            debugger;
-        });
+        conversation.historyService.activityItems.added(() => {});
     },
 
     displayName: computed('conversation', function () {
         const conversation = this.get('conversation');
         const promise = RSVP.resolve('Meeting');
         if (!conversation.isGroupConversation()) {
-            debugger;
+            return '';
         }
 
         return DS.PromiseObject.create({ promise });

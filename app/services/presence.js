@@ -3,6 +3,7 @@ import Ember from 'ember';
 const {
     computed,
     inject,
+    Logger,
     Service
 } = Ember;
 
@@ -22,9 +23,9 @@ export default Service.extend({
 
     setStatus (status) {
         this.get('skype').application.personsAndGroupsManager.mePerson.status.set(status).then(() => {
-            console.info(`status changed to ${status}`);
+            Logger.info(`status changed to ${status}`);
         }, (err) => {
-            console.error(err);
+            Logger.error(err);
         });
     }
 })

@@ -1,10 +1,6 @@
 import Ember from 'ember';
 
-import User from '../models/user';
-import Conversation from '../models/conversation';
-
 const {
-    getOwner,
     RSVP,
     Logger,
     Service,
