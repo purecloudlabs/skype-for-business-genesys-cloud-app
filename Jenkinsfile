@@ -68,5 +68,13 @@ pipeline {
                 }
             }
         }
+
+        stage('Upload') {
+            steps {
+                script {
+                    sh "yarn run upload --web-app-name purecloud-skype --source-dir dist --create-manifest true --version 1.0.0 --build-number ${env.BUILD_NUMBER} --no-index-file-copy true"
+                }
+            }
+        }
     }
 }
