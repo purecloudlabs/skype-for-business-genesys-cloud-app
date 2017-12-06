@@ -1,5 +1,7 @@
 pipeline {
-    agent 'dev_shared'
+    agent {
+        label 'dev_shared'
+    }
 
     tools {
         nodejs '6.12.1'
