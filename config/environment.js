@@ -2,6 +2,9 @@
 
 module.exports = function (environment) {
     var rootURL = environment === 'production' ? '/' : '/skype-for-business-purecloud-app';
+    if (process.env.BUILD_NUMBER) {
+        rootURL = '/' + process.env.BUILD_NUMBER + '/';
+    }
     var ENV = {
         modulePrefix: 'purecloud-skype',
         environment: environment,
