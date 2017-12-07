@@ -12,8 +12,7 @@
   "scripts": {
     "build": "ember build",
     "start": "ember server",
-    "test": "ember test",
-    "deploy": "ember build && cp -r dist/* docs/ && git commit -am \"build\" && git push"
+    "test": "ember test"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
