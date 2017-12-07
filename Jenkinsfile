@@ -24,18 +24,14 @@ pipeline {
     stages {
         stage('Setup Environment') {
             steps {
+                sh 'printenv'
+
                 echo "Building branch: ${env.BRANCH_NAME}"
 
                 script {
                     currentBuild.description = env.BRANCH_NAME
-                    env.DEFAULT_NODE_PATH = sh script: 'which node', returnStdout: true
-                    env.WEB_APP_OUTPUT_DIR = "${env.WORKSPACE}/skype-for-business-purecloud-app/dist"
                     env.WEB_APP_VERSION = env.BRANCH_NAME.replace('origin/', '')
                 }
-
-                checkout scm
-
-                sh 'printenv'
             }
         }
 
