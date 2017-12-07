@@ -87,8 +87,8 @@
     "@glimmer/util" "^0.22.0"
 
 "@purecloud/web-app-deploy@^1.0.409":
-  version "1.0.409"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm-dev/@purecloud/web-app-deploy/-/@purecloud/web-app-deploy-1.0.409.tgz#df0be9c9c6b4f5889bf377365c5e592ba27a772b"
+  version "1.0.435"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm-dev/@purecloud/web-app-deploy/-/@purecloud/web-app-deploy-1.0.435.tgz#b838aae756a567fc9826eeaaa14020aa386b1cdc"
   dependencies:
     aws-sdk "^2.34.0"
     command-line-args "^4.0.2"
@@ -368,8 +368,8 @@ asynckit@^0.4.0:
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
 
 aws-sdk@^2.34.0:
-  version "2.164.0"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/aws-sdk/-/aws-sdk-2.164.0.tgz#e3988657b7c7e96e7ca5a9ff52c90b96b4b229d9"
+  version "2.166.0"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/aws-sdk/-/aws-sdk-2.166.0.tgz#132e969b9fac950a0a897b43f46412cc3d14d4d8"
   dependencies:
     buffer "4.9.1"
     crypto-browserify "1.0.9"
