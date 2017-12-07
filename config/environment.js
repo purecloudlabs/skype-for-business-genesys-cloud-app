@@ -1,7 +1,9 @@
 /* eslint-env node */
 
+var pkg = require('../package.json');
+
 module.exports = function (environment) {
-    var rootURL = environment === 'production' ? '' : '/skype-for-business-purecloud-app';
+    var rootURL = environment === 'production' ? '/' : '/skype-for-business-purecloud-app';
     var ENV = {
         modulePrefix: 'purecloud-skype',
         environment: environment,
@@ -19,8 +21,8 @@ module.exports = function (environment) {
         },
 
         APP: {
-            // Here you can pass flags/options to your application instance
-            // when it is created
+            version: pkg.version,
+            buildNumber: process.env.BUILD_NUMBER || 'BUILDNUM'
         }
     };
 
