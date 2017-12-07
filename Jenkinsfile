@@ -26,11 +26,10 @@ pipeline {
             steps {
                 sh 'printenv'
 
-                echo "Building branch: ${env.BRANCH_NAME}"
+                echo "Building branch: ${env.GIT_BRANCH}"
 
                 script {
-                    currentBuild.description = env.BRANCH_NAME
-                    env.WEB_APP_VERSION = env.BRANCH_NAME.replace('origin/', '')
+                    currentBuild.description = env.GIT_BRANCH.replace('origin/', '')
                 }
             }
         }
