@@ -28,6 +28,11 @@ export default Service.extend({
         grant: 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
     },
 
+    clientIds: {
+        inindca: '9a529fd6-cb6c-4f8b-8fc9-e9288974f0c5',
+        testdca: '4def91da-ef2b-4f79-9f25-f53b475bdaec'
+    },
+
     accessCode: null,
     msftAccessToken: null,
     purecloudAccessToken: null,
@@ -196,12 +201,33 @@ export default Service.extend({
     purecloudAuth() {
         const platform = window.require('platformClient');
         const redirectUri = `${window.location.origin}${window.location.pathname}`;
-        const clientId = '9a529fd6-cb6c-4f8b-8fc9-e9288974f0c5';
+        const clientId = this.get('clientIds.testdca');
         let client = platform.ApiClient.instance;
         client.setEnvironment('inindca.com');
         client.loginImplicitGrant(clientId, redirectUri).catch((err) => {
             Logger.error(err.error);
         })
+    },
+
+    validatePurecloudAuth(token) {
+        const platformClient = window.require('platformClient');
+        let client = platformClient.ApiClient.instance;
+        client.setEnvironment('inindca.com');
+        client.authentications['PureCloud Auth'].accessToken = token;
+        let apiInstance = new platformClient.UsersApi();
+
+        apiInstance.getUsersMe().then((data) => {
+            Logger.log('auth confirmed', data);
+            this.set('purecloudAccessToken', token);
+            this.setTokenCookie(token, 'purecloud');
+            return true;
+        }).catch((err) => {
+            Logger.error('AUTH ERROR', err);
+            if (err.status === 401) {
+                this.purecloudAuth();
+            }
+            return false;
+        });
     },
 
     setTokenCookie(token, type) {

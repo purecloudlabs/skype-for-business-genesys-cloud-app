@@ -26,7 +26,7 @@ export default Route.extend({
                 this.get('auth').set('purecloudAccessToken', token);
                 this.get('auth').setTokenCookie(token, 'purecloud');
             } else if (cookie) {
-                this.get('auth').set('purecloudAccessToken', cookie);
+                this.get('auth').validatePurecloudAuth(cookie);
             } else {
                 this.get('auth').purecloudAuth();
             }
