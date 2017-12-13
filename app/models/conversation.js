@@ -18,6 +18,9 @@ export default Ember.Object.extend({
 
     conversation: null,
     extraConversations: null,
+    latestConversation: null,
+
+    attachedListeners: null,
 
     messages: null,
     loadedHistory: false,
@@ -63,7 +66,10 @@ export default Ember.Object.extend({
     }),
 
     incomingExtraConversation: observer('extraConversations.[]', function () {
-        run.once(this, this._setupMessageHandling, this.get('extraConversations.lastObject'));
+        const latest = this.get('extraConversations.lastObject');
+        this.set('latestConversation', latest)
+
+        run.once(this, this._setupMessageHandling, latest);
     }),
 
     init() {
@@ -71,6 +77,8 @@ export default Ember.Object.extend({
 
         this.set('messages', []);
         this.set('extraConversations', []);
+        this.set('attachedListeners', []);
+
         this.set('deferred', RSVP.defer());
 
         const id = this.get('id');
@@ -84,11 +92,13 @@ export default Ember.Object.extend({
             return;
         }
 
+        this.set('latestConversation', conversation);
+
         this._setup();
     },
 
     sendMessage(message) {
-        this.get('conversation').chatService.sendMessage(message)
+        this.get('latestConversation').chatService.sendMessage(message)
             .then(function () {
                 Logger.log('Message sent.');
             });
@@ -127,6 +137,12 @@ export default Ember.Object.extend({
     },
 
     _setupMessageHandling(conversation) {
+        if (this.get('attachedListeners').includes(conversation.id())) {
+            return;
+        }
+
+        this.get('attachedListeners').addObject(conversation.id());
+
         conversation.historyService.activityItems.added(message => {
             Logger.log('HISTORY', message);
 
