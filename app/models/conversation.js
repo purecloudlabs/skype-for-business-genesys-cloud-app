@@ -16,6 +16,7 @@ export default Ember.Object.extend({
     skype: inject.service(),
 
     conversation: null,
+    extraConversations: null,
 
     messages: null,
     loadedHistory: false,
@@ -61,6 +62,7 @@ export default Ember.Object.extend({
         this._super(...arguments);
 
         this.set('messages', []);
+        this.set('extraConversations', []);
         this.set('deferred', RSVP.defer());
 
         const id = this.get('id');
