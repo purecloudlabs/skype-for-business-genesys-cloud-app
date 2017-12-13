@@ -20,6 +20,7 @@ export default Route.extend({
 
         let ref = window.location.href;
         let tokenIndex = ref.indexOf('access_token');
+
         return localforage.getItem('forage.token.purecloud').then((cookie) => {
             if (tokenIndex != -1) {
                 let token = ref.substring(tokenIndex + 13, ref.indexOf('&'));

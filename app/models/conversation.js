@@ -105,7 +105,16 @@ export default Ember.Object.extend({
 
             let sender = this.get('store').getUserForPerson(message.sender);
 
+            if (message.type && message.type() !== 'TextMessage') {
+                Logger.log('Unsupported message type:', {
+                    message,
+                    messageType: message.type()
+                });
+                return;
+            }
+
             let messageModel = Ember.Object.create({
+                raw: message,
                 direction: message.direction(),
                 status: message.status(),
                 text: message.text(),
