@@ -17,12 +17,19 @@ export default AjaxService.extend({
         /online.lync.com/
     ],
 
-    headers: computed('auth.msftAccessToken', function () {
+    headers: computed('auth.{msftAccessToken,purecloudAccessToken}', function () {
         let headers = {};
-        const token = this.get('auth.msftAccessToken');
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+        const msftToken = this.get('auth.msftAccessToken');
+        if (msftToken) {
+            headers['Authorization'] = `Bearer ${msftToken}`;
         }
+
+        const pcToken = this.get('auth.purecloudAccessToken');
+        if (pcToken) {
+            headers['Purecloud Auth'] = `bearer ${pcToken}`;
+            headers['inin-client-id'] = '#/person/5a2ab908b59b1d251b66b2ea';
+        }
+
         return headers;
     })
 });
