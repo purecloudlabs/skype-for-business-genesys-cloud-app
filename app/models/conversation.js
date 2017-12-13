@@ -1,5 +1,6 @@
 import Ember from 'ember';
-import moment from 'moment';
+
+import Message from './message';
 
 const {
     get,
@@ -23,6 +24,9 @@ export default Ember.Object.extend({
 
     deferred: null,
     _setupComplete: false,
+
+    messageSortingAsc: ['sortComparison:asc'],
+    sortedMessages: computed.sort('messages', 'messageSortingAsc'),
 
     name: computed.reads('conversationTarget.name'),
 
@@ -128,13 +132,9 @@ export default Ember.Object.extend({
                 return;
             }
 
-            let messageModel = Ember.Object.create({
-                raw: message,
-                direction: message.direction(),
-                status: message.status(),
-                text: message.text(),
-                timestamp: moment(message.timestamp()),
-                sender
+            let messageModel = Message.create({
+                sender,
+                skypeMessage: message
             });
 
             Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
