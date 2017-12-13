@@ -62,6 +62,10 @@ export default Ember.Object.extend({
         run.once(this, this._setup);
     }),
 
+    incomingExtraConversation: observer('extraConversations.[]', function () {
+        run.once(this, this._setupMessageHandling, this.get('extraConversations.lastObject'));
+    }),
+
     init() {
         this._super(...arguments);
 
@@ -119,6 +123,10 @@ export default Ember.Object.extend({
             this.get('deferred').resolve();
         });
 
+        this._setupMessageHandling(conversation);
+    },
+
+    _setupMessageHandling(conversation) {
         conversation.historyService.activityItems.added(message => {
             Logger.log('HISTORY', message);
 
