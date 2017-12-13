@@ -14,7 +14,8 @@ export default AjaxService.extend({
     trustedHosts: [
         /outlook.office.com/,
         /graph.microsoft.com/,
-        /online.lync.com/
+        /online.lync.com/,
+        /api.(?:inindca|mypurecloud).(?:com|jp).?(?:ie|au)?/
     ],
 
     headers: computed('auth.msftAccessToken', function () {
