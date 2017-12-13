@@ -4,7 +4,8 @@ import PromiseObject from '../utils/promise-object';
 const {
     inject,
     computed,
-    RSVP
+    RSVP,
+    Logger
 } = Ember;
 
 export default Ember.Object.extend({
@@ -118,26 +119,22 @@ export default Ember.Object.extend({
         }
     }),
 
-    photoUrl: computed('email', function () {
+    photoUrl: computed('email', 'auth.msftAccessToken', function () {
         const email = this.get('email');
         if (!email) {
             return RSVP.resolve('');
         }
-        const promise = this.get('ajax').request(`https://outlook.office.com/api/v2.0/Users/${email}/photo`)
-            .then(photoDescriptor => {
-                const avatarUrl = photoDescriptor['@odata.id'];
-                const requestUrl = `${avatarUrl}/$value`;
-                return fetch(requestUrl, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `bearer ${this.get('auth.msftAccessToken')}`
-                    }
-                }).then(response => {
-                    return response.blob();
-                }).then(blob => {
-                    return (window.URL || window.webkitURL).createObjectURL(blob);
-                });
-            });
+        const promise = fetch(`https://graph.microsoft.com/v1.0/users/${email}/photo/$value`, {
+            headers: {
+                Authorization: `bearer ${this.get('auth.msftAccessToken')}`
+            }
+        }).then(response => {
+            return response.blob();
+        }).then(blob => {
+            return (window.URL || window.webkitURL).createObjectURL(blob);
+        }).catch(error => {
+            Logger.error('Error loading photo data:', { error });
+        });
 
         return PromiseObject.create({
             promise

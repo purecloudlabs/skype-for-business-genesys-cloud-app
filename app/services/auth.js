@@ -51,23 +51,14 @@ export default Service.extend({
             this.set('MSALDeferred', deferred);
 
             if (!error && token) {
-                this.set('msftAccessToken', token);
-                deferred.resolve(token);
-
-                Logger.info('Retrieved token', {
-                    accessToken: token
+                this.userAgentApplication.acquireTokenSilent(this.get('scope')).then(token => {
+                    Logger.info('Retrieved token', {
+                        accessToken: token
+                    });
+                    this.set('msftAccessToken', token);
+                    deferred.resolve(token);
                 });
-
-                return;
             }
-
-            this.userAgentApplication.acquireTokenSilent(this.get('scope')).then(token => {
-                Logger.info('Retrieved token', {
-                    accessToken: token
-                });
-                this.set('msftAccessToken', token);
-                deferred.resolve(token);
-            });
         }, {
             logger,
             cacheLocation: 'localStorage'

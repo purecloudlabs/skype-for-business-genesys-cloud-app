@@ -41,6 +41,18 @@ export default Ember.Object.extend({
         return this.get('store').getUserForPerson(person);
     }),
 
+    avatarUrl: computed('conversation', function () {
+        const conversation = this.get('conversation');
+        const avatarUrl = conversation.avatarUrlLarge();
+        if (typeof avatarUrl === 'string') {
+            return RSVP.resolve(avatarUrl);
+        }
+
+        return new RSVP.Promise(resolve => {
+            conversation.avatarUrl.get().then(resolve);
+        });
+    }),
+
     conversationChange: observer('conversation', function () {
         run.once(this, this._setup);
     }),
@@ -74,14 +86,15 @@ export default Ember.Object.extend({
 
     loadMessageHistory() {
         if (!this.get('loadedHistory')) {
-            this.get('deferred.promise').then(() =>
+            this.get('deferred.promise').then(() => {
                 this.get('conversation').historyService.getMoreActivityItems().then(() => {
                     Logger.log('History loaded', {
                         name: this.get('name'),
                         conversationId: this.get('conversation.id')
                     });
                     this.set('loadedHistory', true);
-                }));
+                });
+            });
         }
     },
 
