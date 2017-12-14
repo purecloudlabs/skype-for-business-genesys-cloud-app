@@ -1,5 +1,6 @@
 import Ember from 'ember';
-import moment from 'moment';
+
+import Message from './message';
 
 const {
     get,
@@ -16,12 +17,19 @@ export default Ember.Object.extend({
     skype: inject.service(),
 
     conversation: null,
+    extraConversations: null,
+    latestConversation: null,
+
+    attachedListeners: null,
 
     messages: null,
     loadedHistory: false,
 
     deferred: null,
     _setupComplete: false,
+
+    messageSortingAsc: ['sortComparison:asc'],
+    sortedMessages: computed.sort('messages', 'messageSortingAsc'),
 
     name: computed.reads('conversationTarget.name'),
 
@@ -57,10 +65,20 @@ export default Ember.Object.extend({
         run.once(this, this._setup);
     }),
 
+    incomingExtraConversation: observer('extraConversations.[]', function () {
+        const latest = this.get('extraConversations.lastObject');
+        this.set('latestConversation', latest)
+
+        run.once(this, this._setupMessageHandling, latest);
+    }),
+
     init() {
         this._super(...arguments);
 
         this.set('messages', []);
+        this.set('extraConversations', []);
+        this.set('attachedListeners', []);
+
         this.set('deferred', RSVP.defer());
 
         const id = this.get('id');
@@ -74,11 +92,13 @@ export default Ember.Object.extend({
             return;
         }
 
+        this.set('latestConversation', conversation);
+
         this._setup();
     },
 
     sendMessage(message) {
-        this.get('conversation').chatService.sendMessage(message)
+        this.get('latestConversation').chatService.sendMessage(message)
             .then(function () {
                 Logger.log('Message sent.');
             });
@@ -113,6 +133,16 @@ export default Ember.Object.extend({
             this.get('deferred').resolve();
         });
 
+        this._setupMessageHandling(conversation);
+    },
+
+    _setupMessageHandling(conversation) {
+        if (this.get('attachedListeners').includes(conversation.id())) {
+            return;
+        }
+
+        this.get('attachedListeners').addObject(conversation.id());
+
         conversation.historyService.activityItems.added(message => {
             Logger.log('HISTORY', message);
 
@@ -126,13 +156,9 @@ export default Ember.Object.extend({
                 return;
             }
 
-            let messageModel = Ember.Object.create({
-                raw: message,
-                direction: message.direction(),
-                status: message.status(),
-                text: message.text(),
-                timestamp: moment(message.timestamp()),
-                sender
+            let messageModel = Message.create({
+                sender,
+                skypeMessage: message
             });
 
             Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
