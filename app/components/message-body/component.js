@@ -3,11 +3,12 @@ const { Component, computed, inject } = Ember;
 
 export default Component.extend({
     classNames: [ 'message-body '],
-    classNameBindings: [ 'isYou:is-you:not-you' ],
+    classNameBindings: [ 'isYou:is-you', 'unread:unread' ],
 
     store: inject.service(),
 
     message: null,
+    unread: computed.alias('message.unread'),
     sender: computed.alias('message.sender'),
     me: computed.alias('store.me'),
 

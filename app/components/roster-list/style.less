@@ -103,7 +103,8 @@
     .roster-group {
         padding: 0;
 
-        .roster-heading, .roster-entries {
+        .roster-heading,
+        .roster-entries {
             width: 100%;
         }
 
@@ -112,50 +113,59 @@
             padding: 0 20px;
         }
 
-        .roster-entries {
-            .roster-entry {
-                display: flex;
-                align-items: center;
+        .roster-entry {
+            display: flex;
+            align-items: center;
 
-                height: 25px;
-                font-size: 0.9em;
+            height: 25px;
+            font-size: 0.9em;
 
-                padding: 0 20px 0 40px;
+            padding: 0 20px 0 40px;
 
-                .name {
-                    flex: 1;
-                }
+            .name {
+                flex: 1;
+            }
 
-                .presence-indicator {
-                    margin-right: 8px;
-                }
+            .presence-indicator {
+                margin-right: 8px;
+            }
 
-                .close {
-                    display: none;
-                    color: @text-grey;
+            .badge-count {
+                background-color: #e56266;
+                color: white;
+                border-radius: 50%;
 
-                    &:hover {
-                        color: red;
-                    }
-                }
-
-                &.active {
-                    background-color: @pc-darkblue;
-
-                    .name {
-                        color: #fff;
-                    }
-                }
-
-                &:hover {
-                    background-color: @bg-grey-light;
-                    cursor: pointer;
-
-                    .close {
-                        display: block;
-                    }
+                .number {
+                    font-size: 16px;
                 }
             }
+
+            .close {
+                display: none;
+                color: @text-grey;
+
+                &:hover {
+                    color: red;
+                }
+            }
+
+            &.active {
+                background-color: @pc-darkblue;
+
+                .name {
+                    color: #fff;
+                }
+            }
+
+            &:hover {
+                background-color: @bg-grey-light;
+                cursor: pointer;
+
+                .close {
+                    display: block;
+                }
+            }
+
         }
     }
 }

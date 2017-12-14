@@ -51,6 +51,12 @@
                     {{await conversation.name}}
                 </div>
 
+                {{#if conversation.badgeCount}}
+                    <div class="badge-count">
+                        <span class="number">{{conversation.badgeCount}}</span>
+                    </div>
+                {{/if}}
+
                 <div class="close">
                     <i class="ion-close-circled"></i>
                 </div>

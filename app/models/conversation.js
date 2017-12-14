@@ -11,12 +11,16 @@ const {
     Logger
 } = Ember;
 
+const MESSAGE_CACHE = { };
+const getCacheKey = message => `${moment(message.timestamp()).toISOString()}$$${message.text()}`;
+
 export default Ember.Object.extend({
     store: inject.service(),
     skype: inject.service(),
 
     conversation: null,
 
+    badgeCount: 0,
     messages: null,
     loadedHistory: false,
 
@@ -65,7 +69,12 @@ export default Ember.Object.extend({
         this._setup();
     },
 
+    addMessage(message) {
+        this.get('messages').pushObject(message);
+    },
+
     sendMessage(message) {
+        this.set('badgeCount', 0);
         this.get('conversation').chatService.sendMessage(message)
             .then(function () {
                 Logger.log('Message sent.');
@@ -100,22 +109,32 @@ export default Ember.Object.extend({
             this.get('deferred').resolve();
         });
 
+        conversation.chatService.messages.added(message => {
+            console.log('chatService.messages.added', message);
+
+            let model = MESSAGE_CACHE[ getCacheKey(message) ];
+            if (model) {
+                model.set('unread', true);
+                this.incrementProperty('badgeCount');
+            }
+        });
+
         conversation.historyService.activityItems.added(message => {
             Logger.log('HISTORY', message);
-
-            let sender = this.get('store').getUserForPerson(message.sender);
 
             let messageModel = Ember.Object.create({
                 direction: message.direction(),
                 status: message.status(),
                 text: message.text(),
                 timestamp: moment(message.timestamp()),
-                sender
+                sender: this.get('store').getUserForPerson(message.sender)
             });
+
+            MESSAGE_CACHE[ getCacheKey(message) ] = messageModel;
 
             Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
 
-            this.get('messages').pushObject(messageModel);
+            this.addMessage(messageModel);
         });
 
         conversation.state.changed((newValue, reason, oldValue) => {
