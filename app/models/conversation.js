@@ -108,6 +108,7 @@ export default Ember.Object.extend({
 
     sendMessage(message) {
         this.set('badgeCount', 0);
+        this.get('messages').forEach(message => message.set('unread', false));
         this.get('latestConversation').chatService.sendMessage(message)
             .then(function () {
                 Logger.log('Message sent.');
@@ -157,7 +158,7 @@ export default Ember.Object.extend({
             console.log('chatService.messages.added', message);
 
             let model = MESSAGE_CACHE[ getCacheKey(message) ];
-            if (model) {
+            if (model && model.get('sender') !== this.get('store.me')) {
                 model.set('unread', true);
                 this.incrementProperty('badgeCount');
             }
