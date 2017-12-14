@@ -1,5 +1,6 @@
 import Ember from 'ember';
-import moment from 'moment';
+
+import Message from './message';
 
 const {
     get,
@@ -19,6 +20,10 @@ export default Ember.Object.extend({
     skype: inject.service(),
 
     conversation: null,
+    extraConversations: null,
+    latestConversation: null,
+
+    attachedListeners: null,
 
     badgeCount: 0,
     messages: null,
@@ -26,6 +31,9 @@ export default Ember.Object.extend({
 
     deferred: null,
     _setupComplete: false,
+
+    messageSortingAsc: ['sortComparison:asc'],
+    sortedMessages: computed.sort('messages', 'messageSortingAsc'),
 
     name: computed.reads('conversationTarget.name'),
 
@@ -45,14 +53,36 @@ export default Ember.Object.extend({
         return this.get('store').getUserForPerson(person);
     }),
 
+    avatarUrl: computed('conversation', function () {
+        const conversation = this.get('conversation');
+        const avatarUrl = conversation.avatarUrlLarge();
+        if (typeof avatarUrl === 'string') {
+            return RSVP.resolve(avatarUrl);
+        }
+
+        return new RSVP.Promise(resolve => {
+            conversation.avatarUrl.get().then(resolve);
+        });
+    }),
+
     conversationChange: observer('conversation', function () {
         run.once(this, this._setup);
+    }),
+
+    incomingExtraConversation: observer('extraConversations.[]', function () {
+        const latest = this.get('extraConversations.lastObject');
+        this.set('latestConversation', latest)
+
+        run.once(this, this._setupMessageHandling, latest);
     }),
 
     init() {
         this._super(...arguments);
 
         this.set('messages', []);
+        this.set('extraConversations', []);
+        this.set('attachedListeners', []);
+
         this.set('deferred', RSVP.defer());
 
         const id = this.get('id');
@@ -66,16 +96,14 @@ export default Ember.Object.extend({
             return;
         }
 
-        this._setup();
-    },
+        this.set('latestConversation', conversation);
 
-    addMessage(message) {
-        this.get('messages').pushObject(message);
+        this._setup();
     },
 
     sendMessage(message) {
         this.set('badgeCount', 0);
-        this.get('conversation').chatService.sendMessage(message)
+        this.get('latestConversation').chatService.sendMessage(message)
             .then(function () {
                 Logger.log('Message sent.');
             });
@@ -83,14 +111,15 @@ export default Ember.Object.extend({
 
     loadMessageHistory() {
         if (!this.get('loadedHistory')) {
-            this.get('deferred.promise').then(() =>
+            this.get('deferred.promise').then(() => {
                 this.get('conversation').historyService.getMoreActivityItems().then(() => {
                     Logger.log('History loaded', {
                         name: this.get('name'),
                         conversationId: this.get('conversation.id')
                     });
                     this.set('loadedHistory', true);
-                }));
+                });
+            });
         }
     },
 
@@ -109,6 +138,16 @@ export default Ember.Object.extend({
             this.get('deferred').resolve();
         });
 
+        this._setupMessageHandling(conversation);
+    },
+
+    _setupMessageHandling(conversation) {
+        if (this.get('attachedListeners').includes(conversation.id())) {
+            return;
+        }
+
+        this.get('attachedListeners').addObject(conversation.id());
+
         conversation.chatService.messages.added(message => {
             console.log('chatService.messages.added', message);
 
@@ -122,19 +161,26 @@ export default Ember.Object.extend({
         conversation.historyService.activityItems.added(message => {
             Logger.log('HISTORY', message);
 
-            let messageModel = Ember.Object.create({
-                direction: message.direction(),
-                status: message.status(),
-                text: message.text(),
-                timestamp: moment(message.timestamp()),
-                sender: this.get('store').getUserForPerson(message.sender)
+            let sender = this.get('store').getUserForPerson(message.sender);
+
+            if (message.type && message.type() !== 'TextMessage') {
+                Logger.log('Unsupported message type:', {
+                    message,
+                    messageType: message.type()
+                });
+                return;
+            }
+
+            let messageModel = Message.create({
+                sender,
+                skypeMessage: message
             });
 
             MESSAGE_CACHE[ getCacheKey(message) ] = messageModel;
 
             Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
 
-            this.addMessage(messageModel);
+            this.get('messages').pushObject(message);
         });
 
         conversation.state.changed((newValue, reason, oldValue) => {

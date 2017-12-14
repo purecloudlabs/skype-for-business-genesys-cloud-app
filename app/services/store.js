@@ -70,11 +70,20 @@ export default Service.extend({
         const conversations = this.get('conversations');
         let conversation = conversations.findBy('id', id);
         if (!conversation) {
-            conversation = Conversation.create({
-                id,
-                conversation: skypeConversation
-            }, getOwner(this).ownerInjection());
-            this.get('conversations').addObject(conversation);
+            // Lets check if the conversation has a user
+            conversation = this.getConversationForUser({
+                id: skypeConversation.creator.id()
+            }, false);
+
+            if (conversation) {
+                conversation.get('extraConversations').pushObject(skypeConversation);
+            } else {
+                conversation = Conversation.create({
+                    id,
+                    conversation: skypeConversation
+                }, getOwner(this).ownerInjection());
+                this.get('conversations').addObject(conversation);
+            }
         }
         if (!conversation.get('conversation') && skypeConversation) {
             conversation.set('conversation', skypeConversation);
@@ -83,9 +92,9 @@ export default Service.extend({
         return conversation;
     },
 
-    getConversationForUser(user) {
+    getConversationForUser(user, fallback = true) {
         const conversation = this.get('conversations').findBy('conversationTarget.id', user.id);
-        if (!conversation) {
+        if (!conversation && fallback) {
             const skypeConversation = this.get('skype').startConversation(user.id);
             return this.getConversation(skypeConversation.id(), skypeConversation);
         }

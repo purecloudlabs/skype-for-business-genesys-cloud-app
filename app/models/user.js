@@ -4,7 +4,8 @@ import PromiseObject from '../utils/promise-object';
 const {
     inject,
     computed,
-    RSVP
+    RSVP,
+    Logger
 } = Ember;
 
 export default Ember.Object.extend({
@@ -77,22 +78,33 @@ export default Ember.Object.extend({
         });
     }),
 
-    rawPresence: computed('person', function () {
-        const person = this.get('person');
-        const status = person.status();
-        let promise = RSVP.resolve('Offline');
-        if (typeof status === 'string') {
-            promise = RSVP.resolve(status);
-        } else {
-            promise = new RSVP.Promise(resolve => {
-                person.status.get().then(resolve);
-            });
-        }
+    rawPresence: computed('person', {
+        get() {
+            const person = this.get('person');
+            const status = person.status();
+            let promise = RSVP.resolve('Offline');
+            if (typeof status === 'string') {
+                promise = RSVP.resolve(status);
+            } else {
+                promise = new RSVP.Promise(resolve => {
+                    person.status.get().then(resolve);
+                });
+            }
 
-        return PromiseObject.create({ promise });
+            return PromiseObject.create({ promise });
+        },
+
+        set(key, value) {
+            if (typeof value === 'string') {
+                return PromiseObject.create({
+                    promise: RSVP.resolve(value)
+                });
+            }
+            return value;
+        }
     }),
 
-    presence: computed('rawPresence.isFulfilled', function () {
+    presence: computed('rawPresence', 'rawPresence.isFulfilled', function () {
         const status = this.get('rawPresence.content');
         const map = {
             Online: 'Available',
@@ -118,26 +130,22 @@ export default Ember.Object.extend({
         }
     }),
 
-    photoUrl: computed('email', function () {
+    photoUrl: computed('email', 'auth.msftAccessToken', function () {
         const email = this.get('email');
         if (!email) {
             return RSVP.resolve('');
         }
-        const promise = this.get('ajax').request(`https://outlook.office.com/api/v2.0/Users/${email}/photo`)
-            .then(photoDescriptor => {
-                const avatarUrl = photoDescriptor['@odata.id'];
-                const requestUrl = `${avatarUrl}/$value`;
-                return fetch(requestUrl, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `bearer ${this.get('auth.msftAccessToken')}`
-                    }
-                }).then(response => {
-                    return response.blob();
-                }).then(blob => {
-                    return (window.URL || window.webkitURL).createObjectURL(blob);
-                });
-            });
+        const promise = fetch(`https://graph.microsoft.com/v1.0/users/${email}/photo/$value`, {
+            headers: {
+                Authorization: `bearer ${this.get('auth.msftAccessToken')}`
+            }
+        }).then(response => {
+            return response.blob();
+        }).then(blob => {
+            return (window.URL || window.webkitURL).createObjectURL(blob);
+        }).catch(error => {
+            Logger.error('Error loading photo data:', { error });
+        });
 
         return PromiseObject.create({
             promise
@@ -148,7 +156,9 @@ export default Ember.Object.extend({
         let person = this.get('person');
         if (person.status) {
             person.status.subscribe();
-            person.status.changed(() => this.notifyPropertyChange('rawPresence'));
+            person.status.changed(() => {
+                this.notifyPropertyChange('rawPresence')
+            });
         }
     }
 });

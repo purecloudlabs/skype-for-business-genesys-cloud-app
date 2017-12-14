@@ -8,18 +8,8 @@ const {
 
 export default Controller.extend({
     auth: inject.service(),
-
     skype: inject.service(),
-    //
-    // loading: false,
-    //
-    // init() {
-    //     this.set('loading', true);
-    //
-    //     this.get('skype').startAuthentication().then(() => {
-    //         this.set('loading', false);
-    //     });
-    // }
+
     actions: {
         startAuth() {
             const auth = this.get('auth');

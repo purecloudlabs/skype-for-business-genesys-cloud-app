@@ -86,8 +86,8 @@ export default Service.extend(Evented, {
                 this.application.conversationsManager.getMoreConversations();
             })
             .catch((err) => {
-                Logger.error('Skype.signIn.catch', err, arguments);
-            })
+                Logger.error('Skype.signIn.catch', err);
+            });
     },
 
     registerForEvents() {
