@@ -31,20 +31,25 @@ export default Component.extend({
 
         makeCall() {
             let platformClient = window.require('platformClient');
-            const number = this.get('target.person').phoneNumbers().get('firstObject').displayString();
+            let number = this.get('target.person').phoneNumbers().get('firstObject');
+            if (number) {
+                number = `tel:+1${number.displayString()}`;
 
-            platformClient.ApiClient.instance.setEnvironment('inindca.com');
-            platformClient.ApiClient.instance.authentications['PureCloud Auth'].accessToken = this.get('auth.purecloudAccessToken');
-            let apiInstance = new platformClient.ConversationsApi();
-            let body = {
-                phoneNumber: number,
-            };
+                platformClient.ApiClient.instance.setEnvironment('inindca.com');
+                platformClient.ApiClient.instance.authentications['PureCloud Auth'].accessToken = this.get('auth.purecloudAccessToken');
+                let apiInstance = new platformClient.ConversationsApi();
+                let body = {
+                    phoneNumber: number,
+                };
 
-            apiInstance.postConversationsCalls(body).then((data) => {
-                Logger.log('Call Made', data);
-            }).catch((err) => {
-                Logger.error('CALL ERROR', err);
-            });
+                apiInstance.postConversationsCalls(body).then((data) => {
+                    Logger.log('Call Made', data);
+                }).catch((err) => {
+                    Logger.error('CALL ERROR', err);
+                });
+            } else {
+                // no phone number, error
+            }
         }
     }
 })

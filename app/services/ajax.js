@@ -20,10 +20,11 @@ export default AjaxService.extend({
 
     headers: computed('auth.msftAccessToken', function () {
         let headers = {};
-        const token = this.get('auth.msftAccessToken');
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+        const msftToken = this.get('auth.msftAccessToken');
+        if (msftToken) {
+            headers['Authorization'] = `Bearer ${msftToken}`;
         }
+
         return headers;
     })
 });

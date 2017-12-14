@@ -30,7 +30,7 @@ export default Service.extend({
 
     clientIds: {
         inindca: '9a529fd6-cb6c-4f8b-8fc9-e9288974f0c5',
-        testdca: '4def91da-ef2b-4f79-9f25-f53b475bdaec'
+        testshia: '160ab5d6-3d99-4fe9-bf94-0f96d5633b8f'
     },
 
     accessCode: null,
@@ -192,7 +192,7 @@ export default Service.extend({
     purecloudAuth() {
         const platform = window.require('platformClient');
         const redirectUri = `${window.location.origin}${window.location.pathname}`;
-        const clientId = this.get('clientIds.testdca');
+        const clientId = this.get('clientIds.testshia');
         let client = platform.ApiClient.instance;
         client.setEnvironment('inindca.com');
         client.loginImplicitGrant(clientId, redirectUri).catch((err) => {
