@@ -106,9 +106,13 @@ export default Ember.Object.extend({
         this._setup();
     },
 
-    sendMessage(message) {
+    clearUnreadState() {
         this.set('badgeCount', 0);
         this.get('messages').forEach(message => message.set('unread', false));
+    },
+
+    sendMessage(message) {
+        this.clearUnreadState();
         this.get('latestConversation').chatService.sendMessage(message)
             .then(function () {
                 Logger.log('Message sent.');
