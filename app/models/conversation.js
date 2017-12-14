@@ -48,9 +48,14 @@ export default Ember.Object.extend({
     conversationTarget: computed('conversation', function () {
         const person = get(this.get('conversation').participants(), 'firstObject.person');
         if (!person) {
-            return {};
+            return Ember.Object.create({
+                name: RSVP.resolve(''),
+                photoUrl: RSVP.resolve('')
+            });
         }
-        return this.get('store').getUserForPerson(person);
+        else {
+            return this.get('store').getUserForPerson(person);
+        }
     }),
 
     avatarUrl: computed('conversation', function () {
@@ -71,7 +76,7 @@ export default Ember.Object.extend({
 
     incomingExtraConversation: observer('extraConversations.[]', function () {
         const latest = this.get('extraConversations.lastObject');
-        this.set('latestConversation', latest)
+        this.set('latestConversation', latest);
 
         run.once(this, this._setupMessageHandling, latest);
     }),

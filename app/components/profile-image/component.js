@@ -21,8 +21,8 @@ export default Component.extend({
         this.processPhoto();
     },
 
-    initials: computed('person.name', function () {
-        return this.get('person.name').then(name => {
+    initials: computed('person.fullName', function () {
+        return this.get('person.fullName').then(name => {
             if (!name) {
                 return '';
             }
