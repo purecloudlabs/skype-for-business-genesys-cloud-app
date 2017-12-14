@@ -185,7 +185,7 @@ export default Ember.Object.extend({
 
             Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
 
-            this.get('messages').pushObject(message);
+            this.get('messages').pushObject(messageModel);
         });
 
         conversation.state.changed((newValue, reason, oldValue) => {
