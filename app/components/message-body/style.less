@@ -11,6 +11,16 @@
         height: 30px;
     }
 
+    &.unread::before {
+        position: absolute;
+        content: " ";
+        background-color: #E5848A;
+        width: 5px;
+        left: 0;
+        top: 0;
+        bottom: 0;
+    }
+
     &.is-you::before {
         position: absolute;
         content: " ";

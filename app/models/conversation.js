@@ -12,6 +12,9 @@ const {
     Logger
 } = Ember;
 
+const MESSAGE_CACHE = { };
+const getCacheKey = message => `${moment(message.timestamp()).toISOString()}$$${message.text()}`;
+
 export default Ember.Object.extend({
     store: inject.service(),
     skype: inject.service(),
@@ -22,6 +25,7 @@ export default Ember.Object.extend({
 
     attachedListeners: null,
 
+    badgeCount: 0,
     messages: null,
     loadedHistory: false,
 
@@ -44,9 +48,14 @@ export default Ember.Object.extend({
     conversationTarget: computed('conversation', function () {
         const person = get(this.get('conversation').participants(), 'firstObject.person');
         if (!person) {
-            return {};
+            return Ember.Object.create({
+                name: RSVP.resolve(''),
+                photoUrl: RSVP.resolve('')
+            });
         }
-        return this.get('store').getUserForPerson(person);
+        else {
+            return this.get('store').getUserForPerson(person);
+        }
     }),
 
     avatarUrl: computed('conversation', function () {
@@ -67,7 +76,7 @@ export default Ember.Object.extend({
 
     incomingExtraConversation: observer('extraConversations.[]', function () {
         const latest = this.get('extraConversations.lastObject');
-        this.set('latestConversation', latest)
+        this.set('latestConversation', latest);
 
         run.once(this, this._setupMessageHandling, latest);
     }),
@@ -97,7 +106,13 @@ export default Ember.Object.extend({
         this._setup();
     },
 
+    clearUnreadState() {
+        this.set('badgeCount', 0);
+        this.get('messages').forEach(message => message.set('unread', false));
+    },
+
     sendMessage(message) {
+        this.clearUnreadState();
         this.get('latestConversation').chatService.sendMessage(message)
             .then(function () {
                 Logger.log('Message sent.');
@@ -143,6 +158,16 @@ export default Ember.Object.extend({
 
         this.get('attachedListeners').addObject(conversation.id());
 
+        conversation.chatService.messages.added(message => {
+            console.log('chatService.messages.added', message);
+
+            let model = MESSAGE_CACHE[ getCacheKey(message) ];
+            if (model && model.get('sender') !== this.get('store.me')) {
+                model.set('unread', true);
+                this.incrementProperty('badgeCount');
+            }
+        });
+
         conversation.historyService.activityItems.added(message => {
             Logger.log('HISTORY', message);
 
@@ -160,6 +185,8 @@ export default Ember.Object.extend({
                 sender,
                 skypeMessage: message
             });
+
+            MESSAGE_CACHE[ getCacheKey(message) ] = messageModel;
 
             Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
 

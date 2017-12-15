@@ -3,6 +3,8 @@ import Ember from 'ember';
 const {
     inject,
     computed,
+    run,
+    observer,
     Logger,
     Component
 } = Ember;
@@ -17,8 +19,32 @@ export default Component.extend({
 
     target: computed.alias('conversation.conversationTarget'),
 
+    didInsertElement() {
+        run.scheduleOnce('afterRender', this, this.focus);
+
+        return this._super(...arguments);
+    },
+
+    conversationChanged: observer('conversation', function () {
+        run.scheduleOnce('afterRender', this, this.focus);
+    }),
+
+    focus() {
+        if (this.element) {
+            let textarea = this.element.querySelector('textarea');
+            if (textarea) {
+                textarea.focus();
+            }
+        }
+    },
+
     actions: {
         keyup({key, keyCode, shiftKey, target}) {
+            console.log('KEY', key, keyCode);
+            if ((key === "Escape" || keyCode === 27) && target.value === "") {
+                this.get('conversation').clearUnreadState();
+            }
+
             if ((key === "Enter" || keyCode === 13) && !shiftKey) {
                 let messageText = target.value;
 

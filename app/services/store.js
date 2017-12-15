@@ -14,6 +14,7 @@ const {
 export default Service.extend({
     skype: inject.service(),
 
+    me: null,
     users: null,
     contacts: null,
     conversations: null,

@@ -19,6 +19,11 @@ export default Component.extend({
         this._super(...arguments);
 
         this.processPhoto();
+
+        this.element
+            .querySelector('img')
+            .addEventListener('error', () =>
+                run.scheduleOnce('afterRender', this, this.set, 'showInitials', true));
     },
 
     initials: computed('person.name', function () {
@@ -33,11 +38,7 @@ export default Component.extend({
 
     processPhoto: observer('person.photoUrl', function () {
         this.get('person.photoUrl').then(url => {
-            if (!url) {
-                run.scheduleOnce('afterRender', this, this.set, 'showInitials', true);
-            } else {
-                run.scheduleOnce('afterRender', this, this.set, 'showInitials', false);
-            }
+            run.scheduleOnce('afterRender', this, this.set, 'showInitials', !url);
         }).catch(() => {
             run.scheduleOnce('afterRender', this, this.set, 'showInitials', true);
         });
