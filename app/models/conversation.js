@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import moment from 'moment';
 
 import Message from './message';
 
@@ -159,7 +160,7 @@ export default Ember.Object.extend({
         this.get('attachedListeners').addObject(conversation.id());
 
         conversation.chatService.messages.added(message => {
-            console.log('chatService.messages.added', message);
+            Logger.log('chatService.messages.added', message);
 
             let model = MESSAGE_CACHE[ getCacheKey(message) ];
             if (model && model.get('sender') !== this.get('store.me')) {
