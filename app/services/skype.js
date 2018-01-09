@@ -14,7 +14,7 @@ const config = {
 const redirectUri =
     window.location.host.indexOf('localhost') > -1 ?
         'https://localhost:4200/skype-for-business-purecloud-app/' :
-        'https://mypurecloud.github.io/skype-for-business-purecloud-app/';
+        window.location.href;
 
 const appConfigProperties = {
     "displayName": "purecloudskype",
