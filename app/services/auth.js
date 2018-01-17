@@ -42,6 +42,10 @@ export default Service.extend({
     init() {
         this._super(...arguments);
 
+        // Workaround for MSAL thinking we are authenticating with it instead of PureCloud
+        const loginRequest = 'msal.login.request';
+        window.localStorage.setItem(loginRequest, '');
+
         const logger = new Msal.Logger((logLevel, message) => {
             Ember.Logger.log('MSAL:', message);
         }, { level: Msal.LogLevel.Verbose });
@@ -197,6 +201,7 @@ export default Service.extend({
         client.setEnvironment('inindca.com');
         client.loginImplicitGrant(clientId, redirectUri).catch((err) => {
             Logger.error(err.error);
+            return RSVP.reject(err);
         })
     },
 

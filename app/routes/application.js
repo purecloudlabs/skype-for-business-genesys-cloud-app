@@ -22,7 +22,7 @@ export default Route.extend({
         let tokenIndex = ref.indexOf('access_token');
 
         return localforage.getItem('forage.token.purecloud').then((cookie) => {
-            if (tokenIndex != -1) {
+            if (tokenIndex !== -1) {
                 let token = ref.substring(tokenIndex + 13, ref.indexOf('&'));
                 this.get('auth').set('purecloudAccessToken', token);
                 this.get('auth').setTokenCookie(token, 'purecloud');
@@ -32,13 +32,13 @@ export default Route.extend({
                 this.get('auth').purecloudAuth();
             }
         }).then(() => {
-            this.get('auth').silentLogin().then(() => {
+            return this.get('auth').silentLogin().then(() => {
                 let target = transition.targetName;
                 this.transitionTo(target);
-            }).catch(error => {
-                Logger.error('Error logging in silently', error);
-                this.transitionTo('index');
-            })
+            });
+        }).catch(error => {
+            Logger.error('Error logging in silently', error);
+            this.transitionTo('index');
         });
     }
 });
