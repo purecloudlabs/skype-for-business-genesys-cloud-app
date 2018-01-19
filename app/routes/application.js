@@ -25,11 +25,11 @@ export default Route.extend({
             if (tokenIndex !== -1) {
                 let token = ref.substring(tokenIndex + 13, ref.indexOf('&'));
                 this.get('auth').set('purecloudAccessToken', token);
-                this.get('auth').setTokenCookie(token, 'purecloud');
+                return this.get('auth').setTokenCookie(token, 'purecloud');
             } else if (cookie) {
-                this.get('auth').validatePurecloudAuth(cookie);
+                return this.get('auth').validatePurecloudAuth(cookie);
             } else {
-                this.get('auth').purecloudAuth();
+                return this.get('auth').purecloudAuth();
             }
         }).then(() => {
             return this.get('auth').silentLogin().then(() => {

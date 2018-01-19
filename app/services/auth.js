@@ -37,10 +37,14 @@ export default Service.extend({
     msftAccessToken: null,
     purecloudAccessToken: null,
 
+    purecloudAuthDeferred: null,
     MSALDeferred: null,
 
     init() {
         this._super(...arguments);
+
+        const purecloudDeferred = RSVP.defer();
+        this.set('purecloudAuthDeferred', purecloudDeferred);
 
         // Workaround for MSAL thinking we are authenticating with it instead of PureCloud
         const loginRequest = 'msal.login.request';
@@ -50,22 +54,24 @@ export default Service.extend({
             Ember.Logger.log('MSAL:', message);
         }, { level: Msal.LogLevel.Verbose });
 
-        this.userAgentApplication = new Msal.UserAgentApplication(this.get('appId'), null, (errDesc, token, error) => {
-            const deferred = RSVP.defer();
-            this.set('MSALDeferred', deferred);
+        purecloudDeferred.promise.then(() => {
+            this.userAgentApplication = new Msal.UserAgentApplication(this.get('appId'), null, (errDesc, token, error) => {
+                const deferred = RSVP.defer();
+                this.set('MSALDeferred', deferred);
 
-            if (!error && token) {
-                this.userAgentApplication.acquireTokenSilent(this.get('scope')).then(token => {
-                    Logger.info('Retrieved token', {
-                        accessToken: token
+                if (!error && token) {
+                    this.userAgentApplication.acquireTokenSilent(this.get('scope')).then(token => {
+                        Logger.info('Retrieved token', {
+                            accessToken: token
+                        });
+                        this.set('msftAccessToken', token);
+                        deferred.resolve(token);
                     });
-                    this.set('msftAccessToken', token);
-                    deferred.resolve(token);
-                });
-            }
-        }, {
-            logger,
-            cacheLocation: 'localStorage'
+                }
+            }, {
+                logger,
+                cacheLocation: 'localStorage'
+            });
         });
     },
 
@@ -95,6 +101,9 @@ export default Service.extend({
     }),
 
     microsoftUser: computed('msftAccessToken', function () {
+        if (!this.userAgentApplication) {
+            return null;
+        }
         return this.userAgentApplication.getUser();
     }),
 
@@ -136,10 +145,17 @@ export default Service.extend({
         });
 
         this.set('loginDeferred', deferred);
+        deferred.resolve();
         return deferred.promise;
     },
 
     silentLogin() {
+        if (!this.userAgentApplication) {
+            return this.get('purecloudAuthDeferred').promise.then(() => {
+                return this.silentLogin();
+            });
+        }
+
         if (this.userAgentApplication.getUser()) {
             return this.get('skype.promise').then(() => {
                 this.get('skype').signIn();
@@ -196,10 +212,12 @@ export default Service.extend({
     purecloudAuth() {
         const platform = window.require('platformClient');
         const redirectUri = `${window.location.origin}${window.location.pathname}`;
-        const clientId = this.get('clientIds.testshia');
+        const clientId = this.get('clientIds.inindca');
         let client = platform.ApiClient.instance;
         client.setEnvironment('inindca.com');
-        client.loginImplicitGrant(clientId, redirectUri).catch((err) => {
+        return client.loginImplicitGrant(clientId, redirectUri).then(() => {
+            this.get('purecloudAuthDeferred').resolve();
+        }).catch((err) => {
             Logger.error(err.error);
             return RSVP.reject(err);
         })
@@ -207,27 +225,33 @@ export default Service.extend({
 
     validatePurecloudAuth(token) {
         const platformClient = window.require('platformClient');
-        let client = platformClient.ApiClient.instance;
+        const client = platformClient.ApiClient.instance;
         client.setEnvironment('inindca.com');
         client.authentications['PureCloud Auth'].accessToken = token;
+
         let apiInstance = new platformClient.UsersApi();
 
-        apiInstance.getUsersMe().then((data) => {
+        return apiInstance.getUsersMe().then((data) => {
             Logger.log('auth confirmed', data);
             this.set('purecloudAccessToken', token);
             this.setTokenCookie(token, 'purecloud');
+
+            this.get('purecloudAuthDeferred').resolve();
+
             return true;
         }).catch((err) => {
             Logger.error('AUTH ERROR', err);
             if (err.status === 401) {
-                this.purecloudAuth();
+                return this.purecloudAuth();
             }
             return false;
         });
     },
 
     setTokenCookie(token, type) {
-        localforage.setItem(`forage.token.${type}`, token).then(() => {
+        return localforage.setItem(`forage.token.${type}`, token).then(() => {
+            this.get('purecloudAuthDeferred').resolve();
+
             Logger.log(`${type} cookie set`);
         });
     }
