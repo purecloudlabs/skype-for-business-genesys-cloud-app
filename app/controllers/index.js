@@ -15,7 +15,7 @@ export default Controller.extend({
             const auth = this.get('auth');
             const skype = this.get('skype');
 
-            auth.loginMicrosoft()
+            auth.microsoftAuth()
                 .then(token => {
                     Logger.log('TOKEN:', token);
                 })
