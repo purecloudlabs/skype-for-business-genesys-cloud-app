@@ -20,7 +20,7 @@ export default Service.extend({
     ajax: inject.service(),
     skype: inject.service(),
 
-    appId: '6dd45f0c-9db2-4c5b-93c3-3ff5c703184e',
+    appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
     urls: {
         auth: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
         grant: 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
@@ -91,6 +91,12 @@ export default Service.extend({
         };
 
         return `${base}/?${objectToQueryParameters(data)}`;
+    }),
+
+    adminConsentUrl: computed(function () {
+        const id = this.get('appId');
+        const uri = `${window.location.origin}${window.location.pathname}`;
+        return `https://login.microsoftonline.com/common/adminconsent?client_id=${id}&state=12345&redirect_uri=${uri}`;
     }),
 
     microsoftUser: computed('msftAccessToken', function () {

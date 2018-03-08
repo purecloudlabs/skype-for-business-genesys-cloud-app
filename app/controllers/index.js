@@ -2,6 +2,7 @@ import Ember from 'ember';
 
 const {
     inject,
+    computed,
     Logger,
     Controller
 } = Ember;
@@ -24,5 +25,7 @@ export default Controller.extend({
                     Logger.error('Error authenticating:', { error });
                 });
         }
-    }
+    },
+
+    adminConsentUrl: computed.reads('auth.adminConsentUrl')
 })
