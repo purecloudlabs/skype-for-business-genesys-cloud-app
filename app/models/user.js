@@ -152,6 +152,12 @@ export default Ember.Object.extend({
         });
     }),
 
+    skypePhotoUrl: computed('person', function () {
+        return PromiseObject.create({
+            promise: this.get('person').avatarUrl.get()
+        });
+    }),
+
     subscribeToProperties() {
         let person = this.get('person');
         if (person.status) {

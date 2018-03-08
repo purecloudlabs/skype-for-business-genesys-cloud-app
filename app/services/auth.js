@@ -49,11 +49,14 @@ export default Service.extend({
             clientId: this.get('appId'),
             redirectUri: this.get('redirectUri'),
             popUp: true,
+            cacheLocation: "localStorage",
             callback: (err, token) => {
                 if (err) {
                     this.get('msftAuthDeferred').reject(err);
                     return;
                 }
+
+                Ember.Logger.info('Loaded token:', token);
 
                 this.set('msftAccessToken', token);
                 this.get('msftAuthDeferred').resolve(token);

@@ -12,9 +12,11 @@ export default AjaxService.extend({
     contentType: 'application/json; charset=utf-8',
 
     trustedHosts: [
+        /infra.lync.com/,
+        /online.lync.com/,
+        /graph.windows.net/,
         /outlook.office.com/,
         /graph.microsoft.com/,
-        /online.lync.com/,
         /api.(?:inindca|mypurecloud).(?:com|jp).?(?:ie|au)?/
     ],
 

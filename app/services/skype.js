@@ -17,11 +17,11 @@ const redirectUri =
         window.location.href;
 
 const appConfigProperties = {
-    "displayName": "purecloudskype",
-    "applicationID": "ec744ffe-d332-454a-9f13-b9f7ebe8b249",
-    "applicationType": "Web app / API",
-    "objectID": "45185d32-9960-42ad-beed-6b02215f8ba2",
-    "homePage": "https://mypurecloud.github.io/skype-for-business-purecloud-app/",
+    displayName: 'purecloudskype',
+    applicationID: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
+    applicationType: 'Web app / API',
+    objectID: '45185d32-9960-42ad-beed-6b02215f8ba2',
+    homePage: 'https://mypurecloud.github.io/skype-for-business-purecloud-app/',
 };
 
 export const EVENTS = {

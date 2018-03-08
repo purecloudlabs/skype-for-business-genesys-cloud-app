@@ -16,9 +16,6 @@ export default Controller.extend({
             const skype = this.get('skype');
 
             auth.microsoftAuth()
-                .then(token => {
-                    Logger.log('TOKEN:', token);
-                })
                 .then(() => skype.get('promise'))
                 .then(() => skype.signIn())
                 .then(() => {
