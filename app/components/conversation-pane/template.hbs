@@ -12,11 +12,8 @@
     <div class="input-footer">
         <textarea onkeyup={{action "keyup"}}></textarea>
     </div>
-
 {{else}}
-
     <div class="empty-panel">
-        <span class="ion-more"></span>
+        {{loading-icon}}
     </div>
-
 {{/if}}
