@@ -21,6 +21,13 @@ pipeline {
         PATH = "./node_modules/.bin:$PATH"
     }
 
+    parameters {
+        booleanParam(defaultValue: true, description: 'Build and deploy application to environments?', name: 'DEPLOY_APPLICATION')
+        booleanParam(defaultValue: true, description: 'Deploy to dev?', name: 'DEPLOY_TO_DEV')
+        booleanParam(defaultValue: false, description: 'Deploy to test?', name: 'DEPLOY_TO_TEST')
+        booleanParam(defaultValue: false, description: 'Deploy to production?', name: 'DEPLOY_TO_PROD')
+    }
+
     stages {
         stage('Setup Environment') {
             steps {
@@ -53,9 +60,21 @@ pipeline {
                     sh 'yarn run ember test'
                 }
             }
+
+            post {
+                failure {
+                    mail to: 'omar.estrella@genesys.com', subject: "FAILURE: ${currentBuild.displayName}", body: "Build ${env.BUILD_NUMBER} failed."
+                }
+            }
         }
 
         stage('Build') {
+            when {
+                expression {
+                    params.DEPLOY_APPLICATION == true
+                }
+            }
+
             steps {
                 script {
                     env.CDN_URL = sh script: "cdn --web-app-name purecloud-skype --build-number ${env.BUILD_NUMBER}", returnStdout: true
@@ -65,19 +84,44 @@ pipeline {
         }
 
         stage('Upload') {
+            when {
+                expression {
+                    params.DEPLOY_APPLICATION == true
+                }
+            }
+
             steps {
                 script {
-                    sh "yarn run upload --web-app-name purecloud-skype --source-dir dist --create-manifest true --version 1.0.0 --build-number ${env.BUILD_NUMBER} --no-index-file-copy true"
+                    if (params.DEPLOY_APPLICATION) {
+                        sh "yarn run upload --web-app-name purecloud-skype --source-dir dist --create-manifest true --version 1.0.0 --build-number ${env.BUILD_NUMBER} --no-index-file-copy true"
+                    }
                 }
             }
         }
 
         stage('Deploy') {
+            when {
+                expression {
+                    params.DEPLOY_APPLICATION == true && getDeployEnvironments().size() > 0
+                }
+            }
+
             steps {
                 script {
-                    sh "yarn run deploy --web-app-name purecloud-skype --dest-env dev --build-number ${env.BUILD_NUMBER}"
+                    def environments = getDeployEnvironments()
+                    if (environments.size() > 0) {
+                        echo "Deploying to: ${environments}"
+
+                        def environmentsParam = environments.join(',')
+                        sh "yarn run deploy --web-app-name purecloud-skype --dest-env ${environmentsParam} --build-number ${env.BUILD_NUMBER}"
+                    }
                 }
             }
         }
     }
+}
+
+def getDeployEnvironments() {
+    def deployMap = [dev: params.DEPLOY_TO_DEV, test: params.DEPLOY_TO_TEST, prod: params.DEPLOY_TO_PROD]
+    return ['dev', 'test', 'prod'].findAll { deployMap[it] }
 }
