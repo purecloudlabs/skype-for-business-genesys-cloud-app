@@ -9,6 +9,7 @@ const {
 
 export default Route.extend({
     auth: inject.service(),
+    skype: inject.service(),
 
     beforeModel(transition) {
         localforage.config({
@@ -33,11 +34,13 @@ export default Route.extend({
             }
         }).then(() => {
             return this.get('auth').silentLogin().then(() => {
-                let target = transition.targetName;
-                this.transitionTo(target);
+                Logger.info('Silently logged in');
+                return this.get('skype').get('promise');
+            }).then(() => {
+                return this.get('skype').signIn();
             });
         }).catch(error => {
-            Logger.error('Error logging in silently', error);
+            Logger.error('Error logging in silently', { error });
             this.transitionTo('index');
         });
     }

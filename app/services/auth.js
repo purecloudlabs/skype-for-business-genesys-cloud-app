@@ -113,7 +113,7 @@ export default Service.extend({
 
     silentLogin() {
         const deferred = RSVP.defer();
-        this.authenticationContext.acquireToken('common', (err, token) => {
+        this.authenticationContext.acquireToken(this.get('appId'), (err, token) => {
             if (err) {
                 deferred.reject(err);
                 return;

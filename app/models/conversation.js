@@ -195,7 +195,7 @@ export default Ember.Object.extend({
         });
 
         conversation.state.changed((newValue, reason, oldValue) => {
-            Logger.log('conversation.state.changed', newValue, reason, oldValue);
+            Logger.log('conversation.state.changed', { newValue, reason, oldValue });
         });
     }
 });
