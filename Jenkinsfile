@@ -112,8 +112,9 @@ pipeline {
                     if (environments.size() > 0) {
                         echo "Deploying to: ${environments}"
 
-                        def environmentsParam = environments.join(',')
-                        sh "yarn run deploy --web-app-name purecloud-skype --dest-env ${environmentsParam} --build-number ${env.BUILD_NUMBER}"
+                        environments.each {
+                            sh "yarn run deploy --web-app-name purecloud-skype --dest-env ${it} --build-number ${env.BUILD_NUMBER}"
+                        }
                     }
                 }
             }
