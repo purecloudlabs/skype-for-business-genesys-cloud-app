@@ -5,7 +5,15 @@
     </div>
 {{else}}
     <div class="login">
-        <button {{action "startAuth"}}>Login</button>
+        <button {{action "startAuth"}}>
+            Login
+        </button>
+
+        {{#if closedPopup}}
+            <span class="closed-popup-error">
+                In order to access PureCloud's Skype for Business integration, please authenticate with Microsoft Services in the provided popup window.
+            </span>
+        {{/if}}
     </div>
 
     <div class="admin-consent">
