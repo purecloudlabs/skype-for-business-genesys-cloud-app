@@ -22,10 +22,10 @@ pipeline {
     }
 
     parameters {
-        booleanParam(defaultValue: true, description: 'Build and deploy application to environments?', name: 'deployApplication')
-        booleanParam(defaultValue: true, description: 'Deploy to dev?', name: 'deployToDev')
-        booleanParam(defaultValue: false, description: 'Deploy to test?', name: 'deployToTest')
-        booleanParam(defaultValue: false, description: 'Deploy to production?', name: 'deployToProd')
+        booleanParam(defaultValue: true, description: 'Build and deploy application to environments?', name: 'DEPLOY_APPLICATION')
+        booleanParam(defaultValue: true, description: 'Deploy to dev?', name: 'DEPLOY_TO_DEV')
+        booleanParam(defaultValue: false, description: 'Deploy to test?', name: 'DEPLOY_TO_TEST')
+        booleanParam(defaultValue: false, description: 'Deploy to production?', name: 'DEPLOY_TO_PROD')
     }
 
     stages {
@@ -71,7 +71,7 @@ pipeline {
         stage('Build') {
             when {
                 expression {
-                    params.deployApplication == true
+                    params.DEPLOY_APPLICATION == true
                 }
             }
 
@@ -86,13 +86,13 @@ pipeline {
         stage('Upload') {
             when {
                 expression {
-                    params.deployApplication == true
+                    params.DEPLOY_APPLICATION == true
                 }
             }
 
             steps {
                 script {
-                    if (params.deployApplication) {
+                    if (params.DEPLOY_APPLICATION) {
                         sh "yarn run upload --web-app-name purecloud-skype --source-dir dist --create-manifest true --version 1.0.0 --build-number ${env.BUILD_NUMBER} --no-index-file-copy true"
                     }
                 }
@@ -102,7 +102,7 @@ pipeline {
         stage('Deploy') {
             when {
                 expression {
-                    params.deployApplication == true && getDeployEnvironments().size() > 0
+                    params.DEPLOY_APPLICATION == true && getDeployEnvironments().size() > 0
                 }
             }
 
@@ -122,6 +122,6 @@ pipeline {
 }
 
 def getDeployEnvironments() {
-    def deployMap = [dev: params.deployToDev, test: params.deployToTest, prod: params.deployToProd]
+    def deployMap = [dev: params.DEPLOY_TO_DEV, test: params.DEPLOY_TO_TEST, prod: params.DEPLOY_TO_PROD]
     return ['dev', 'test', 'prod'].findAll { deployMap[it] }
 }
