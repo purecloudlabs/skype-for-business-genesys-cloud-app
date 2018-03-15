@@ -40,7 +40,6 @@ export default Component.extend({
 
     actions: {
         keyup({key, keyCode, shiftKey, target}) {
-            Logger.log('KEY', key, keyCode);
             if ((key === "Escape" || keyCode === 27) && target.value === "") {
                 this.get('conversation').clearUnreadState();
             }
