@@ -9,168 +9,175 @@
     > div {
         padding: 0 20px;
     }
+}
+
+h3 {
+    font-size: 1.15em;
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    margin: 20px 0 20px 0;
 
     h3 {
-        font-size: 1.15em;
+        flex: 1;
+        margin: 0;
+
+        color: @text-blue-grey;
+        font-weight: normal;
     }
 
-    .heading {
-        display: flex;
-        align-items: center;
-        margin: 20px 0 20px 0;
-
-        h3 {
-            flex: 1;
-            margin: 0;
-
-            color: @text-blue-grey;
-            font-weight: normal;
-        }
-
-        .controls {
-            i:first-child {
-                margin-right: 8px;
-            }
+    .controls {
+        i:first-child {
+            margin-right: 8px;
         }
     }
+}
 
-    .search-container {
-        display: flex;
+.search-container {
+    display: flex;
+    position: relative;
+
+    .search-input {
         position: relative;
+        width: 100%;
 
-        .search-input {
-            position: relative;
+        input {
             width: 100%;
-
-            input {
-                width: 100%;
-                padding: 6px 18px;
-                font-size: 0.8em;
-                border: 1px solid @pc-darkblue;
-                box-sizing: border-box;
-                outline: none;
-            }
-
-            i {
-                position: absolute;
-                left: 6px;
-                top: 6px;
-                color: @text-grey;
-            }
+            padding: 6px 18px;
+            font-size: 0.8em;
+            border: 1px solid @pc-darkblue;
+            box-sizing: border-box;
+            outline: none;
         }
 
-        .search-results {
+        i {
             position: absolute;
-            left: 0;
-            top: 36px;
-            width: calc(~"100% - 40px");
-            margin: 0 20px;
-            background-color: #ffffff;
-            border-radius: 3px;
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-
-            .search-result {
-                display: flex;
-                align-items: center;
-                height: 25px;
-                padding: 0 15px;
-
-                a {
-                    display: block;
-                    width: 100%;
-                    color: @text-color;
-                    text-decoration: none;
-
-                    &:hover, &:active, &:focus {
-                        color: @text-color;
-                        text-decoration: none;
-                    }
-                }
-
-                &:hover {
-                    cursor: pointer;
-                    background-color: @bg-grey-light;
-                }
-
-                &.loading:hover, .no-results:hover {
-                    cursor: default;
-                    background-color: transparent;
-                }
-            }
+            left: 6px;
+            top: 6px;
+            color: @text-grey;
         }
     }
 
-    .roster-group {
-        padding: 0;
+    .search-results {
+        position: absolute;
+        left: 0;
+        top: 36px;
+        width: calc(~"100% - 40px");
+        margin: 0 20px;
+        background-color: #ffffff;
+        border-radius: 3px;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 
-        .roster-heading,
-        .roster-entries {
-            width: 100%;
-        }
-
-        .roster-heading {
-            color: @pc-darkblue;
-            padding: 0 20px;
-        }
-
-        .roster-entry {
+        .search-result {
             display: flex;
             align-items: center;
-
             height: 25px;
-            font-size: 0.9em;
+            padding: 0 15px;
 
-            padding: 0 20px;
+            a {
+                display: block;
+                width: 100%;
+                color: @text-color;
+                text-decoration: none;
 
-            .name {
-                flex: 1;
-            }
-
-            .presence-indicator {
-                margin-right: 8px;
-            }
-
-            .badge-count {
-                background-color: #e56266;
-                color: white;
-                border-radius: 50%;
-                width: 18px;
-                height: 18px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 12px;
-            }
-
-            .close {
-                display: none;
-                color: @text-grey;
-                font-size: 14px;
-                margin-right: -15px;
-                margin-left: 3px;
-
-                &:hover {
-                    color: red;
-                }
-            }
-
-            &.active {
-                background-color: @pc-darkblue;
-
-                .name {
-                    color: #fff;
+                &:hover, &:active, &:focus {
+                    color: @text-color;
+                    text-decoration: none;
                 }
             }
 
             &:hover {
-                background-color: @bg-grey-light;
                 cursor: pointer;
-
-                .close {
-                    display: block;
-                }
+                background-color: @bg-grey-light;
             }
 
+            &.loading:hover, .no-results:hover {
+                cursor: default;
+                background-color: transparent;
+            }
+        }
+    }
+}
+
+.roster-group {
+    padding: 0;
+
+    .roster-heading,
+    .roster-entries {
+        width: 100%;
+    }
+
+    .roster-heading {
+        color: @pc-darkblue;
+        padding: 0 20px;
+    }
+
+    .roster-entry {
+        display: flex;
+        align-items: center;
+
+        height: 25px;
+        padding: 0 20px;
+
+        color: @text-color;
+        font-size: 0.9em;
+        text-decoration: none;
+
+        &:hover {
+            cursor: pointer;
+            background-color: @bg-grey-light;
+            text-decoration: none;
+
+            .close {
+                display: block;
+            }
+        }
+
+        &:visited, &:active {
+            color: @text-color;
+            text-decoration: none;
+        }
+
+        &.active {
+            background-color: @pc-darkblue;
+
+            .name {
+                color: #fff;
+            }
+        }
+
+        .name {
+            flex: 1;
+        }
+
+        .presence-indicator {
+            margin-right: 8px;
+        }
+
+        .badge-count {
+            background-color: #e56266;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .close {
+            display: none;
+            color: @text-grey;
+            font-size: 14px;
+            margin-right: -15px;
+            margin-left: 3px;
+
+            &:hover {
+                color: red;
+            }
         }
     }
 }

@@ -7,5 +7,13 @@ export default Route.extend(AuthenticatedRoute, {
 
     model(params) {
         return this.get('store').getConversation(params.id);
+    },
+
+    afterModel(model) {
+        if (!model) {
+            return;
+        }
+
+        model.loadMessageHistory();
     }
 });
