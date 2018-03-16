@@ -21,7 +21,7 @@ export default Route.extend({
 
     beforeModel() {
         localforage.config({
-            name: 'pureSkype',
+            name: 'purecloud-skype',
             version: 1.0,
             storeName: 'forage',
             description: 'Storing local preferences for the Skype for Business integration app'
@@ -31,7 +31,7 @@ export default Route.extend({
         const tokenIndex = ref.indexOf('access_token');
         const auth = this.get('auth');
 
-        return localforage.getItem('forage.token.purecloud').then((cookie) => {
+        return localforage.getItem('purecloudAccessToken').then((cookie) => {
             if (tokenIndex !== -1) {
                 const token = ref.substring(tokenIndex + 13, ref.indexOf('&'));
                 auth.set('purecloudAccessToken', token);

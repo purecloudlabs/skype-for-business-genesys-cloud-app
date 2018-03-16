@@ -19,6 +19,7 @@ function objectToQueryParameters(obj) {
 export default Service.extend({
     ajax: inject.service(),
     skype: inject.service(),
+    application: inject.service(),
 
     appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
     urls: {
@@ -126,11 +127,12 @@ export default Service.extend({
     },
 
     purecloudAuth() {
-        const platform = window.require('platformClient');
+        const platformClient = window.require('platformClient');
+        const environment = this.get('application.environment') || 'inindca.com';
         const redirectUri = `${window.location.origin}${window.location.pathname}`;
         const clientId = this.get('clientIds.inindca');
-        let client = platform.ApiClient.instance;
-        client.setEnvironment('inindca.com');
+        let client = platformClient.ApiClient.instance;
+        client.setEnvironment(environment);
         return client.loginImplicitGrant(clientId, redirectUri).then(() => {
             this.get('purecloudAuthDeferred').resolve();
         }).catch((err) => {
@@ -141,8 +143,10 @@ export default Service.extend({
 
     validatePurecloudAuth(token) {
         const platformClient = window.require('platformClient');
+        const environment = this.get('application.environment') || 'inindca.com';
         const client = platformClient.ApiClient.instance;
-        client.setEnvironment('inindca.com');
+
+        client.setEnvironment(environment);
         client.authentications['PureCloud Auth'].accessToken = token;
 
         let apiInstance = new platformClient.UsersApi();
