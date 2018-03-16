@@ -54,7 +54,7 @@ export default Route.extend({
         }).then(() => {
             return this.get('skype').signIn();
         }).then(() => {
-            this.transitionTo('conversations');
+            this.transitionTo('conversation');
         }).catch(error => {
             Logger.error('Error logging in silently', { error });
             return RSVP.reject(error);

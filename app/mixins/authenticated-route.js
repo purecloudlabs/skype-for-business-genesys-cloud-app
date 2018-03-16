@@ -1,7 +1,7 @@
-import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service'
+import { inject as service } from '@ember/service';
+import Mixin from '@ember/object/mixin';
 
-export default Route.extend({
+export default Mixin.create({
     auth: service(),
 
     beforeModel() {
@@ -9,4 +9,4 @@ export default Route.extend({
             this.transitionTo('index');
         }
     }
-});
+})

@@ -29,7 +29,7 @@ export default Controller.extend({
                 .then(() => skype.get('promise'))
                 .then(() => skype.signIn())
                 .then(() => this.set('authenticating', false))
-                .then(() => this.transitionToRoute('conversations'))
+                .then(() => this.transitionToRoute('conversation'))
                 .catch(error => {
                     Logger.error('Error authenticating:', { error });
                     this.set('error', error);
