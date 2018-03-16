@@ -42,6 +42,7 @@ export default Component.extend({
         keydown(event) {
             const {key, keyCode, shiftKey, target} = event;
             Logger.log('KEY', key, keyCode);
+
             if ((key === "Escape" || keyCode === 27) && target.value === "") {
                 this.get('conversation').clearUnreadState();
             }
