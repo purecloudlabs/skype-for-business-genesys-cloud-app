@@ -1,0 +1,25 @@
+<div class="login">
+    {{#if authenticating}}
+        {{loading-icon}}
+    {{else}}
+        <button {{action "startAuth"}}>
+            Login to Skype
+        </button>
+
+        {{#if closedPopup}}
+            <span class="error-message">
+                In order to access PureCloud's Skype for Business integration, please authenticate with Microsoft services in the provided popup window.
+            </span>
+        {{else if errorMessage}}
+            <span class="error-message">
+                {{errorMessage}}
+            </span>
+        {{/if}}
+    {{/if}}
+</div>
+
+<div class="admin-consent">
+    <a href="{{adminConsentUrl}}" target="consent">
+        Are you an organization admin? Give application consent here.
+    </a>
+</div>

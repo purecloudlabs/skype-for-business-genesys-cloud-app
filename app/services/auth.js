@@ -148,16 +148,15 @@ export default Service.extend({
         let apiInstance = new platformClient.UsersApi();
 
         return apiInstance.getUsersMe().then((data) => {
-            Logger.log('auth confirmed', data);
+            Logger.debug('Purecloud auth confirmed:', { data });
             this.set('purecloudAccessToken', token);
-            this.setTokenCookie(token, 'purecloud');
-
-            this.get('purecloudAuthDeferred').resolve();
-
-            return true;
-        }).catch((err) => {
-            Logger.error('AUTH ERROR', err);
-            if (err.status === 401) {
+            return this.setTokenCookie(token, 'purecloud');
+        }).then(() => {
+            Logger.debug('Purecloud cookie set');
+            return this.get('purecloudAuthDeferred').resolve();
+        }).catch(error => {
+            Logger.error('Purecloud auth error:', { error });
+            if (error.status === 401) {
                 return this.purecloudAuth();
             }
             return false;
@@ -165,10 +164,6 @@ export default Service.extend({
     },
 
     setTokenCookie(token, type) {
-        return localforage.setItem(`forage.token.${type}`, token).then(() => {
-            this.get('purecloudAuthDeferred').resolve();
-
-            Logger.log(`${type} cookie set`);
-        });
+        return localforage.setItem(`forage.token.${type}`, token);
     }
 });

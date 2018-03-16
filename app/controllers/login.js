@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import DS from 'ember-data';
+import PromiseObject from '../utils/promise-object';
 
 const {
     inject,
@@ -9,9 +9,11 @@ const {
 } = Ember;
 
 export default Controller.extend({
+    intl: inject.service(),
     auth: inject.service(),
     skype: inject.service(),
 
+    error: null,
     authPromise: null,
 
     actions: {
@@ -20,23 +22,22 @@ export default Controller.extend({
             const skype = this.get('skype');
 
             const promise = auth.microsoftAuth();
-            this.set('authPromise', DS.PromiseObject.create({ promise }));
+            this.set('authPromise', PromiseObject.create({ promise }));
+            this.set('authenticating', true);
+
             promise
                 .then(() => skype.get('promise'))
                 .then(() => skype.signIn())
-                .then(() => {
-                    Logger.log('done?', arguments);
-                }).catch(error => {
+                .then(() => this.set('authenticating', false))
+                .then(() => this.transitionToRoute('conversations'))
+                .catch(error => {
                     Logger.error('Error authenticating:', { error });
-                });
+                    this.set('error', error);
+                }).finally(() => this.set('authenticating', false));
         }
     },
 
     adminConsentUrl: computed.reads('auth.adminConsentUrl'),
-
-    isAuthenticating: computed('authPromise', 'authPromise.isSettled', function () {
-        return this.get('authPromise') && !this.get('authPromise.isSettled');
-    }),
 
     closedPopup: computed('authPromise', 'authPromise.{reason,isRejected}', function () {
         if (this.get('authPromise.isRejected')) {
@@ -45,5 +46,18 @@ export default Controller.extend({
             return regex.test(reason);
         }
         return false;
+    }),
+
+    errorMessage: computed('error', function () {
+        const error = this.get('error');
+        if (!error) {
+            return null;
+        }
+
+        if (error.code && error.code.toLowerCase() === 'oauthfailed' && /multiple user identities/.test(error.message)) {
+            return this.get('intl').t('errors.auth.multipleIdentities');
+        }
+
+        return this.get('intl').t('errors.auth.generalError');
     })
 })

@@ -85,8 +85,9 @@ export default Service.extend(Evented, {
                 // Load current conversations
                 this.application.conversationsManager.getMoreConversations();
             })
-            .catch((err) => {
-                Logger.error('Skype.signIn.catch', err);
+            .catch(error => {
+                Logger.error('Skype.signIn.catch', { error });
+                return RSVP.reject(error);
             });
     },
 
