@@ -43,7 +43,7 @@ export default Route.extend({
             }
         }).catch(error => {
             Logger.error('Error grabbing purecloud auth info', { error });
-            this.transitionTo('index');
+            this.transitionTo('login');
         });
     },
 
@@ -53,6 +53,8 @@ export default Route.extend({
             return this.get('skype').get('promise');
         }).then(() => {
             return this.get('skype').signIn();
+        }).then(() => {
+            this.transitionTo('conversations');
         }).catch(error => {
             Logger.error('Error logging in silently', { error });
             return RSVP.reject(error);
