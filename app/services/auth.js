@@ -154,7 +154,7 @@ export default Service.extend({
         return apiInstance.getUsersMe().then((data) => {
             Logger.debug('Purecloud auth confirmed:', { data });
             this.set('purecloudAccessToken', token);
-            return this.setToken('purecloud', token);
+            return this.setTokenCookie(token, 'purecloud');
         }).then(() => {
             Logger.debug('Purecloud cookie set');
             return this.get('purecloudAuthDeferred').resolve();
@@ -167,11 +167,7 @@ export default Service.extend({
         });
     },
 
-    setToken(type, token) {
+    setTokenCookie(token, type) {
         return localforage.setItem(`forage.token.${type}`, token);
-    },
-
-    getToken(type) {
-        return localforage.getItem(`forage.token.${type}`);
     }
 });

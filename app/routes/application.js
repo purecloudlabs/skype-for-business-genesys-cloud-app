@@ -2,8 +2,6 @@ import Ember from 'ember';
 import { inject as service } from '@ember/service'
 import Route from '@ember/routing/route';
 
-const localforage = window.localforage;
-
 export default Route.extend({
     intl: service(),
     application: service(),
@@ -26,16 +24,8 @@ export default Route.extend({
 
     beforeModel() {
         this.extractSDKParams();
+
         this.get('intl').setLocale(['en-us']);
-
-        localforage.config({
-            name: 'purecloud-skype',
-            version: 1.0,
-            storeName: 'forage',
-            description: 'Storing local preferences for the Skype for Business integration app'
-        });
-
-        return localforage.ready();
     },
 
     extractSDKParams() {
