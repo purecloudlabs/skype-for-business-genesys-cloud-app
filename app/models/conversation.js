@@ -170,7 +170,9 @@ export default Ember.Object.extend({
         });
 
         conversation.historyService.activityItems.added(message => {
-            Logger.log('History added:', { message });
+            Logger.log('HISTORY', message);
+
+            let sender = this.get('store').getUserForPerson(message.sender);
 
             if (message.type && message.type() !== 'TextMessage') {
                 Logger.log('Unsupported message type:', {
@@ -179,8 +181,6 @@ export default Ember.Object.extend({
                 });
                 return;
             }
-
-            let sender = this.get('store').getUserForPerson(message.sender);
 
             let messageModel = Message.create({
                 sender,
@@ -195,10 +195,7 @@ export default Ember.Object.extend({
         });
 
         conversation.state.changed((newValue, reason, oldValue) => {
-            Logger.debug('conversation.state.changed', {
-                conversation,
-                event: { newValue, reason, oldValue }
-            });
+            Logger.log('conversation.state.changed', newValue, reason, oldValue);
         });
     }
 });

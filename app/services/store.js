@@ -45,7 +45,7 @@ export default Service.extend({
     },
 
     addConversation(conversation) {
-        Logger.debug('Store.addConversation', { conversation });
+        Logger.info('Store.addConversation', { conversation });
 
         const model = this.getConversation(conversation.id(), conversation);
         if (!this.get('activeConversation')) {
@@ -54,11 +54,11 @@ export default Service.extend({
     },
 
     addGroup() {
-        Logger.debug('Store.addGroup - ', arguments);
+        Logger.log('Store.addGroup - ', arguments);
     },
 
     setActiveConversation(conversation) {
-        Logger.debug('Store.setActiveConversation', { conversation });
+        Logger.log('Store.setActiveConversation', { conversation });
 
         if (conversation !== this.get('activeConversation')) {
             this.set('activeConversation', conversation);
@@ -125,4 +125,5 @@ export default Service.extend({
             this.setActiveConversation(conversation);
         });
     }
+
 });

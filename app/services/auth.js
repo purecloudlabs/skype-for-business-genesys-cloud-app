@@ -19,7 +19,6 @@ function objectToQueryParameters(obj) {
 export default Service.extend({
     ajax: inject.service(),
     skype: inject.service(),
-    application: inject.service(),
 
     appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
     urls: {
@@ -114,7 +113,7 @@ export default Service.extend({
 
     silentLogin() {
         const deferred = RSVP.defer();
-        this.authenticationContext.acquireToken(this.get('appId'), (err, token) => {
+        this.authenticationContext.acquireToken('common', (err, token) => {
             if (err) {
                 deferred.reject(err);
                 return;
@@ -127,12 +126,11 @@ export default Service.extend({
     },
 
     purecloudAuth() {
-        const platformClient = window.require('platformClient');
-        const environment = this.get('application.environment') || 'inindca.com';
+        const platform = window.require('platformClient');
         const redirectUri = `${window.location.origin}${window.location.pathname}`;
         const clientId = this.get('clientIds.inindca');
-        let client = platformClient.ApiClient.instance;
-        client.setEnvironment(environment);
+        let client = platform.ApiClient.instance;
+        client.setEnvironment('inindca.com');
         return client.loginImplicitGrant(clientId, redirectUri).then(() => {
             this.get('purecloudAuthDeferred').resolve();
         }).catch((err) => {
@@ -143,24 +141,23 @@ export default Service.extend({
 
     validatePurecloudAuth(token) {
         const platformClient = window.require('platformClient');
-        const environment = this.get('application.environment') || 'inindca.com';
         const client = platformClient.ApiClient.instance;
-
-        client.setEnvironment(environment);
+        client.setEnvironment('inindca.com');
         client.authentications['PureCloud Auth'].accessToken = token;
 
         let apiInstance = new platformClient.UsersApi();
 
         return apiInstance.getUsersMe().then((data) => {
-            Logger.debug('Purecloud auth confirmed:', { data });
+            Logger.log('auth confirmed', data);
             this.set('purecloudAccessToken', token);
-            return this.setTokenCookie(token, 'purecloud');
-        }).then(() => {
-            Logger.debug('Purecloud cookie set');
-            return this.get('purecloudAuthDeferred').resolve();
-        }).catch(error => {
-            Logger.error('Purecloud auth error:', { error });
-            if (error.status === 401) {
+            this.setTokenCookie(token, 'purecloud');
+
+            this.get('purecloudAuthDeferred').resolve();
+
+            return true;
+        }).catch((err) => {
+            Logger.error('AUTH ERROR', err);
+            if (err.status === 401) {
                 return this.purecloudAuth();
             }
             return false;
@@ -168,6 +165,10 @@ export default Service.extend({
     },
 
     setTokenCookie(token, type) {
-        return localforage.setItem(`forage.token.${type}`, token);
+        return localforage.setItem(`forage.token.${type}`, token).then(() => {
+            this.get('purecloudAuthDeferred').resolve();
+
+            Logger.log(`${type} cookie set`);
+        });
     }
 });

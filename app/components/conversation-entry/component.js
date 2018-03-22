@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import PromiseObject from '../../utils/promise-object';
+import DS from 'ember-data';
 
 const {
     computed,
@@ -24,6 +24,6 @@ export default Component.extend({
             return '';
         }
 
-        return PromiseObject.create({ promise });
+        return DS.PromiseObject.create({ promise });
     })
 });

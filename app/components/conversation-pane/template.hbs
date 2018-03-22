@@ -10,7 +10,7 @@
     {{messages-panel messages=conversation.sortedMessages}}
 
     <div class="input-footer">
-        <textarea onkeydown={{action "keydown" on="keydown"}}></textarea>
+        <textarea onkeyup={{action "keyup"}}></textarea>
     </div>
 {{else}}
     <div class="empty-panel">

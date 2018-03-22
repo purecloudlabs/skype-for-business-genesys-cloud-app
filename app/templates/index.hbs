@@ -1,0 +1,14 @@
+{{#if auth.isLoggedIn}}
+    <div class="skype-for-business-app">
+        {{roster-list}}
+        {{conversation-pane}}
+    </div>
+{{else}}
+    <div class="login">
+        <button {{action "startAuth"}}>Login</button>
+    </div>
+
+    <div class="admin-consent">
+        <a href="{{adminConsentUrl}}" target="consent">Are you an organization admin? Give application consent here.</a>
+    </div>
+{{/if}}

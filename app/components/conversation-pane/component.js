@@ -39,18 +39,15 @@ export default Component.extend({
     },
 
     actions: {
-        keydown(event) {
-            const {key, keyCode, shiftKey, target} = event;
-            Logger.log('KEY', key, keyCode);
-
+        keyup({key, keyCode, shiftKey, target}) {
             if ((key === "Escape" || keyCode === 27) && target.value === "") {
                 this.get('conversation').clearUnreadState();
             }
 
             if ((key === "Enter" || keyCode === 13) && !shiftKey) {
-                event.preventDefault();
-
                 let messageText = target.value;
+
+                Logger.log("SEND", messageText);
                 this.get('conversation').sendMessage(messageText);
 
                 target.value = "";
