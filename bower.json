@@ -1,7 +1,5 @@
 {
   "name": "purecloud-skype",
   "dependencies": {
-    "ionicons": "^2.0.1",
-    "localforage": "~1.4.2"
   }
 }

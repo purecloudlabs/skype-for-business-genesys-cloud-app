@@ -39,7 +39,7 @@
     "ember-component-css": "^0.6.3",
     "ember-data": "^3.0.2",
     "ember-export-application-global": "^2.0.0",
-    "ember-ionicons": "^0.1.1",
+    "ember-intl": "^2.33.1",
     "ember-load-initializers": "^1.0.0",
     "ember-moment": "^7.5.0",
     "ember-promise-helpers": "^1.0.6",
@@ -52,6 +52,7 @@
   },
   "private": true,
   "dependencies": {
-    "@purecloud/web-app-deploy": "^1.0.409"
+    "@purecloud/web-app-deploy": "^1.0.409",
+    "localforage": "^1.6.0"
   }
 }
