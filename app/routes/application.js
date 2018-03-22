@@ -1,44 +1,50 @@
-/* global localforage */
 import Ember from 'ember';
-
-const {
-    inject,
-    Route,
-    Logger
-} = Ember;
+import { inject as service } from '@ember/service'
+import Route from '@ember/routing/route';
 
 export default Route.extend({
-    auth: inject.service(),
+    intl: service(),
+    application: service(),
 
-    beforeModel(transition) {
-        localforage.config({
-            name: 'pureSkype',
-            version: 1.0,
-            storeName: 'forage',
-            description: 'Storing local preferences for the Skype for Business integration app'
-        });
-
-        let ref = window.location.href;
-        let tokenIndex = ref.indexOf('access_token');
-
-        return localforage.getItem('forage.token.purecloud').then((cookie) => {
-            if (tokenIndex !== -1) {
-                let token = ref.substring(tokenIndex + 13, ref.indexOf('&'));
-                this.get('auth').set('purecloudAccessToken', token);
-                return this.get('auth').setTokenCookie(token, 'purecloud');
-            } else if (cookie) {
-                return this.get('auth').validatePurecloudAuth(cookie);
-            } else {
-                return this.get('auth').purecloudAuth();
+    actions: {
+        loading() {
+            return true;
+        },
+        error(error) {
+            if (typeof error === 'string' && /User login is required/.test(error)) {
+                this.replaceWith('login');
+                return;
             }
-        }).then(() => {
-            return this.get('auth').silentLogin().then(() => {
-                let target = transition.targetName;
-                this.transitionTo(target);
-            });
-        }).catch(error => {
-            Logger.error('Error logging in silently', error);
-            this.transitionTo('index');
-        });
+
+            const login = this.controllerFor('login');
+            login.set('error', error);
+            this.replaceWith('login');
+        }
+    },
+
+    beforeModel() {
+        this.extractSDKParams();
+
+        this.get('intl').setLocale(['en-us']);
+    },
+
+    extractSDKParams() {
+        const search = window.location.search;
+        if (search) {
+            try {
+                const parameters = {};
+                search.substr(1).split('&').forEach(param => {
+                    const [key, value] = param.split('=');
+                    parameters[key] = value;
+                });
+
+                const application = this.get('application');
+                if (parameters.pcEnvironment) {
+                    application.set('environment', parameters.pcEnvironment);
+                }
+            } catch (error) {
+                Ember.Logger.error('Error parsing SDK parameters:', { error });
+            }
+        }
     }
 });

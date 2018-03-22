@@ -85,8 +85,9 @@ export default Service.extend(Evented, {
                 // Load current conversations
                 this.application.conversationsManager.getMoreConversations();
             })
-            .catch((err) => {
-                Logger.error('Skype.signIn.catch', err);
+            .catch(error => {
+                Logger.error('Skype.signIn.catch', { error });
+                return RSVP.reject(error);
             });
     },
 
@@ -101,16 +102,16 @@ export default Service.extend(Evented, {
         persons.subscribe();
 
         groups.added(group => {
-            Logger.info('Group added', group);
+            Logger.debug('Group added:', { group });
             this.trigger(EVENTS.groupAdded, group);
         });
         groups.removed(group => {
-            Logger.info('Group added', group);
+            Logger.debug('Group removed:', { group });
             this.trigger(EVENTS.groupRemoved, group);
         });
 
         persons.added(person => {
-            Logger.info('Person added', person);
+            Logger.debug('Person added:', { person });
 
             person.id.get().then(() => {
                 this.trigger(EVENTS.personAdded, person);
@@ -118,7 +119,7 @@ export default Service.extend(Evented, {
         });
 
         conversations.added(conversation => {
-            Logger.info('Skype conversation added', { conversation });
+            Logger.debug('Conversation added:', { conversation });
 
             conversation.chatService.accept();
             conversation.chatService.start();
