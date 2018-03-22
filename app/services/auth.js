@@ -163,7 +163,7 @@ export default Service.extend({
             if (error.status === 401) {
                 return this.purecloudAuth();
             }
-            return RSVP.reject(error);
+            return false;
         });
     },
 

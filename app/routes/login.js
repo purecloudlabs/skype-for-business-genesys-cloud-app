@@ -11,10 +11,6 @@ export default Route.extend({
     skype: service(),
 
     beforeModel() {
-        if (!this.get('auth.purecloudAccessToken')) {
-            this.replaceWith('index');
-        }
-
         return this.get('auth').silentLogin().then(() => {
             Logger.info('Silently logged in');
             return this.get('skype').get('promise');
