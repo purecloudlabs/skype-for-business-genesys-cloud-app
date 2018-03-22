@@ -18,7 +18,7 @@ module.exports = function (defaults) {
         },
     });
 
-    app.import('bower_components/localforage/dist/localforage.js');
+    app.import('node_modules/localforage/dist/localforage.js');
 
     return app.toTree();
 };

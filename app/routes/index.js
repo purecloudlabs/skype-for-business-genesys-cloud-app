@@ -19,15 +19,23 @@ export default Route.extend({
     beforeModel() {
         const ref = window.location.href;
         const tokenIndex = ref.indexOf('access_token');
+        const stateIndex = ref.indexOf('session_state')
         const auth = this.get('auth');
 
-        return auth.getToken('purecloud').then((cookie) => {
-            if (tokenIndex !== -1) {
+        const isPurecloudAuth = tokenIndex > 0 && stateIndex === -1;
+        const isMicrosoftAuth = tokenIndex > 0 && stateIndex > 0;
+
+        if (isMicrosoftAuth && window.self !== window.top) {
+            return;
+        }
+
+        return auth.getToken('purecloud').then(cachedToken => {
+            if (cachedToken) {
+                return auth.validatePurecloudAuth(cachedToken);
+            } else if (isPurecloudAuth) {
                 const token = ref.substring(tokenIndex + 13, ref.indexOf('&'));
                 auth.set('purecloudAccessToken', token);
                 return auth.setToken('purecloud', token);
-            } else if (cookie) {
-                return auth.validatePurecloudAuth(cookie);
             } else {
                 return auth.purecloudAuth();
             }

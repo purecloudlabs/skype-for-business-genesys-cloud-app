@@ -48,8 +48,6 @@ pipeline {
                     sh 'source ./npm-utils/scripts/jenkins-pre-build.sh ${NODE_VERSION} -m'
 
                     sh 'yarn install --pure-lockfile'
-                    sh 'yarn add bower phantomjs-prebuilt'
-                    sh 'yarn run bower install'
                 }
             }
         }
