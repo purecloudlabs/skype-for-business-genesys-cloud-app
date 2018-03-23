@@ -54,8 +54,12 @@ export default Controller.extend({
             return null;
         }
 
-        if (error.code && error.code.toLowerCase() === 'oauthfailed' && /multiple user identities/.test(error.message)) {
-            return this.get('intl').t('errors.auth.multipleIdentities');
+        if (error.code && error.code.toLowerCase() === 'oauthfailed') {
+            if (/multiple user identities/.test(error.message)) {
+                return this.get('intl').t('errors.auth.multipleIdentities');
+            } else if (/no user is signed in/.test(error.message)) {
+                return null;
+            }
         }
 
         return this.get('intl').t('errors.auth.generalError');

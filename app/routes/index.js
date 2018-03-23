@@ -25,7 +25,8 @@ export default Route.extend({
 
         const isPurecloudAuth = tokenIndex > 0 && stateIndex === -1;
 
-        if (this.get('application').authenticatingInFrame()) {
+        const application = this.get('application');
+        if (application.authenticatingInFrame() || application.loadingInsideFrame()) {
             Logger.info('Authenticating inside iframe');
             return;
         }

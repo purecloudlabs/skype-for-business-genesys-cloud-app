@@ -16,7 +16,9 @@ export default Route.extend({
             this.replaceWith('index');
         }
 
-        if (this.get('application').authenticatingInFrame()){
+        if (window.top !== window.self) debugger;
+        const application = this.get('application');
+        if (application.authenticatingInFrame() || application.loadingInsideFrame()) {
             Logger.info('Authenticating inside iframe');
             return;
         }
