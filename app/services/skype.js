@@ -8,7 +8,8 @@ const {
 } = Ember;
 
 const config = {
-    apiKey: 'a42fcebd-5b43-4b89-a065-74450fb91255', // SDK
+    apiKey: 'a42fcebd-5b43-4b89-a065-74450fb91255',
+    apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // with UI
 };
 
 const redirectUri =
@@ -48,14 +49,10 @@ export default Service.extend(Evented, {
         this.promise = deferred.promise;
 
         window.Skype.initialize({
-            apiKey: config.apiKey,
+            apiKey: config.apiKeyCC
         }, api => {
             this.api = api;
-            this.application =  new api.application({
-                settings: {
-                    convLogSettings: true
-                }
-            });
+            this.application = api.UIApplicationInstance;
             deferred.resolve();
         }, error => {
             Logger.error('There was an error loading the api:', error);
