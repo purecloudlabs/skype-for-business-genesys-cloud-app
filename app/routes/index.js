@@ -9,6 +9,7 @@ const {
 export default Route.extend({
     auth: service(),
     skype: service(),
+    application: service(),
 
     actions: {
         error() {
@@ -23,10 +24,9 @@ export default Route.extend({
         const auth = this.get('auth');
 
         const isPurecloudAuth = tokenIndex > 0 && stateIndex === -1;
-        const isMicrosoftAuth = tokenIndex > 0 && stateIndex > 0;
 
-        if ((isPurecloudAuth || isMicrosoftAuth) && window.self !== window.top) {
-            Logger.debug('Authenticating inside iframe');
+        if (this.get('application').authenticatingInFrame()) {
+            Logger.info('Authenticating inside iframe');
             return;
         }
 

@@ -9,10 +9,16 @@ const {
 export default Route.extend({
     auth: service(),
     skype: service(),
+    application: service(),
 
     beforeModel() {
         if (!this.get('auth.purecloudAccessToken')) {
             this.replaceWith('index');
+        }
+
+        if (this.get('application').authenticatingInFrame()){
+            Logger.info('Authenticating inside iframe');
+            return;
         }
 
         return this.get('auth').silentLogin().then(() => {
