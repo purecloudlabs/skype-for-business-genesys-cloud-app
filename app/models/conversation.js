@@ -108,7 +108,9 @@ export default Ember.Object.extend({
     },
 
     clearUnreadState() {
+        this.set('store.totalUnreadCount', this.get('store.totalUnreadCount') - this.get('badgeCount'));
         this.set('badgeCount', 0);
+        purecloud.apps.alerting.setAttentionCount(this.get('store.totalUnreadCount'));
         this.get('messages').forEach(message => message.set('unread', false));
     },
 
@@ -165,7 +167,9 @@ export default Ember.Object.extend({
             let model = MESSAGE_CACHE[ getCacheKey(message) ];
             if (model && model.get('sender') !== this.get('store.me')) {
                 model.set('unread', true);
+                this.incrementProperty('store.totalUnreadCount');
                 this.incrementProperty('badgeCount');
+                purecloud.apps.alerting.setAttentionCount(this.get('store.totalUnreadCount'));
             }
         });
 
