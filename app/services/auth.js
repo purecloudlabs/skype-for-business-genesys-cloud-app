@@ -129,11 +129,10 @@ export default Service.extend({
     purecloudAuth() {
         const platformClient = window.require('platformClient');
         const environment = this.get('application.environment') || 'inindca.com';
-        const redirectUri = `${window.location.origin}${window.location.pathname}`;
         const clientId = this.get('clientIds.inindca');
         let client = platformClient.ApiClient.instance;
         client.setEnvironment(environment);
-        return client.loginImplicitGrant(clientId, redirectUri).then(() => {
+        return client.loginImplicitGrant(clientId, this.get('redirectUri')).then(() => {
             this.get('purecloudAuthDeferred').resolve();
         }).catch((err) => {
             Logger.error(err.error);
@@ -161,7 +160,7 @@ export default Service.extend({
         }).catch(error => {
             Logger.error('Purecloud auth error:', { error });
             if (error.status === 401) {
-                return this.purecloudAuth();
+                return this.setToken('purecloud', null).then(this.purecloudAuth.bind(this));
             }
             return RSVP.reject(error);
         });

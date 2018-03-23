@@ -25,7 +25,8 @@ export default Route.extend({
         const isPurecloudAuth = tokenIndex > 0 && stateIndex === -1;
         const isMicrosoftAuth = tokenIndex > 0 && stateIndex > 0;
 
-        if (isMicrosoftAuth && window.self !== window.top) {
+        if ((isPurecloudAuth || isMicrosoftAuth) && window.self !== window.top) {
+            Logger.debug('Authenticating inside iframe');
             return;
         }
 
