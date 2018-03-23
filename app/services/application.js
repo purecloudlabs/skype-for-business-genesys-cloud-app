@@ -1,6 +1,6 @@
 import Service from '@ember/service';
 
-const ENV_REG_EXP = /^s*(?:(localhost|localhost.mypurecloud.com)|([^:\/\?#\s]*)?(inin[dts]ca|mypurecloud)([^:\/?#]+))(?::\d+)?(\/[^?#]*)?(?:\?|#.*)?s*$/i;
+const ENV_REG_EXP = /^s*(?:(localhost|localhost.mypurecloud.com)|([^:/?#\s]*)?(inin[dts]ca|mypurecloud)([^:/?#]+))(?::\d+)?(\/[^?#]*)?(?:\?|#.*)?s*$/i;
 
 export default Service.extend({
     environment: null,
