@@ -16,6 +16,8 @@ const {
 const MESSAGE_CACHE = { };
 const getCacheKey = message => `${moment(message.timestamp()).toISOString()}$$${message.text()}`;
 
+const purecloud = window.purecloud;
+
 export default Ember.Object.extend({
     store: inject.service(),
     skype: inject.service(),
