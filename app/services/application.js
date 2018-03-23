@@ -13,8 +13,12 @@ export default Service.extend({
         const isMicrosoftAuth = tokenIndex > 0 && stateIndex > 0;
 
         try {
-            const parentLocation = window && window.top && window.top.location.host;
             const inFrame = window.self !== window.top;
+            if (window.location.hostname === 'localhost') {
+                return (isPurecloudAuth || isMicrosoftAuth) && inFrame;
+            }
+
+            const parentLocation = window && window.top && window.top.location.host;
             return (isPurecloudAuth || isMicrosoftAuth) && inFrame && !ENV_REG_EXP.test(parentLocation);
         } catch (e) {
             return false;
@@ -25,10 +29,6 @@ export default Service.extend({
         try {
             const parentLocation = window && window.top && window.top.location.host;
             const inFrame = window.self !== window.top;
-
-            if (window.location.hostname === 'localhost') {
-                return inFrame;
-            }
 
             return inFrame && !ENV_REG_EXP.test(parentLocation);
         } catch (e) {
