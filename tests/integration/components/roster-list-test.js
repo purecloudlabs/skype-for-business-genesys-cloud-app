@@ -85,13 +85,13 @@ module('Integration | Component | roster-list', function (hooks) {
 
         conv1 = createConversation({
             id: 1,
-            users: [user1, user2],
+            users: [user1],
             owner: this.owner
         });
 
         conv2 = createConversation({
             id: 2,
-            users: [user2, user1],
+            users: [user2],
             owner: this.owner
         });
     });
