@@ -1,10 +1,9 @@
 import Ember from 'ember';
-import moment from 'moment';
-import RSVP from 'rsvp';
 import {module, test} from 'qunit';
 import {setupRenderingTest} from 'ember-qunit';
 import {render} from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
+import {mockMessage} from "../../helpers/mock-data";
 
 module('Integration | Component | message-body', function (hooks) {
     setupRenderingTest(hooks);
@@ -15,17 +14,7 @@ module('Integration | Component | message-body', function (hooks) {
     });
 
     test('it renders', async function (assert) {
-        const sender = Ember.Object.create({
-            name: RSVP.resolve('Test McTesterson'),
-            skypePhotoUrl: RSVP.resolve('1')
-        });
-
-        const message = Ember.Object.create({
-            sender,
-            timestamp: moment(),
-            unread: true,
-            text: "test message please ignore"
-        });
+        const message = mockMessage();
 
         this.set('message', message);
 
@@ -33,6 +22,6 @@ module('Integration | Component | message-body', function (hooks) {
 
         assert.equal(
             this.element.querySelector('.text').textContent.trim(),
-            "test message please ignore");
+            message.get('text'));
     });
 });
