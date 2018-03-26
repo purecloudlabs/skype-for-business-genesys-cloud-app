@@ -3,8 +3,8 @@
 
 
 "@ember/test-helpers@^0.7.18":
-  version "0.7.18"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/@ember/test-helpers/-/test-helpers-0.7.18.tgz#a0c474c3029588ec46d2e406252fc072b7f9aa3c"
+  version "0.7.20"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/@ember/test-helpers/-/test-helpers-0.7.20.tgz#488b1c8ef23626f8831e5cb750ffca86e017e6dc"
   dependencies:
     broccoli-funnel "^2.0.1"
     ember-cli-babel "^6.10.0"
@@ -343,11 +343,12 @@ atob@^2.0.0:
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/atob/-/atob-2.0.3.tgz#19c7a760473774468f20b2d2d03372ad7d4cbf5d"
 
 aws-sdk@^2.34.0:
-  version "2.210.0"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/aws-sdk/-/aws-sdk-2.210.0.tgz#5aac0d77205926699262a11b3d22031af9de667c"
+  version "2.213.1"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/aws-sdk/-/aws-sdk-2.213.1.tgz#bcbfdf1fd7439a948bf53c46bd90c97b4a64925b"
   dependencies:
     buffer "4.9.1"
-    events "^1.1.1"
+    events "1.1.1"
+    ieee754 "1.1.8"
     jmespath "0.15.0"
     querystring "0.2.0"
     sax "1.2.1"
@@ -549,8 +550,8 @@ babel-plugin-filter-imports@^0.3.1:
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/babel-plugin-filter-imports/-/babel-plugin-filter-imports-0.3.1.tgz#e7859b56886b175dd2616425d277b219e209ea8b"
 
 babel-plugin-htmlbars-inline-precompile@^0.2.3:
-  version "0.2.3"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/babel-plugin-htmlbars-inline-precompile/-/babel-plugin-htmlbars-inline-precompile-0.2.3.tgz#cd365e278af409bfa6be7704c4354beee742446b"
+  version "0.2.4"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/babel-plugin-htmlbars-inline-precompile/-/babel-plugin-htmlbars-inline-precompile-0.2.4.tgz#54b48168432bbc03f1f26f2e9090cb222bc78c75"
 
 babel-plugin-syntax-async-functions@^6.8.0:
   version "6.13.0"
@@ -1280,7 +1281,7 @@ broccoli-merge-trees@^3.0.0:
     broccoli-plugin "^1.3.0"
     merge-trees "^2.0.0"
 
-broccoli-middleware@^1.0.0:
+broccoli-middleware@^1.2.1:
   version "1.2.1"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/broccoli-middleware/-/broccoli-middleware-1.2.1.tgz#a21f255f8bfe5a21c2f0fbf2417addd9d24c9436"
   dependencies:
@@ -1430,6 +1431,10 @@ bser@^2.0.0:
   dependencies:
     node-int64 "^0.4.0"
 
+buffer-from@^1.0.0:
+  version "1.0.0"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/buffer-from/-/buffer-from-1.0.0.tgz#4cb8832d23612589b0406e9e2956c17f06fdf531"
+
 buffer@4.9.1:
   version "4.9.1"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/buffer/-/buffer-4.9.1.tgz#6d1bb601b07a4efced97094132093027c95bc298"
@@ -1522,8 +1527,8 @@ can-symlink@^1.0.0:
     tmp "0.0.28"
 
 caniuse-lite@^1.0.30000792:
-  version "1.0.30000815"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/caniuse-lite/-/caniuse-lite-1.0.30000815.tgz#3a4258e6850362185adb11b0d754a48402d35bf6"
+  version "1.0.30000819"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/caniuse-lite/-/caniuse-lite-1.0.30000819.tgz#aabee5fd15a080febab6ae5d30c9ea15f4c6d4e2"
 
 capture-exit@^1.1.0:
   version "1.2.0"
@@ -1569,7 +1574,7 @@ chalk@^1.0.0, chalk@^1.1.1, chalk@^1.1.3:
     strip-ansi "^3.0.0"
     supports-color "^2.0.0"
 
-chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0, chalk@^2.3.1:
+chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0, chalk@^2.3.1, chalk@^2.3.2:
   version "2.3.2"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/chalk/-/chalk-2.3.2.tgz#250dc96b07491bfd601e648d66ddf5f60c7a5c65"
   dependencies:
@@ -1695,12 +1700,12 @@ clone-response@1.0.2:
     mimic-response "^1.0.0"
 
 clone@^1.0.2:
-  version "1.0.3"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/clone/-/clone-1.0.3.tgz#298d7e2231660f40c003c2ed3140decf3f53085f"
+  version "1.0.4"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
 
 clone@^2.0.0:
-  version "2.1.1"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/clone/-/clone-2.1.1.tgz#d217d1e961118e3ac9a4b8bba3285553bf647cdb"
+  version "2.1.2"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
 
 co@^4.6.0:
   version "4.6.0"
@@ -1760,8 +1765,8 @@ commander@2.8.x:
     graceful-readlink ">= 1.0.0"
 
 commander@^2.6.0:
-  version "2.15.0"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/commander/-/commander-2.15.0.tgz#ad2a23a1c3b036e392469b8012cec6b33b4c1322"
+  version "2.15.1"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/commander/-/commander-2.15.1.tgz#df46e867d0fc2aec66a34662b406a9ccafff5b0f"
 
 common-tags@^1.4.0:
   version "1.7.2"
@@ -1816,9 +1821,10 @@ concat-stream@1.6.0:
     typedarray "^0.0.6"
 
 concat-stream@^1.4.7, concat-stream@^1.6.0:
-  version "1.6.1"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/concat-stream/-/concat-stream-1.6.1.tgz#261b8f518301f1d834e36342b9fea095d2620a26"
+  version "1.6.2"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/concat-stream/-/concat-stream-1.6.2.tgz#904bdf194cd3122fc675c77fc4ac3d4ff0fd1a34"
   dependencies:
+    buffer-from "^1.0.0"
     inherits "^2.0.3"
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
@@ -2116,8 +2122,8 @@ ee-first@1.1.1:
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.3.30:
-  version "1.3.38"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/electron-to-chromium/-/electron-to-chromium-1.3.38.tgz#49234b00c0592f62921f9426bccefee23de086bb"
+  version "1.3.40"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/electron-to-chromium/-/electron-to-chromium-1.3.40.tgz#1fbd6d97befd72b8a6f921dc38d22413d2f6fddf"
 
 ember-ajax@^3.0.0:
   version "3.1.0"
@@ -2365,8 +2371,8 @@ ember-cli-version-checker@^2.0.0, ember-cli-version-checker@^2.1.0:
     semver "^5.3.0"
 
 ember-cli@^3.0.0:
-  version "3.0.0"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ember-cli/-/ember-cli-3.0.0.tgz#3d44be3ea88345d4d03c95453eb3527b15dbaeb2"
+  version "3.0.2"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ember-cli/-/ember-cli-3.0.2.tgz#2272a2b2ffd9932cae247130d148aded60b446e7"
   dependencies:
     amd-name-resolver "1.0.0"
     babel-plugin-transform-es2015-modules-amd "^6.24.0"
@@ -2381,7 +2387,7 @@ ember-cli@^3.0.0:
     broccoli-funnel "^2.0.0"
     broccoli-funnel-reducer "^1.0.0"
     broccoli-merge-trees "^2.0.0"
-    broccoli-middleware "^1.0.0"
+    broccoli-middleware "^1.2.1"
     broccoli-source "^1.1.0"
     broccoli-stew "^1.2.0"
     calculate-cache-key-for-tree "^1.0.0"
@@ -2656,8 +2662,8 @@ ember-qunit@^3.3.2:
     qunit "^2.5.0"
 
 ember-resolver@^4.0.0:
-  version "4.5.4"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ember-resolver/-/ember-resolver-4.5.4.tgz#39c06599b6859d6b476fb24ab31d850f2d1a74af"
+  version "4.5.5"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ember-resolver/-/ember-resolver-4.5.5.tgz#6fef0597a42724e4960f37588df8a208ffd3365a"
   dependencies:
     "@glimmer/resolver" "^0.4.1"
     babel-plugin-debug-macros "^0.1.10"
@@ -2785,11 +2791,12 @@ error@^7.0.0:
     xtend "~4.0.0"
 
 es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~0.10.14:
-  version "0.10.40"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/es5-ext/-/es5-ext-0.10.40.tgz#ab3d2179b943008c5e9ef241beb25ef41424c774"
+  version "0.10.41"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/es5-ext/-/es5-ext-0.10.41.tgz#bab3e982d750f0112f0cb9e6abed72c59eb33eb2"
   dependencies:
     es6-iterator "~2.0.3"
     es6-symbol "~3.1.1"
+    next-tick "1"
 
 es6-iterator@~2.0.1, es6-iterator@~2.0.3:
   version "2.0.3"
@@ -2847,8 +2854,8 @@ eslint-visitor-keys@^1.0.0:
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
 eslint@^4.0.0:
-  version "4.18.2"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/eslint/-/eslint-4.18.2.tgz#0f81267ad1012e7d2051e186a9004cc2267b8d45"
+  version "4.19.1"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/eslint/-/eslint-4.19.1.tgz#32d1d653e1d90408854bfb296f076ec7e186a300"
   dependencies:
     ajv "^5.3.0"
     babel-code-frame "^6.22.0"
@@ -2859,7 +2866,7 @@ eslint@^4.0.0:
     doctrine "^2.1.0"
     eslint-scope "^3.7.1"
     eslint-visitor-keys "^1.0.0"
-    espree "^3.5.2"
+    espree "^3.5.4"
     esquery "^1.0.0"
     esutils "^2.0.2"
     file-entry-cache "^2.0.0"
@@ -2881,6 +2888,7 @@ eslint@^4.0.0:
     path-is-inside "^1.0.2"
     pluralize "^7.0.0"
     progress "^2.0.0"
+    regexpp "^1.0.1"
     require-uncached "^1.0.3"
     semver "^5.3.0"
     strip-ansi "^4.0.0"
@@ -2888,7 +2896,7 @@ eslint@^4.0.0:
     table "4.0.2"
     text-table "~0.2.0"
 
-espree@^3.5.2:
+espree@^3.5.4:
   version "3.5.4"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/espree/-/espree-3.5.4.tgz#b0f447187c8a8bed944b815a660bddf5deb5d1a7"
   dependencies:
@@ -2946,7 +2954,7 @@ events-to-array@^1.0.1:
   version "1.1.2"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/events-to-array/-/events-to-array-1.1.2.tgz#2d41f563e1fe400ed4962fe1a4d5c6a7539df7f6"
 
-events@^1.1.1:
+events@1.1.1:
   version "1.1.1"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
 
@@ -3819,9 +3827,13 @@ iconv-lite@0.4.19, iconv-lite@^0.4.17:
   version "0.4.19"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
-ieee754@^1.1.4:
+ieee754@1.1.8:
   version "1.1.8"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
+
+ieee754@^1.1.4:
+  version "1.1.10"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/ieee754/-/ieee754-1.1.10.tgz#719a6f7b026831e64bdb838b0de1bb0029bbf716"
 
 ignore@^3.3.3:
   version "3.3.7"
@@ -4116,8 +4128,8 @@ is-path-cwd@^1.0.0:
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/is-path-cwd/-/is-path-cwd-1.0.0.tgz#d225ec23132e89edd38fda767472e62e65f1106d"
 
 is-path-in-cwd@^1.0.0:
-  version "1.0.0"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/is-path-in-cwd/-/is-path-in-cwd-1.0.0.tgz#6477582b8214d602346094567003be8a9eac04dc"
+  version "1.0.1"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/is-path-in-cwd/-/is-path-in-cwd-1.0.1.tgz#5ac48b345ef675339bd6c7a48a912110b241cf52"
   dependencies:
     is-path-inside "^1.0.0"
 
@@ -4849,9 +4861,13 @@ loud-rejection@^1.0.0:
     currently-unhandled "^0.4.1"
     signal-exit "^3.0.0"
 
-lowercase-keys@1.0.0, lowercase-keys@^1.0.0:
+lowercase-keys@1.0.0:
   version "1.0.0"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/lowercase-keys/-/lowercase-keys-1.0.0.tgz#4e3366b39e7f5457e35f1324bdf6f88d0bfc7306"
+
+lowercase-keys@^1.0.0:
+  version "1.0.1"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/lowercase-keys/-/lowercase-keys-1.0.1.tgz#6f9e30b47084d971a7c820ff15a6c5167b74c26f"
 
 lru-cache@^4.0.1:
   version "4.1.2"
@@ -5018,8 +5034,8 @@ micromatch@^2.1.5:
     regex-cache "^0.4.2"
 
 micromatch@^3.0.4, micromatch@^3.1.4:
-  version "3.1.9"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/micromatch/-/micromatch-3.1.9.tgz#15dc93175ae39e52e93087847096effc73efcf89"
+  version "3.1.10"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/micromatch/-/micromatch-3.1.10.tgz#70859bc95c9840952f359a068a3fc49f9ecfac23"
   dependencies:
     arr-diff "^4.0.0"
     array-unique "^0.3.2"
@@ -5033,7 +5049,7 @@ micromatch@^3.0.4, micromatch@^3.1.4:
     object.pick "^1.3.0"
     regex-not "^1.0.0"
     snapdragon "^0.8.1"
-    to-regex "^3.0.1"
+    to-regex "^3.0.2"
 
 "mime-db@>= 1.33.0 < 2", mime-db@~1.33.0:
   version "1.33.0"
@@ -5151,8 +5167,8 @@ mute-stream@0.0.7:
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
 nan@^2.3.0:
-  version "2.9.2"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/nan/-/nan-2.9.2.tgz#f564d75f5f8f36a6d9456cca7a6c4fe488ab7866"
+  version "2.10.0"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
 
 nanomatch@^1.2.9:
   version "1.2.9"
@@ -5178,6 +5194,10 @@ natural-compare@^1.4.0:
 negotiator@0.6.1:
   version "0.6.1"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
+
+next-tick@1:
+  version "1.0.0"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
 
 node-int64@^0.4.0:
   version "0.4.0"
@@ -5588,8 +5608,8 @@ posix-character-classes@^0.1.0:
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
 
 postcss-less@^1.1.3:
-  version "1.1.3"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/postcss-less/-/postcss-less-1.1.3.tgz#6930525271bfe38d5793d33ac09c1a546b87bb51"
+  version "1.1.5"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/postcss-less/-/postcss-less-1.1.5.tgz#a6f0ce180cf3797eeee1d4adc0e9e6d6db665609"
   dependencies:
     postcss "^5.2.16"
 
@@ -5615,12 +5635,12 @@ postcss@^5.2.16:
     supports-color "^3.2.3"
 
 postcss@^6.0.14, postcss@^6.0.19:
-  version "6.0.19"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/postcss/-/postcss-6.0.19.tgz#76a78386f670b9d9494a655bf23ac012effd1555"
+  version "6.0.21"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/postcss/-/postcss-6.0.21.tgz#8265662694eddf9e9a5960db6da33c39e4cd069d"
   dependencies:
-    chalk "^2.3.1"
+    chalk "^2.3.2"
     source-map "^0.6.1"
-    supports-color "^5.2.0"
+    supports-color "^5.3.0"
 
 prelude-ls@~1.1.2:
   version "1.1.2"
@@ -5868,6 +5888,10 @@ regex-not@^1.0.0, regex-not@^1.0.2:
     extend-shallow "^3.0.2"
     safe-regex "^1.1.0"
 
+regexpp@^1.0.1:
+  version "1.0.1"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/regexpp/-/regexpp-1.0.1.tgz#d857c3a741dce075c2848dcb019a0a975b190d43"
+
 regexpu-core@^2.0.0:
   version "2.0.0"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/regexpu-core/-/regexpu-core-2.0.0.tgz#49d038837b8dcf8bfa5b9a42139938e6ea2ae240"
@@ -5957,9 +5981,15 @@ resolve-url@^0.2.1:
   version "0.2.1"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
 
-resolve@1.5.0, resolve@^1.1.6, resolve@^1.3.0, resolve@^1.3.3, resolve@^1.4.0, resolve@^1.5.0:
+resolve@1.5.0:
   version "1.5.0"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/resolve/-/resolve-1.5.0.tgz#1f09acce796c9a762579f31b2c1cc4c3cddf9f36"
+  dependencies:
+    path-parse "^1.0.5"
+
+resolve@^1.1.6, resolve@^1.3.0, resolve@^1.3.3, resolve@^1.4.0, resolve@^1.5.0:
+  version "1.6.0"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/resolve/-/resolve-1.6.0.tgz#0fbd21278b27b4004481c395349e7aba60a9ff5c"
   dependencies:
     path-parse "^1.0.5"
 
@@ -6513,7 +6543,7 @@ supports-color@^3.2.3:
   dependencies:
     has-flag "^1.0.0"
 
-supports-color@^5.2.0, supports-color@^5.3.0:
+supports-color@^5.3.0:
   version "5.3.0"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/supports-color/-/supports-color-5.3.0.tgz#5b24ac15db80fa927cf5227a4a33fd3c4c7676c0"
   dependencies:
@@ -6680,7 +6710,7 @@ to-regex-range@^2.1.0:
     is-number "^3.0.0"
     repeat-string "^1.6.1"
 
-to-regex@^3.0.1:
+to-regex@^3.0.1, to-regex@^3.0.2:
   version "3.0.2"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/to-regex/-/to-regex-3.0.2.tgz#13cfdd9b336552f30b51f33a8ae1b42a7a7599ce"
   dependencies:

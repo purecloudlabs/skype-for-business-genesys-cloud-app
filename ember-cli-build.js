@@ -16,6 +16,9 @@ module.exports = function (defaults) {
                 replacement: CDN_URL
             }]
         },
+        "ember-cli-babel": {
+            includePolyfill: true
+        }
     });
 
     app.import('node_modules/localforage/dist/localforage.js');
