@@ -3,7 +3,7 @@ import {module, test} from 'qunit';
 import {setupRenderingTest} from 'ember-qunit';
 import {render} from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import {mockMessage} from "../../helpers/mock-data";
+import {mockMessage, mockUser} from "../../helpers/mock-data";
 
 module('Integration | Component | message-body', function (hooks) {
     setupRenderingTest(hooks);
@@ -15,7 +15,6 @@ module('Integration | Component | message-body', function (hooks) {
 
     test('it renders', async function (assert) {
         const message = mockMessage();
-
         this.set('message', message);
 
         await render(hbs`{{message-body message=message}}`);
@@ -24,4 +23,49 @@ module('Integration | Component | message-body', function (hooks) {
             this.element.querySelector('.text').textContent.trim(),
             message.get('text'));
     });
+
+    test('it marks messages from logged in user', async function (assert) {
+        const sender = mockUser();
+        const message = mockMessage({ sender });
+
+        this.set('message', message);
+        this.set('me', sender);
+
+        await render(hbs`{{message-body message=message me=me}}`);
+
+        assert.equal(
+            this.element.querySelectorAll('.is-you').length,
+            1);
+    });
+
+    test('it doesnt mark messages not from logged in user', async function (assert) {
+        this.set('message', mockMessage());
+
+        await render(hbs`{{message-body message=message}}`);
+
+        assert.equal(
+            this.element.querySelectorAll('.is-you').length,
+            0);
+    });
+
+    test('it marks messages that are unread', async function (assert) {
+        this.set('message', mockMessage());
+
+        await render(hbs`{{message-body message=message}}`);
+
+        assert.equal(
+            this.element.querySelectorAll('.unread').length,
+            1);
+    });
+
+    test('it doesnt mark messages that are read', async function (assert) {
+        this.set('message', mockMessage({ unread: false }));
+
+        await render(hbs`{{message-body message=message}}`);
+
+        assert.equal(
+            this.element.querySelectorAll('.unread').length,
+            0);
+    });
+
 });
