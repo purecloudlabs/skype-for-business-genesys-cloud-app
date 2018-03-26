@@ -4,7 +4,7 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const CDN_URL = process.env.CDN_URL || '';
 
 module.exports = function (defaults) {
-    var app = new EmberApp(defaults, {
+    let app = new EmberApp(defaults, {
         sourcemaps: {
             enabled: true,
             extensions: ['js']

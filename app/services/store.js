@@ -10,7 +10,6 @@ const {
     Service,
 } = Ember;
 
-
 export default Service.extend({
     skype: inject.service(),
 
@@ -27,14 +26,19 @@ export default Service.extend({
         this.set('contacts', []);
         this.set('conversations', []);
 
-        const skype = this.get('skype');
+        this.setupSkype();
+    },
 
+    setupSkype() {
+        if (Ember.testing) {
+            return;
+        }
+
+        const skype = this.get('skype');
         skype.on(EVENTS.signIn, this.signIn.bind(this));
         skype.on(EVENTS.personAdded, this.getUserForPerson.bind(this));
         skype.on(EVENTS.conversationAdded, this.addConversation.bind(this));
         skype.on(EVENTS.groupAdded, this.addGroup.bind(this));
-
-        window.STORE = this;
     },
 
     signIn(user) {
