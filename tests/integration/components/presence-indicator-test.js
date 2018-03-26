@@ -6,7 +6,7 @@ import hbs from 'htmlbars-inline-precompile';
 import {mockUser} from "../../helpers/mock-data";
 
 
-module('Integration | Component | profile-image', function (hooks) {
+module('Integration | Component | presence-indicator', function (hooks) {
     setupRenderingTest(hooks);
 
     hooks.beforeEach(function () {
