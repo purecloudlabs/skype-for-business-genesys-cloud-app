@@ -1,9 +1,9 @@
 import Ember from 'ember';
-import RSVP from 'rsvp';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, waitFor } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
+import {mockUser} from "../../helpers/mock-data";
 
 
 module('Integration | Component | profile-image', function (hooks) {
@@ -15,10 +15,7 @@ module('Integration | Component | profile-image', function (hooks) {
     });
 
     test('displays initials on image load failure', async function (assert) {
-        const person = Ember.Object.create({
-            name: RSVP.resolve('Test McTesterson'),
-            skypePhotoUrl: RSVP.resolve('1')
-        });
+        const person = mockUser();
 
         this.set('person', person);
 
@@ -29,10 +26,7 @@ module('Integration | Component | profile-image', function (hooks) {
     });
 
     test('does not display initials on successful image load', async function (assert) {
-        const person = Ember.Object.create({
-            name: RSVP.resolve('Test McTesterson'),
-            skypePhotoUrl: RSVP.resolve('https://placekitten.com/g/300/300')
-        });
+        const person = mockUser({ skypePhotoUrl: 'https://placekitten.com/g/300/300' });
 
         this.set('person', person);
 
