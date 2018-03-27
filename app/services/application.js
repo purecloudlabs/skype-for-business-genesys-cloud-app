@@ -4,6 +4,7 @@ const ENV_REG_EXP = /^s*(?:(localhost|localhost.mypurecloud.com)|([^:/?#\s]*)?(i
 
 export default Service.extend({
     environment: null,
+    clientApp: null,
 
     authenticatingInFrame() {
         const href = window.location.href;
