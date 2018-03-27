@@ -4,6 +4,45 @@ import RSVP from 'rsvp';
 import Conversation from 'purecloud-skype/models/conversation';
 import User from 'purecloud-skype/models/user';
 
+function propertyFunction(value) {
+    const prop = () => value;
+    prop.get = () => RSVP.resolve(value);
+    prop.changed = () => null
+    prop.added = () => null
+    return prop;
+}
+
+// See: https://officedev.github.io/skype-docs/Skype/WebSDK/model/api/interfaces/jcafe.person.html
+export function mockSkypePerson({ id, displayName, avatarUrl = 'https://placekitten.com/g/200/200' }) {
+    return {
+        id: propertyFunction(id),
+        displayName: propertyFunction(displayName),
+        avatarUrl: propertyFunction(avatarUrl)
+    }
+}
+
+// See: https://officedev.github.io/skype-docs/Skype/WebSDK/model/api/interfaces/jcafe.conversation.html
+export function mockSkypeConversation({ id, creator = null }) {
+    creator = creator || mockSkypePerson({ id });
+
+    const chatService = {
+        messages: propertyFunction([])
+    };
+
+    const historyService = {
+        activityItems: propertyFunction([])
+    }
+
+    return {
+        id: propertyFunction(id),
+        participants: propertyFunction([]),
+        state: propertyFunction(''),
+        creator,
+        chatService,
+        historyService
+    };
+}
+
 export const basicMockUser =
     ({
          name = 'Test McTesterson',
