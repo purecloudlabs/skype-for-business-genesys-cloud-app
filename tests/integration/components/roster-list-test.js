@@ -1,61 +1,9 @@
 import Ember from 'ember';
-import RSVP from 'rsvp';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-
-import Conversation from 'purecloud-skype/models/conversation';
-import User from 'purecloud-skype/models/user';
-
-function createUser({ id, displayName, email, presence }) {
-    return User.create({
-        id,
-        presence,
-        person: {
-            id: () => id,
-            displayName: () => displayName,
-            email: () => email,
-            presence: () => presence,
-            avatarUrl: () => 'https://placekitten.com/g/200/200'
-        }
-    });
-}
-
-function createConversation({ id, users = [], owner }) {
-    const participants = () => {
-        return users.map(({ id, person}) => {
-            return { id, person };
-        });
-    }
-    participants.added = () => {};
-
-    return Conversation.create({
-        id,
-        conversation: {
-            id() {
-                const _id = () => id
-                _id.get = () => RSVP.resolve(id)
-                return _id;
-            },
-            added() {},
-            state: {
-                changed() {}
-            },
-            participants,
-            chatService: {
-                messages: {
-                    added() {}
-                }
-            },
-            historyService: {
-                activityItems: {
-                    added() {}
-                }
-            }
-        }
-    }, owner.ownerInjection());
-}
+import { mockUserModel, mockConversationModel } from '../../helpers/mock-data';
 
 let user1, user2;
 let conv1, conv2;
@@ -67,14 +15,14 @@ module('Integration | Component | roster-list', function (hooks) {
         this.owner.register('service:skype', Ember.Service.extend());
         const store = this.owner.lookup('service:store')
 
-        user1 = createUser({
+        user1 = mockUserModel({
             id: 1,
             displayName: 'Test 1',
             email: 'test1@email.com',
             presence: 'Available'
         });
 
-        user2 = createUser({
+        user2 = mockUserModel({
             id: 2,
             displayName: 'Test 2',
             email: 'test2@email.com',
@@ -83,13 +31,13 @@ module('Integration | Component | roster-list', function (hooks) {
 
         store.users = [user1, user2];
 
-        conv1 = createConversation({
+        conv1 = mockConversationModel({
             id: 1,
             users: [user1],
             owner: this.owner
         });
 
-        conv2 = createConversation({
+        conv2 = mockConversationModel({
             id: 2,
             users: [user2],
             owner: this.owner

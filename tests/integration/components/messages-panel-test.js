@@ -3,7 +3,7 @@ import {module, test} from 'qunit';
 import {setupRenderingTest} from 'ember-qunit';
 import {render} from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import {mockMessage} from "../../helpers/mock-data";
+import {basicMockMessage} from '../../helpers/mock-data';
 
 module('Integration | Component | messages-panel', function (hooks) {
     setupRenderingTest(hooks);
@@ -15,11 +15,11 @@ module('Integration | Component | messages-panel', function (hooks) {
 
     test('it renders all the messages passed to it', async function (assert) {
         const messages = [
-            mockMessage({ text: "message 1" }),
-            mockMessage({ text: "message 2" }),
-            mockMessage({ text: "message 3" }),
-            mockMessage({ text: "message 4" }),
-            mockMessage({ text: "message 5" }),
+            basicMockMessage({ text: "message 1" }),
+            basicMockMessage({ text: "message 2" }),
+            basicMockMessage({ text: "message 3" }),
+            basicMockMessage({ text: "message 4" }),
+            basicMockMessage({ text: "message 5" }),
         ];
 
         this.set('messages', messages);

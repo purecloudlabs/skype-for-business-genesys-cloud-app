@@ -3,7 +3,7 @@ import {module, test} from 'qunit';
 import {setupRenderingTest} from 'ember-qunit';
 import {render} from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import {mockMessage, mockUser} from "../../helpers/mock-data";
+import {basicMockMessage, basicMockUser} from '../../helpers/mock-data';
 
 module('Integration | Component | message-body', function (hooks) {
     setupRenderingTest(hooks);
@@ -14,7 +14,7 @@ module('Integration | Component | message-body', function (hooks) {
     });
 
     test('it renders', async function (assert) {
-        const message = mockMessage();
+        const message = basicMockMessage();
         this.set('message', message);
 
         await render(hbs`{{message-body message=message}}`);
@@ -25,8 +25,8 @@ module('Integration | Component | message-body', function (hooks) {
     });
 
     test('it marks messages from logged in user', async function (assert) {
-        const sender = mockUser();
-        const message = mockMessage({ sender });
+        const sender = basicMockUser();
+        const message = basicMockMessage({ sender });
 
         this.set('message', message);
         this.set('me', sender);
@@ -39,7 +39,7 @@ module('Integration | Component | message-body', function (hooks) {
     });
 
     test('it doesnt mark messages not from logged in user', async function (assert) {
-        this.set('message', mockMessage());
+        this.set('message', basicMockMessage());
 
         await render(hbs`{{message-body message=message}}`);
 
@@ -49,7 +49,7 @@ module('Integration | Component | message-body', function (hooks) {
     });
 
     test('it marks messages that are unread', async function (assert) {
-        this.set('message', mockMessage());
+        this.set('message', basicMockMessage());
 
         await render(hbs`{{message-body message=message}}`);
 
@@ -59,7 +59,7 @@ module('Integration | Component | message-body', function (hooks) {
     });
 
     test('it doesnt mark messages that are read', async function (assert) {
-        this.set('message', mockMessage({ unread: false }));
+        this.set('message', basicMockMessage({ unread: false }));
 
         await render(hbs`{{message-body message=message}}`);
 

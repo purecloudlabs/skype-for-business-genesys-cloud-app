@@ -3,7 +3,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import {mockUser} from "../../helpers/mock-data";
+import {basicMockUser} from '../../helpers/mock-data';
 
 
 module('Integration | Component | presence-indicator', function (hooks) {
@@ -15,7 +15,7 @@ module('Integration | Component | presence-indicator', function (hooks) {
     });
 
     test('displays correct presence class for user', async function (assert) {
-        const person = mockUser();
+        const person = basicMockUser();
 
         this.set('user', person);
 

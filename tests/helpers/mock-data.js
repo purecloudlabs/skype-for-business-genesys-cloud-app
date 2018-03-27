@@ -1,8 +1,10 @@
-import moment from "moment";
+import moment from 'moment';
 import Ember from 'ember';
 import RSVP from 'rsvp';
+import Conversation from 'purecloud-skype/models/conversation';
+import User from 'purecloud-skype/models/user';
 
-export const mockUser =
+export const basicMockUser =
     ({
          name = 'Test McTesterson',
          skypePhotoUrl = '1',
@@ -16,9 +18,9 @@ export const mockUser =
             presenceClass
         });
 
-export const mockMessage =
+export const basicMockMessage =
     ({
-         sender = mockUser(),
+         sender = basicMockUser(),
          timestamp = moment(),
          unread = true,
          text = "test message please ignore"
@@ -29,3 +31,55 @@ export const mockMessage =
             unread,
             text
         });
+
+
+export function mockUserModel({ id, displayName, email, presence, owner }) {
+    const ownerInjection = owner ? owner.ownerInjection() : {}
+    return User.create({
+        id,
+        presence,
+        person: {
+            id: () => id,
+            displayName: () => displayName,
+            email: () => email,
+            presence: () => presence,
+            avatarUrl: () => 'https://placekitten.com/g/200/200'
+        }
+    }, ownerInjection);
+}
+
+export function mockConversationModel({ id, users = [], owner }) {
+    const ownerInjection = owner ? owner.ownerInjection() : {}
+    const participants = () => {
+        return users.map(({ id, person}) => {
+            return { id, person };
+        });
+    }
+    participants.added = () => {};
+
+    return Conversation.create({
+        id,
+        conversation: {
+            id() {
+                const _id = () => id
+                _id.get = () => RSVP.resolve(id)
+                return _id;
+            },
+            added() {},
+            state: {
+                changed() {}
+            },
+            participants,
+            chatService: {
+                messages: {
+                    added() {}
+                }
+            },
+            historyService: {
+                activityItems: {
+                    added() {}
+                }
+            }
+        }
+    }, ownerInjection);
+}

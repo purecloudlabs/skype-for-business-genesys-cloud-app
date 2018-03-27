@@ -3,7 +3,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, waitFor } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-import {mockUser} from "../../helpers/mock-data";
+import {basicMockUser} from "../../helpers/mock-data";
 
 
 module('Integration | Component | profile-image', function (hooks) {
@@ -15,7 +15,7 @@ module('Integration | Component | profile-image', function (hooks) {
     });
 
     test('displays initials on image load failure', async function (assert) {
-        const person = mockUser();
+        const person = basicMockUser();
 
         this.set('person', person);
 
@@ -26,7 +26,7 @@ module('Integration | Component | profile-image', function (hooks) {
     });
 
     test('does not display initials on successful image load', async function (assert) {
-        const person = mockUser({ skypePhotoUrl: 'https://placekitten.com/g/300/300' });
+        const person = basicMockUser({ skypePhotoUrl: 'https://placekitten.com/g/300/300' });
 
         this.set('person', person);
 
