@@ -26,6 +26,8 @@ export default Route.extend({
 
     beforeModel() {
         this.extractSDKParams();
+        this.get('application').setupClientApp();
+
         this.get('intl').setLocale(['en-us']);
 
         localforage.config({

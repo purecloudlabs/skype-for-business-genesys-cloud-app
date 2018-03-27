@@ -1,4 +1,9 @@
+import Ember from 'ember';
 import Service from '@ember/service';
+
+const {
+    Logger
+} = Ember;
 
 const ENV_REG_EXP = /^s*(?:(localhost|localhost.mypurecloud.com)|([^:/?#\s]*)?(inin[dts]ca|mypurecloud)([^:/?#]+))(?::\d+)?(\/[^?#]*)?(?:\?|#.*)?s*$/i;
 
@@ -35,5 +40,34 @@ export default Service.extend({
         } catch (e) {
             return false;
         }
+    },
+
+    setupClientApp() {
+        if (this.clientApp) {
+            return;
+        }
+
+        let env = this.get('environment');
+        if (!env) {
+            this.clientApp = new window.purecloud.apps.ClientApp({
+                pcOrigin: 'https://apps.inindca.com' // Local development hosted in DCA
+            });
+        } else {
+            try {
+                this.clientApp = new window.purecloud.apps.ClientApp({
+                    pcEnvironment: env
+                });
+            } catch (err) {
+                Logger.error('There was an error setting up the apps SDK. Notifications will not work.', { err });
+            }
+        }
+    },
+
+    setAttentionCount(count) {
+        if (!this.clientApp) {
+            return;
+        }
+
+        this.clientApp.alerting.setAttentionCount(count);
     }
 });

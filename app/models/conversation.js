@@ -170,7 +170,7 @@ export default Ember.Object.extend({
                 model.set('unread', true);
                 this.incrementProperty('store.totalUnreadCount');
                 this.incrementProperty('badgeCount');
-                this.get('application.clientApp').alerting.setAttentionCount(this.get('store.totalUnreadCount'));
+                this.get('application').setAttentionCount(this.get('store.totalUnreadCount'));
             }
         });
 

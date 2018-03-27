@@ -132,7 +132,6 @@ export default Service.extend({
         const clientId = this.get('clientIds.inindca');
         let client = platformClient.ApiClient.instance;
         client.setEnvironment(environment);
-        this.setupClientApp();
         return client.loginImplicitGrant(clientId, this.get('redirectUri')).then(() => {
             this.get('purecloudAuthDeferred').resolve();
         }).catch((err) => {
@@ -147,7 +146,6 @@ export default Service.extend({
         const client = platformClient.ApiClient.instance;
 
         client.setEnvironment(environment);
-        this.setupClientApp();
         client.authentications['PureCloud Auth'].accessToken = token;
 
         let apiInstance = new platformClient.UsersApi();
@@ -166,18 +164,6 @@ export default Service.extend({
             }
             return RSVP.reject(error);
         });
-    },
-
-    setupClientApp() {
-        if (!this.get('application.clientApp.alerting')) {
-            let env = this.get('application.environment');
-            try {
-                this.set('application.clientApp', new window.purecloud.apps.ClientApp( { pcEnvironment: env } ));
-            } catch (err) {
-                Logger.error('Apps SDK startup:', {err});
-                this.set('application.clientApp', new window.purecloud.apps.ClientApp( { pcOrigin: window.location.origin } ));
-            }
-        }
     },
 
     setToken(type, token) {
