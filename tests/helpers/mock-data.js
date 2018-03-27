@@ -9,15 +9,24 @@ function propertyFunction(value) {
     prop.get = () => RSVP.resolve(value);
     prop.changed = () => null
     prop.added = () => null
+    prop.subscribe = () => null
     return prop;
 }
 
 // See: https://officedev.github.io/skype-docs/Skype/WebSDK/model/api/interfaces/jcafe.person.html
-export function mockSkypePerson({ id, displayName, avatarUrl = 'https://placekitten.com/g/200/200' }) {
+export function mockSkypePerson({
+    id,
+    email = 'test@test.com',
+    displayName = 'Test McTesterson',
+    avatarUrl = 'https://placekitten.com/g/200/200',
+    status = 'Available'
+}) {
     return {
         id: propertyFunction(id),
+        email: propertyFunction(email),
         displayName: propertyFunction(displayName),
-        avatarUrl: propertyFunction(avatarUrl)
+        avatarUrl: propertyFunction(avatarUrl),
+        status: propertyFunction(status)
     }
 }
 
@@ -77,13 +86,7 @@ export function mockUserModel({ id, displayName, email, presence, owner }) {
     return User.create({
         id,
         presence,
-        person: {
-            id: () => id,
-            displayName: () => displayName,
-            email: () => email,
-            presence: () => presence,
-            avatarUrl: () => 'https://placekitten.com/g/200/200'
-        }
+        person: mockSkypePerson({ id, displayName, email })
     }, ownerInjection);
 }
 

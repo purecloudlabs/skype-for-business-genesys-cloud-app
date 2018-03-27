@@ -81,7 +81,7 @@ export default Ember.Object.extend({
         const latest = this.get('extraConversations.lastObject');
         this.set('latestConversation', latest);
 
-        run.once(this, this._setupMessageHandling, latest);
+        run(this, () => run.once(this, this._setupMessageHandling, latest));
     }),
 
     init() {
