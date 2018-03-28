@@ -1,12 +1,9 @@
 import Ember from 'ember';
 import Service from '@ember/service';
-import ClientApp from '@purecloud/purecloud-client-app-sdk';
 
 const {
     Logger
 } = Ember;
-
-// const { ClientApp } = window.require('purecloud-client-app-sdk');
 
 const ENV_REG_EXP = /^s*(?:(localhost|localhost.mypurecloud.com)|([^:/?#\s]*)?(inin[dts]ca|mypurecloud)([^:/?#]+))(?::\d+)?(\/[^?#]*)?(?:\?|#.*)?s*$/i;
 
@@ -53,12 +50,12 @@ export default Service.extend({
         let env = this.get('environment');
         // let ClientApp = window.require('purecloud-client-app-sdk');
         if (!env) {
-            this.clientApp = new ClientApp({
+            this.clientApp = new window.purecloud.apps.ClientApp({
                 pcOrigin: 'https://apps.inindca.com' // Local development hosted in DCA
             });
         } else {
             try {
-                this.clientApp = new ClientApp({
+                this.clientApp = new window.purecloud.apps.ClientApp({
                     pcEnvironment: env
                 });
             } catch (err) {
