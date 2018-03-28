@@ -1,6 +1,6 @@
 <div class="heading">
     <h3>
-        Skype Contacts
+        {{t "components.roster-list.skypeContacts"}}
     </h3>
 </div>
 
@@ -8,7 +8,7 @@
     <div class="search-input">
         <input class="search-input"
                type="text"
-               placeholder="Start a conversation"
+               placeholder="{{t 'components.roster-list.searchPlaceholder'}}"
                onkeyup={{action "searchHandler"}}>
 
         <i class="ion-search"></i>
@@ -17,7 +17,7 @@
     <div class="search-results {{if hideSearch 'hide'}}">
         {{#if (is-pending searchResults)}}
             <div class="search-result loading">
-                Loading results...
+                {{t "components.roster-list.loadingResults"}}
             </div>
         {{else}}
             {{#each (await searchResults) as |result|}}
@@ -28,7 +28,7 @@
                 </div>
             {{else}}
                 <div class="search-result empty">
-                    No results...
+                    {{t "components.roster-list.noResults"}}
                 </div>
             {{/each}}
         {{/if}}
@@ -38,7 +38,7 @@
 <div class="roster-group direct-messages">
     <div class="roster-heading">
         <h3>
-            Direct Messages
+            {{t "components.roster-list.directMessages"}}
         </h3>
     </div>
 
