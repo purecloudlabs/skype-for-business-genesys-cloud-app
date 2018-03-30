@@ -25,7 +25,7 @@ export default Service.extend({
             }
 
             const parentLocation = window && window.top && window.top.location.host;
-            return (isPurecloudAuth || isMicrosoftAuth) && inFrame && !ENV_REG_EXP.test(parentLocation);
+            return (isPurecloudAuth || isMicrosoftAuth) && inFrame && ENV_REG_EXP.test(parentLocation);
         } catch (e) {
             Logger.warn('Application#authenticatingInFrame', { error: e });
             return false;
