@@ -1,5 +1,5 @@
-<div class="image-container">
-    <img src={{await person.photoUrl}}>
+<div class="image-container {{if loading 'loading' 'not-loading'}}">
+    <img src={{await person.skypePhotoUrl}} alt="{{components.profile-image.alt}}">
 </div>
 
 {{#if enablePresenceIndicator}}

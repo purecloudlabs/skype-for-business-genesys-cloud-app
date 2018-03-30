@@ -17,6 +17,7 @@ const MESSAGE_CACHE = { };
 const getCacheKey = message => `${moment(message.timestamp()).toISOString()}$$${message.text()}`;
 
 export default Ember.Object.extend({
+    application: inject.service(),
     store: inject.service(),
     skype: inject.service(),
 
@@ -79,7 +80,7 @@ export default Ember.Object.extend({
         const latest = this.get('extraConversations.lastObject');
         this.set('latestConversation', latest);
 
-        run.once(this, this._setupMessageHandling, latest);
+        run(this, () => run.once(this, this._setupMessageHandling, latest));
     }),
 
     init() {
@@ -108,7 +109,9 @@ export default Ember.Object.extend({
     },
 
     clearUnreadState() {
+        this.set('store.totalUnreadCount', this.get('store.totalUnreadCount') - this.get('badgeCount'));
         this.set('badgeCount', 0);
+        this.get('application.clientApp').alerting.setAttentionCount(this.get('store.totalUnreadCount'));
         this.get('messages').forEach(message => message.set('unread', false));
     },
 
@@ -165,14 +168,14 @@ export default Ember.Object.extend({
             let model = MESSAGE_CACHE[ getCacheKey(message) ];
             if (model && model.get('sender') !== this.get('store.me')) {
                 model.set('unread', true);
+                this.incrementProperty('store.totalUnreadCount');
                 this.incrementProperty('badgeCount');
+                this.get('application').setAttentionCount(this.get('store.totalUnreadCount'));
             }
         });
 
         conversation.historyService.activityItems.added(message => {
-            Logger.log('HISTORY', message);
-
-            let sender = this.get('store').getUserForPerson(message.sender);
+            Logger.log('History added:', { message });
 
             if (message.type && message.type() !== 'TextMessage') {
                 Logger.log('Unsupported message type:', {
@@ -181,6 +184,8 @@ export default Ember.Object.extend({
                 });
                 return;
             }
+
+            let sender = this.get('store').getUserForPerson(message.sender);
 
             let messageModel = Message.create({
                 sender,
@@ -195,7 +200,10 @@ export default Ember.Object.extend({
         });
 
         conversation.state.changed((newValue, reason, oldValue) => {
-            Logger.log('conversation.state.changed', newValue, reason, oldValue);
+            Logger.debug('conversation.state.changed', {
+                conversation,
+                event: { newValue, reason, oldValue }
+            });
         });
     }
 });

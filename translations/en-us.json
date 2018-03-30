@@ -1,0 +1,25 @@
+{
+    "errors": {
+        "auth": {
+            "closedPopup": "In order to access PureCloud's Skype for Business integration, please authenticate with Microsoft services in the provided popup window.",
+            "generalError": "An error occurred during login. Please try again. If this continues, please contact your PureCloud administrator.",
+            "multipleIdentities": "An error occurred during login. Please make sure you are only signed into one Microsoft account when accessing this application. You can sign out of all Microsoft accounts and try again."
+        }
+    },
+    "login": {
+        "loginButton": "Login to Skype",
+        "adminConsentMessage": "Are you an organization admin? Give application consent here."
+    },
+    "components": {
+        "profile-image": {
+            "alt": "User avatar"
+        },
+        "roster-list": {
+            "directMessages": "Direct messages",
+            "loadingResults": "Loading results",
+            "noResults": "No results",
+            "skypeContacts": "Skype Contacts",
+            "searchPlaceholder": "Start a conversation"
+        }
+    }
+}

@@ -4,7 +4,7 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const CDN_URL = process.env.CDN_URL || '';
 
 module.exports = function (defaults) {
-    var app = new EmberApp(defaults, {
+    let app = new EmberApp(defaults, {
         sourcemaps: {
             enabled: true,
             extensions: ['js']
@@ -16,9 +16,13 @@ module.exports = function (defaults) {
                 replacement: CDN_URL
             }]
         },
+        "ember-cli-babel": {
+            includePolyfill: true
+        }
     });
 
-    app.import('bower_components/localforage/dist/localforage.js');
+    app.import('node_modules/localforage/dist/localforage.js');
+    app.import('node_modules/@purecloud/purecloud-client-app-sdk/dist/purecloud-client-app-sdk.js');
 
     return app.toTree();
 };

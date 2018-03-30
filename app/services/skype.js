@@ -8,7 +8,8 @@ const {
 } = Ember;
 
 const config = {
-    apiKey: 'a42fcebd-5b43-4b89-a065-74450fb91255', // SDK
+    apiKey: 'a42fcebd-5b43-4b89-a065-74450fb91255',
+    apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // with UI
 };
 
 const redirectUri =
@@ -48,14 +49,10 @@ export default Service.extend(Evented, {
         this.promise = deferred.promise;
 
         window.Skype.initialize({
-            apiKey: config.apiKey,
+            apiKey: config.apiKeyCC
         }, api => {
             this.api = api;
-            this.application =  new api.application({
-                settings: {
-                    convLogSettings: true
-                }
-            });
+            this.application = api.UIApplicationInstance;
             deferred.resolve();
         }, error => {
             Logger.error('There was an error loading the api:', error);
@@ -85,8 +82,9 @@ export default Service.extend(Evented, {
                 // Load current conversations
                 this.application.conversationsManager.getMoreConversations();
             })
-            .catch((err) => {
-                Logger.error('Skype.signIn.catch', err);
+            .catch(error => {
+                Logger.error('Skype.signIn.catch', { error });
+                return RSVP.reject(error);
             });
     },
 
@@ -101,16 +99,16 @@ export default Service.extend(Evented, {
         persons.subscribe();
 
         groups.added(group => {
-            Logger.info('Group added', group);
+            Logger.debug('Group added:', { group });
             this.trigger(EVENTS.groupAdded, group);
         });
         groups.removed(group => {
-            Logger.info('Group added', group);
+            Logger.debug('Group removed:', { group });
             this.trigger(EVENTS.groupRemoved, group);
         });
 
         persons.added(person => {
-            Logger.info('Person added', person);
+            Logger.debug('Person added:', { person });
 
             person.id.get().then(() => {
                 this.trigger(EVENTS.personAdded, person);
@@ -118,7 +116,7 @@ export default Service.extend(Evented, {
         });
 
         conversations.added(conversation => {
-            Logger.info('Skype conversation added', { conversation });
+            Logger.debug('Conversation added:', { conversation });
 
             conversation.chatService.accept();
             conversation.chatService.start();

@@ -2,7 +2,6 @@ import Ember from 'ember';
 
 const {
     run,
-    observer,
     computed,
     Component,
 } = Ember;
@@ -13,17 +12,24 @@ export default Component.extend({
     person: null,
     showInitials: true,
 
+    loading: false,
     enablePresenceIndicator: true,
 
     didInsertElement() {
         this._super(...arguments);
 
-        this.processPhoto();
+        this.set('loading', true);
 
-        this.element
-            .querySelector('img')
-            .addEventListener('error', () =>
-                run.scheduleOnce('afterRender', this, this.set, 'showInitials', true));
+        const img = this.element.querySelector('img');
+        img.addEventListener('load', run.bind(this, () => {
+            this.set('showInitials', false);
+            this.set('loading', false);
+        }));
+
+        img.addEventListener('error', run.bind(this, () => {
+            this.set('showInitials', true);
+            this.set('loading', false);
+        }));
     },
 
     initials: computed('person.name', function () {
@@ -36,11 +42,11 @@ export default Component.extend({
         });
     }),
 
-    processPhoto: observer('person.photoUrl', function () {
+    processPhoto() {
         this.get('person.photoUrl').then(url => {
             run.scheduleOnce('afterRender', this, this.set, 'showInitials', !url);
         }).catch(() => {
             run.scheduleOnce('afterRender', this, this.set, 'showInitials', true);
         });
-    })
+    }
 });

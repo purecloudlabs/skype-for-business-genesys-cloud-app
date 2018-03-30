@@ -2,7 +2,7 @@ import Ember from 'ember';
 const { Component, computed, inject } = Ember;
 
 export default Component.extend({
-    classNames: [ 'message-body '],
+    classNames: [ 'message-body'],
     classNameBindings: [ 'isYou:is-you', 'unread:unread' ],
 
     store: inject.service(),

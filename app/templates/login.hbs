@@ -1,0 +1,25 @@
+<div class="login">
+    {{#if authenticating}}
+        {{loading-icon}}
+    {{else}}
+        <button {{action "startAuth"}}>
+            {{t "login.loginButton"}}
+        </button>
+
+        {{#if closedPopup}}
+            <span class="error-message">
+                {{t "errors.auth.closedPopup"}}
+            </span>
+        {{else if errorMessage}}
+            <span class="error-message">
+                {{errorMessage}}
+            </span>
+        {{/if}}
+    {{/if}}
+</div>
+
+<div class="admin-consent">
+    <a href="{{adminConsentUrl}}" target="consent">
+        {{t "login.adminConsentMessage"}}
+    </a>
+</div>

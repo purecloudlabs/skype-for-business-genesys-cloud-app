@@ -39,15 +39,18 @@ export default Component.extend({
     },
 
     actions: {
-        keyup({key, keyCode, shiftKey, target}) {
+        keydown(event) {
+            const {key, keyCode, shiftKey, target} = event;
+            Logger.log('KEY', key, keyCode);
+
             if ((key === "Escape" || keyCode === 27) && target.value === "") {
                 this.get('conversation').clearUnreadState();
             }
 
             if ((key === "Enter" || keyCode === 13) && !shiftKey) {
-                let messageText = target.value;
+                event.preventDefault();
 
-                Logger.log("SEND", messageText);
+                let messageText = target.value;
                 this.get('conversation').sendMessage(messageText);
 
                 target.value = "";
@@ -57,8 +60,12 @@ export default Component.extend({
         makeCall() {
             let platformClient = window.require('platformClient');
             let number = this.get('target.person').phoneNumbers().get('firstObject');
-            if (number) {
-                number = `tel:+1${number.displayString()}`;
+            if (number && number.displayString) {
+                let displayString = number.displayString();
+                if (displayString.indexOf('+') === -1) {
+                    displayString = `+${displayString}`;
+                }
+                number = `tel:${displayString}`;
 
                 platformClient.ApiClient.instance.setEnvironment('inindca.com');
                 platformClient.ApiClient.instance.authentications['PureCloud Auth'].accessToken = this.get('auth.purecloudAccessToken');

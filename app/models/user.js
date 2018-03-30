@@ -47,7 +47,6 @@ export default Ember.Object.extend({
                         this.set('email', person.email());
                     }
 
-                    this.setupPhoto();
                     deferred.resolve(this);
                 });
         } else {

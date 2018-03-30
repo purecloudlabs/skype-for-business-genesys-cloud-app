@@ -48,8 +48,6 @@ pipeline {
                     sh 'source ./npm-utils/scripts/jenkins-pre-build.sh ${NODE_VERSION} -m'
 
                     sh 'yarn install --pure-lockfile'
-                    sh 'yarn add bower phantomjs-prebuilt'
-                    sh 'yarn run bower install'
                 }
             }
         }
@@ -63,7 +61,7 @@ pipeline {
 
             post {
                 failure {
-                    mail to: 'omar.estrella@genesys.com', subject: "FAILURE: ${currentBuild.displayName}", body: "Build ${env.BUILD_NUMBER} failed."
+                    mail to: 'omar.estrella@genesys.com', subject: "S4B FAILURE: ${currentBuild.displayName}", body: "Skype integration build ${env.BUILD_NUMBER} failed."
                 }
             }
         }

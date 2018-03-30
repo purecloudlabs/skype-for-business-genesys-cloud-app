@@ -10,7 +10,6 @@ const {
     Service,
 } = Ember;
 
-
 export default Service.extend({
     skype: inject.service(),
 
@@ -27,14 +26,19 @@ export default Service.extend({
         this.set('contacts', []);
         this.set('conversations', []);
 
-        const skype = this.get('skype');
+        this.setupSkype();
+    },
 
+    setupSkype() {
+        if (Ember.testing) {
+            return;
+        }
+
+        const skype = this.get('skype');
         skype.on(EVENTS.signIn, this.signIn.bind(this));
         skype.on(EVENTS.personAdded, this.getUserForPerson.bind(this));
         skype.on(EVENTS.conversationAdded, this.addConversation.bind(this));
         skype.on(EVENTS.groupAdded, this.addGroup.bind(this));
-
-        window.STORE = this;
     },
 
     signIn(user) {
@@ -45,7 +49,7 @@ export default Service.extend({
     },
 
     addConversation(conversation) {
-        Logger.info('Store.addConversation', { conversation });
+        Logger.debug('Store.addConversation', { conversation });
 
         const model = this.getConversation(conversation.id(), conversation);
         if (!this.get('activeConversation')) {
@@ -54,11 +58,11 @@ export default Service.extend({
     },
 
     addGroup() {
-        Logger.log('Store.addGroup - ', arguments);
+        Logger.debug('Store.addGroup - ', arguments);
     },
 
     setActiveConversation(conversation) {
-        Logger.log('Store.setActiveConversation', { conversation });
+        Logger.debug('Store.setActiveConversation', { conversation });
 
         if (conversation !== this.get('activeConversation')) {
             this.set('activeConversation', conversation);
@@ -125,5 +129,4 @@ export default Service.extend({
             this.setActiveConversation(conversation);
         });
     }
-
 });
