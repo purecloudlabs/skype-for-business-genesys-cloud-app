@@ -160,7 +160,9 @@ export default Service.extend({
         }).catch(error => {
             Logger.error('Purecloud auth error:', { error });
             if (error.status === 401) {
-                return this.setToken('purecloud', null).then(this.purecloudAuth.bind(this));
+                return this.setToken('purecloud', null)
+                    .then(this.purecloudAuth.bind(this))
+                    .catch(err => RSVP.reject(err));
             }
             return RSVP.reject(error);
         });
