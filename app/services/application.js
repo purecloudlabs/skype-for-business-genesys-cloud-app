@@ -48,7 +48,6 @@ export default Service.extend({
         }
 
         let env = this.get('environment');
-        // let ClientApp = window.require('purecloud-client-app-sdk');
         if (!env) {
             this.clientApp = new window.purecloud.apps.ClientApp({
                 pcOrigin: 'https://apps.inindca.com' // Local development hosted in DCA
