@@ -25,6 +25,10 @@ export default Route.extend({
 
         const isPurecloudAuth = tokenIndex > 0 && stateIndex === -1;
 
+        if (this.get('application').insideSecondaryIframe()) {
+            return;
+        }
+
         return auth.getToken('purecloud').then(cachedToken => {
             if (cachedToken) {
                 return auth.validatePurecloudAuth(cachedToken);

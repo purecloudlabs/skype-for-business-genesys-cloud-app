@@ -44,6 +44,17 @@ export default Service.extend({
         }
     },
 
+    insideSecondaryIframe() {
+        try {
+            const pathname = window && window.top && window.top.location && window.top.location.pathname;
+            if (pathname && pathname.indexOf('purecloud-skype') > -1) {
+                return true;
+            }
+        } catch (e) {
+            return false;
+        }
+    },
+
     setupClientApp() {
         if (this.clientApp) {
             return;
