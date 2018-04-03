@@ -24,8 +24,9 @@ export default Route.extend({
         const auth = this.get('auth');
 
         const isPurecloudAuth = tokenIndex > 0 && stateIndex === -1;
+        const isMicrosoftAuth = tokenIndex > 0 && stateIndex > 0;
 
-        if (this.get('application').insideSecondaryIframe()) {
+        if (this.get('application').insideSecondaryIframe() || isMicrosoftAuth) {
             return;
         }
 
