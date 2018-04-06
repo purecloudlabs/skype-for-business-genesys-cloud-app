@@ -55,6 +55,13 @@
             &:active {
                 background-color: rgba(0, 0, 0, 0.1);
             }
+
+            &:disabled,
+            &:disabled:active {
+                color: #e3e3e3;
+                cursor: not-allowed;
+                background-color: transparent;
+            }
         }
 
         .initiate-call {

@@ -29,6 +29,14 @@ export default Component.extend({
         run.scheduleOnce('afterRender', this, this.focus);
     }),
 
+    disableCallButton: computed('target.skypePhoneNumbers.isFulfilled', function () {
+        let promise = this.get('target.skypePhoneNumbers');
+
+        return promise ?
+            !promise.get('content.0') :
+            true;
+    }),
+
     focus() {
         if (this.element) {
             let textarea = this.element.querySelector('textarea');

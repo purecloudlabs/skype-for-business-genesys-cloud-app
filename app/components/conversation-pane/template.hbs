@@ -4,7 +4,10 @@
         <div class="name">{{await target.name}}</div>
     </div>
     <div class="action-header">
-        <button class="initiate-call ion-ios-telephone" {{action "makeCall"}}></button>
+        <button class="initiate-call ion-ios-telephone"
+                disabled={{disableCallButton}}
+                {{action "makeCall"}}>
+        </button>
     </div>
 
     {{messages-panel messages=conversation.sortedMessages}}
