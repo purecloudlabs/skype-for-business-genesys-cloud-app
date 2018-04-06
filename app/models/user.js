@@ -157,6 +157,12 @@ export default Ember.Object.extend({
         });
     }),
 
+    skypePhoneNumbers: computed('person', function () {
+        return PromiseObject.create({
+            promise: this.get('person').phoneNumbers.get()
+        });
+    }),
+
     subscribeToProperties() {
         let person = this.get('person');
         if (person.status) {
