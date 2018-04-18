@@ -32,6 +32,7 @@ export default Service.extend({
         'mypurecloud.com': 'a9f415e7-d2a5-4fa4-9f75-0d48adf3c8d1',
         testshia: '160ab5d6-3d99-4fe9-bf94-0f96d5633b8f'
     },
+    builtinClientId: '@@CLIENT_ID',
 
     msftAccessToken: null,
     purecloudAccessToken: null,
@@ -130,7 +131,7 @@ export default Service.extend({
     purecloudAuth() {
         const platformClient = window.require('platformClient');
         const environment = this.get('application.environment') || 'inindca.com';
-        const clientId = this.get('clientIds')[environment];
+        const clientId = this.get('builtinClientId');
         let client = platformClient.ApiClient.instance;
         client.setEnvironment(environment);
         return client.loginImplicitGrant(clientId, this.get('redirectUri')).then(() => {

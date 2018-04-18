@@ -75,6 +75,7 @@ pipeline {
 
             steps {
                 script {
+                    env.CLIENT_ID = params.CLIENT_ID
                     env.CDN_URL = sh script: "cdn --web-app-name purecloud-skype --build-number ${env.BUILD_NUMBER}", returnStdout: true
                     sh 'yarn run ember build --environment=production'
                 }

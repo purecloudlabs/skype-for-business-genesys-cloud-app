@@ -65,7 +65,9 @@ h3 {
         left: 0;
         top: 36px;
         width: calc(~"100% - 40px");
+        max-height: 300px;
         margin: 0 20px;
+        overflow: auto;
         background-color: #ffffff;
         border-radius: 3px;
         box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
@@ -81,6 +83,9 @@ h3 {
                 width: 100%;
                 color: @text-color;
                 text-decoration: none;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
 
                 &:hover, &:active, &:focus {
                     color: @text-color;

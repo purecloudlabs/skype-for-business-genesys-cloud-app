@@ -16,8 +16,8 @@ export default Component.extend({
 
     searchQuery: null,
 
-    generalContacts: computed.alias('store.contacts'),
-    activeConversations: computed.alias('store.conversations'),
+    generalContacts: computed.reads('store.contacts'),
+    activeConversations: computed.reads('store.conversations'),
 
     actions: {
         selectConversation(conversation) {
@@ -34,8 +34,23 @@ export default Component.extend({
             this.set('searchQuery', null);
 
             this.get('store').startConversation(user);
+        },
+
+        closeConversation(conversation) {
+            this.get('store').endConversation(conversation);
         }
     },
+
+    sortedActiveConversations: computed('activeConversations', 'activeConversations.[]', function () {
+        const conversations = this.get('activeConversations');
+        if (conversations) {
+            const promises = conversations.mapBy('name');
+            return Ember.RSVP.all(promises).then(() => {
+                return conversations.sortBy('name.content');
+            });
+        }
+        return [];
+    }),
 
     hideSearch: computed('searchQuery', function () {
         return !this.get('searchQuery');

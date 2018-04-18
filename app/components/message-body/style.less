@@ -6,6 +6,10 @@
     position: relative;
     margin-bottom: -1px;
 
+    .avatar {
+        width: 30px;
+    }
+
     .avatar > * {
         width: 30px;
         height: 30px;
@@ -35,6 +39,10 @@
         display: flex;
         flex-direction: column;
         padding-left: 10px;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        word-wrap: break-word;
 
         .user {
             color: rgb(86, 133, 153);

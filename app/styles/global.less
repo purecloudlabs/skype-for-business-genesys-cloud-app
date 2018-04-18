@@ -11,3 +11,26 @@
     from { transform: rotate(0deg); }
     to { transform: rotate(359deg); }
 }
+
+button {
+    display: inline-block;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    outline: none;
+
+    &:hover, &active, &:focus {
+        outline: none;
+    }
+
+    &.btn-link {
+        padding: 1px;
+        border: none;
+        background: transparent;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}

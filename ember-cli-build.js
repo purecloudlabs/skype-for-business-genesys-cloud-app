@@ -2,6 +2,7 @@
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 const CDN_URL = process.env.CDN_URL || '';
+const CLIENT_ID = process.env.CLIENT_ID || '';
 
 module.exports = function (defaults) {
     let app = new EmberApp(defaults, {
@@ -10,11 +11,14 @@ module.exports = function (defaults) {
             extensions: ['js']
         },
         replace: {
-            files: ['index.html'],
+            files: ['index.html', '**/*.js'],
             patterns: [{
                 match: 'CDN_URL',
                 replacement: CDN_URL
-            }]
+            }, {
+                match: 'CLIENT_ID',
+                replacement: CLIENT_ID
+            }],
         },
         "ember-cli-babel": {
             includePolyfill: true

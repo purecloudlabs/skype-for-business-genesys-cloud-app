@@ -55,6 +55,12 @@
             &:active {
                 background-color: rgba(0, 0, 0, 0.1);
             }
+
+            &:disabled, &:disabled:active {
+                color: #e3e3e3;
+                cursor: not-allowed;
+                background-color: transparent;
+            }
         }
 
         .initiate-call {
@@ -70,12 +76,19 @@
 
     .input-footer {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         flex-shrink: 0;
 
         background-color: @background-grey;
         border-top: 1px solid @pc-mercury;
         padding: 20px;
+
+        .error {
+            color: @danger;
+            font-size: 11px;
+            margin-top: -12px;
+            margin-bottom: 8px;
+        }
 
         textarea {
             flex-grow: 1;

@@ -19,6 +19,8 @@ export default Service.extend({
     conversations: null,
     activeConversation: null,
 
+    totalUnreadCount: 0,
+
     init() {
         this._super(...arguments);
 
@@ -55,6 +57,18 @@ export default Service.extend({
         if (!this.get('activeConversation')) {
             this.setActiveConversation(model);
         }
+
+        conversation.state.changed((newValue, reason, oldValue) => {
+            Logger.debug('conversation.state.changed', {
+                conversation,
+                event: { newValue, reason, oldValue }
+            });
+
+            if (newValue && newValue.toLowerCase() === 'disconnected') {
+                // Maybe display message to user that conversation got disconnected?
+                // this.endConversation(model);
+            }
+        });
     },
 
     addGroup() {
@@ -68,7 +82,9 @@ export default Service.extend({
             this.set('activeConversation', conversation);
         }
 
-        conversation.loadMessageHistory();
+        if (conversation) {
+            conversation.loadMessageHistory();
+        }
     },
 
     getConversation(id, skypeConversation = null) {
@@ -128,5 +144,12 @@ export default Service.extend({
         conversation.get('loaded').then(() => {
             this.setActiveConversation(conversation);
         });
+    },
+
+    endConversation(conversation) {
+        conversation.leave();
+        this.get('skype').endConversation(conversation);
+        this.get('conversations').removeObject(conversation);
+        this.setActiveConversation(this.get('conversations.firstObject'));
     }
 });
