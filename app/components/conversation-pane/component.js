@@ -101,7 +101,8 @@ export default Component.extend({
                     displayString = displayString.replace(/[\s-]+/g, '')
                     number = `tel:${displayString}`;
 
-                    platformClient.ApiClient.instance.setEnvironment('inindca.com');
+                    const environment = this.get('application.environment') || 'inindca.com';
+                    platformClient.ApiClient.instance.setEnvironment(environment);
                     platformClient.ApiClient.instance.authentications['PureCloud Auth'].accessToken = this.get('auth.purecloudAccessToken');
                     let apiInstance = new platformClient.ConversationsApi();
                     let body = {
