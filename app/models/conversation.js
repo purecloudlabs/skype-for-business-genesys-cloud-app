@@ -80,6 +80,8 @@ export default Ember.Object.extend({
         const latest = this.get('extraConversations.lastObject');
         this.set('latestConversation', latest);
 
+        Logger.info('Incoming extra conversation', { conversation: latest });
+
         run(this, () => run.once(this, this._setupMessageHandling, latest));
     }),
 
@@ -109,7 +111,11 @@ export default Ember.Object.extend({
     },
 
     clearUnreadState() {
-        this.set('store.totalUnreadCount', this.get('store.totalUnreadCount') - this.get('badgeCount'));
+        let newCount = this.get('store.totalUnreadCount') - this.get('badgeCount');
+        if (newCount < 0) {
+            newCount = 0;
+        }
+        this.set('store.totalUnreadCount', newCount);
         this.set('badgeCount', 0);
         this.get('application.clientApp').alerting.setAttentionCount(this.get('store.totalUnreadCount'));
         this.get('messages').forEach(message => message.set('unread', false));
@@ -134,6 +140,15 @@ export default Ember.Object.extend({
                     this.set('loadedHistory', true);
                 });
             });
+        }
+    },
+
+    leave() {
+        if (this.latestConversation) {
+            this.latestConversation.leave();
+        }
+        if (this.conversation) {
+            this.conversation.leave();
         }
     },
 
@@ -165,16 +180,22 @@ export default Ember.Object.extend({
         conversation.chatService.messages.added(message => {
             Logger.log('chatService.messages.added', message);
 
-            let model = MESSAGE_CACHE[ getCacheKey(message) ];
+            const cacheKey = getCacheKey(message);
+            let model = MESSAGE_CACHE[cacheKey];
             if (model && model.get('sender') !== this.get('store.me')) {
                 model.set('unread', true);
-                this.incrementProperty('store.totalUnreadCount');
-                this.incrementProperty('badgeCount');
-                this.get('application').setAttentionCount(this.get('store.totalUnreadCount'));
+                this._incrementBadgeCount();
+            } else if (message.direction() === 'Incoming') {
+                this._incrementBadgeCount();
             }
         });
 
         conversation.historyService.activityItems.added(message => {
+            const cacheKey = getCacheKey(message);
+            if (MESSAGE_CACHE[cacheKey]) {
+                return;
+            }
+
             Logger.log('History added:', { message });
 
             if (message.type && message.type() !== 'TextMessage') {
@@ -192,18 +213,17 @@ export default Ember.Object.extend({
                 skypeMessage: message
             });
 
-            MESSAGE_CACHE[ getCacheKey(message) ] = messageModel;
+            MESSAGE_CACHE[cacheKey] = messageModel;
 
             Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
 
             this.get('messages').pushObject(messageModel);
         });
+    },
 
-        conversation.state.changed((newValue, reason, oldValue) => {
-            Logger.debug('conversation.state.changed', {
-                conversation,
-                event: { newValue, reason, oldValue }
-            });
-        });
+    _incrementBadgeCount() {
+        this.incrementProperty('store.totalUnreadCount');
+        this.incrementProperty('badgeCount');
+        this.get('application').setAttentionCount(this.get('store.totalUnreadCount'));
     }
 });

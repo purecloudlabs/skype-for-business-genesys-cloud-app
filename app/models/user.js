@@ -66,15 +66,18 @@ export default Ember.Object.extend({
     },
 
     name: computed('person', function () {
+        let promise;
         const person = this.get('person');
         const name = person.displayName();
         if (typeof name === 'string') {
-            return RSVP.resolve(name);
+            promise = RSVP.resolve(name);
+        } else {
+            promise = RSVP.Promise(resolve => {
+                person.displayName.get().then(resolve);
+            });
         }
 
-        return new RSVP.Promise(resolve => {
-            person.displayName.get().then(resolve);
-        });
+        return PromiseObject.create({ promise });
     }),
 
     rawPresence: computed('person', {
@@ -154,6 +157,12 @@ export default Ember.Object.extend({
     skypePhotoUrl: computed('person', function () {
         return PromiseObject.create({
             promise: this.get('person').avatarUrl.get()
+        });
+    }),
+
+    skypePhoneNumbers: computed('person', function () {
+        return PromiseObject.create({
+            promise: this.get('person').phoneNumbers.get()
         });
     }),
 

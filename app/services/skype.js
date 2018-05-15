@@ -14,7 +14,7 @@ const config = {
 
 const redirectUri =
     window.location.host.indexOf('localhost') > -1 ?
-        'https://localhost:4200/skype-for-business-purecloud-app/' :
+        'https://localhost:4200/' :
         window.location.href;
 
 const appConfigProperties = {
@@ -49,10 +49,14 @@ export default Service.extend(Evented, {
         this.promise = deferred.promise;
 
         window.Skype.initialize({
-            apiKey: config.apiKeyCC
+            apiKey: config.apiKey
         }, api => {
             this.api = api;
-            this.application = api.UIApplicationInstance;
+            this.application = new api.application({
+                settings: {
+                    convLogSettings: true
+                }
+            });
             deferred.resolve();
         }, error => {
             Logger.error('There was an error loading the api:', error);
@@ -79,7 +83,7 @@ export default Service.extend(Evented, {
 
                 this.registerForEvents();
 
-                // Load current conversations
+                // Load all conversations
                 this.application.conversationsManager.getMoreConversations();
             })
             .catch(error => {
@@ -121,6 +125,10 @@ export default Service.extend(Evented, {
             conversation.chatService.accept();
             conversation.chatService.start();
 
+            conversation.selfParticipant.chat.state.when('Notified', () => {
+                conversation.chatService.accept();
+            });
+
             this.trigger(EVENTS.conversationAdded, conversation);
         });
     },
@@ -141,6 +149,13 @@ export default Service.extend(Evented, {
 
     startConversation(sip) {
         return this.application.conversationsManager.getConversation(sip);
+    },
+
+    endConversation(conversation) {
+        const conversations = [conversation.conversation, conversation.latestConversation];
+        conversations.forEach(c => {
+            this.application.conversationsManager.conversations.remove(c);
+        });
     },
 
     // Audio & Video

@@ -15,5 +15,6 @@ export default Route.extend(AuthenticatedRoute, {
         }
 
         model.loadMessageHistory();
+        model.clearUnreadState();
     }
 });

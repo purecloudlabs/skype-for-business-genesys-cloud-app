@@ -22,8 +22,8 @@
         {{else}}
             {{#each (await searchResults) as |result|}}
                 <div class="search-result">
-                    <a href="#" {{action "selectSearchResult" result}}>
-                        <span class="name">{{result.displayName}}</span>
+                    <a href="#" title="{{await result.name}}" {{action "selectSearchResult" result}}>
+                        <span class="name">{{await result.name}}</span>
                     </a>
                 </div>
             {{else}}
@@ -43,7 +43,7 @@
     </div>
 
     <div class="roster-entries">
-        {{#each activeConversations as |conversation|}}
+        {{#each (await sortedActiveConversations) as |conversation|}}
             {{#link-to "conversation.detail" conversation.id class="roster-entry"}}
                 {{presence-indicator user=conversation.conversationTarget}}
 
@@ -57,9 +57,9 @@
                     </div>
                 {{/if}}
 
-                <div class="close">
+                <button class="btn-link close" {{action "closeConversation" conversation}}>
                     <i class="ion-close-circled"></i>
-                </div>
+                </button>
             {{/link-to}}
         {{/each}}
     </div>
