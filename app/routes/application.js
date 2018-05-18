@@ -76,7 +76,7 @@ export default Route.extend({
             }
             // prod
             else {
-                let [_, host] = hostname.split('apps.');
+                let [, host] = hostname.split('apps.');
                 environment = host;
             }
         }
