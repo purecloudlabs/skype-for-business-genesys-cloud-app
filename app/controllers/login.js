@@ -35,7 +35,11 @@ export default Controller.extend({
                 .catch(error => {
                     Logger.error('Error authenticating:', { error });
                     this.set('error', error);
-                    this.set('errorDetails', error.errorDetails);
+                    if (error.errorDetails) {
+                        this.set('errorDetails', error.errorDetails);
+                    } else if (error.error && error.error_description) {
+                        this.set('errorDetails', error);
+                    }
                 }).finally(() => this.set('authenticating', false));
         },
 
@@ -74,13 +78,17 @@ export default Controller.extend({
 
     errorDetailsMessage: computed('errorDetails', function () {
         const details = this.get('errorDetails');
-        if (!details || !details.message) {
+        if (!details) {
             return null;
         }
 
-        const message = details.message;
-        const code = details.code || 'Unknown code';
+        const message = details.message || details.error_description;
+        const code = details.code;
 
-        return `${code}: ${message}`;
+        if (code) {
+            return `${code}: ${message}`;
+        }
+
+        return message;
     })
 })
