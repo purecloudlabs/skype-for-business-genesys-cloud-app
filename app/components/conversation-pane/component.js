@@ -17,6 +17,8 @@ export default Component.extend({
     ajax: inject.service(),
     auth: inject.service(),
     store: inject.service(),
+    application: inject.service(),
+
     conversation: computed.alias('store.activeConversation'),
 
     target: computed.alias('conversation.conversationTarget'),
