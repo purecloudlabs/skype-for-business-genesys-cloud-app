@@ -16,6 +16,8 @@ export default Controller.extend({
     error: null,
     authPromise: null,
 
+    hideMoreDetails: true,
+
     actions: {
         startAuth() {
             const auth = this.get('auth');
@@ -33,7 +35,12 @@ export default Controller.extend({
                 .catch(error => {
                     Logger.error('Error authenticating:', { error });
                     this.set('error', error);
+                    this.set('errorDetails', error.errorDetails);
                 }).finally(() => this.set('authenticating', false));
+        },
+
+        toggleMoreErrorDetails() {
+            this.toggleProperty('hideMoreDetails');
         }
     },
 
@@ -63,5 +70,17 @@ export default Controller.extend({
         }
 
         return this.get('intl').t('errors.auth.generalError');
+    }),
+
+    errorDetailsMessage: computed('errorDetails', function () {
+        const details = this.get('errorDetails');
+        if (!details || !details.message) {
+            return null;
+        }
+
+        const message = details.message;
+        const code = details.code || 'Unknown code';
+
+        return `${code}: ${message}`;
     })
 })

@@ -1,5 +1,7 @@
 {
     "errors": {
+        "showMore": "Show more details",
+        "showLess": "Show less details",
         "textarea": {
             "messageLengthError": "Your message length is too long. It must be under {num} characters."
         },
