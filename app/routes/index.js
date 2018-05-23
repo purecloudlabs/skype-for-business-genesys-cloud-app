@@ -20,7 +20,7 @@ export default Route.extend({
     beforeModel() {
         const ref = window.location.href;
         const tokenIndex = ref.indexOf('access_token');
-        const stateIndex = ref.indexOf('session_state')
+        const stateIndex = ref.indexOf('session_state');
         const auth = this.get('auth');
 
         const isPurecloudAuth = tokenIndex > 0 && stateIndex === -1;
