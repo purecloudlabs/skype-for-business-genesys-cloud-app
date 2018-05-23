@@ -14,6 +14,22 @@
             <span class="error-message">
                 {{errorMessage}}
             </span>
+
+            {{#if errorDetailsMessage}}
+                <div class="more-details">
+                    <a href="#" {{action "toggleMoreErrorDetails"}}>
+                        {{#if hideMoreDetails}}
+                            {{t "errors.showMore"}}
+                        {{else}}
+                            {{t "errors.showLess"}}
+                        {{/if}}
+                    </a>
+
+                    <span class="error-message {{if hideMoreDetails 'hide'}}">
+                        {{errorDetailsMessage}}
+                    </span>
+                </div>
+            {{/if}}
         {{/if}}
     {{/if}}
 </div>
