@@ -15,9 +15,10 @@ export default Component.extend({
     classNames: ['conversation-pane'],
 
     ajax: inject.service(),
-    auth: inject.service(),
-    store: inject.service(),
     application: inject.service(),
+    auth: inject.service(),
+    intl: inject.service(),
+    store: inject.service(),
 
     conversation: computed.alias('store.activeConversation'),
 
@@ -114,7 +115,16 @@ export default Component.extend({
                     apiInstance.postConversationsCalls(body).then((data) => {
                         Logger.log('Call Made', data);
                     }).catch((err) => {
+                        let title = this.get('intl').t('errors.title');
+                        let text = this.get('intl').t('errors.calls.general');
+                        let options = {
+                            type: 'error',
+                            timeout: 30,
+                            showCloseButton: true
+                        }
+
                         Logger.error('CALL ERROR', err);
+                        this.get('application.clientApp').alerting.showToastPopup(title, text, options);
                     });
                 } else {
                     // no phone number, error
