@@ -21,3 +21,4 @@ npm-debug.log*
 testem.log
 .npmrc
 yarn-error.log
+.env
