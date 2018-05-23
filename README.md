@@ -1,4 +1,4 @@
-# purecloud-skype
+# Skype for Business Integration
 
 This README outlines the details of collaborating on this Ember application.
 A short introduction of this app could easily go here.
@@ -14,9 +14,14 @@ You will need the following things properly installed on your computer.
 
 ## Installation
 
+### Clone & and install dependencies
 * `git clone <repository-url>` this repository
 * `cd purecloud-skype`
 * `npm install`
+
+### Setup environment variables
+* Copy `.env.example` to `.env`
+* Replace the `CLIENT_ID` with the value with the correct OAuth client id (ask for this)
 
 ## Running / Development
 
