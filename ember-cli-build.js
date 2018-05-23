@@ -35,8 +35,13 @@ module.exports = function (defaults) {
         }
     });
 
+    if (app.env === 'test') {
+        console.info('Not including App SDK during testing');
+    } else {
+        app.import('node_modules/@purecloud/purecloud-client-app-sdk/dist/purecloud-client-app-sdk.js');
+    }
+
     app.import('node_modules/localforage/dist/localforage.js');
-    app.import('node_modules/@purecloud/purecloud-client-app-sdk/dist/purecloud-client-app-sdk.js');
 
     return app.toTree();
 };
