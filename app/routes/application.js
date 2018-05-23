@@ -41,7 +41,10 @@ export default Route.extend({
     },
 
     extractSDKParams() {
-        const search = window.location.search;
+        let environment = '';
+        const { search, hostname } = window.location;
+
+        // Parse environment from query params provided by apps framework
         if (search) {
             try {
                 const parameters = {};
@@ -50,13 +53,36 @@ export default Route.extend({
                     parameters[key] = value;
                 });
 
-                const application = this.get('application');
                 if (parameters.pcEnvironment) {
-                    application.set('environment', parameters.pcEnvironment);
+                    environment = parameters.pcEnvironment;
                 }
+
             } catch (error) {
-                Ember.Logger.error('Error parsing SDK parameters:', { error });
+                Ember.Logger.error('Error parsing SDK parameters:', {error});
             }
+        }
+
+        // default to url parsing when query params fails
+        if (!environment) {
+            // dca
+            if (hostname === 'apps.inindca.com') {
+                environment = 'inindca.com';
+            } else if (hostname === 'localhost') {
+                environment = 'inindca.com';
+            }
+            // tca
+            else if (hostname === 'apps.inintca.com') {
+                environment = 'inintca.com';
+            }
+            // prod
+            else {
+                let [, host] = hostname.split('apps.');
+                environment = host;
+            }
+        }
+
+        if (environment) {
+            this.get('application').set('environment', environment);
         }
     }
 });

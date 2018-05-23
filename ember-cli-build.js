@@ -1,8 +1,18 @@
 /* eslint-env node */
+/* eslint no-console: 0 */
+const fs = require('fs');
+const path = require('path');
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 const CDN_URL = process.env.CDN_URL || '';
-const CLIENT_ID = process.env.CLIENT_ID || '';
+let CLIENT_ID = process.env.CLIENT_ID || '';
+
+const envPath = path.join(path.dirname(__filename), '.env');
+if (fs.existsSync(envPath)) {
+    CLIENT_ID = require(envPath).CLIENT_ID;
+    console.info('Using client id:', CLIENT_ID);
+}
+
 
 module.exports = function (defaults) {
     let app = new EmberApp(defaults, {
@@ -25,8 +35,13 @@ module.exports = function (defaults) {
         }
     });
 
+    if (app.env === 'test') {
+        console.info('Not including App SDK during testing');
+    } else {
+        app.import('node_modules/@purecloud/purecloud-client-app-sdk/dist/purecloud-client-app-sdk.js');
+    }
+
     app.import('node_modules/localforage/dist/localforage.js');
-    app.import('node_modules/@purecloud/purecloud-client-app-sdk/dist/purecloud-client-app-sdk.js');
 
     return app.toTree();
 };

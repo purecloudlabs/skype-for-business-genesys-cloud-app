@@ -47,7 +47,8 @@
     "ember-resolver": "^4.0.0",
     "ember-source": "^3.0.0",
     "ember-truth-helpers": "^2.0.0",
-    "loader.js": "^4.2.3"
+    "loader.js": "^4.2.3",
+    "localforage": "^1.6.0"
   },
   "engines": {
     "node": ">= 4"
@@ -55,7 +56,6 @@
   "private": true,
   "dependencies": {
     "@purecloud/purecloud-client-app-sdk": "^1.0.0-alpha.7",
-    "@purecloud/web-app-deploy": "^1.0.409",
-    "localforage": "^1.6.0"
+    "@purecloud/web-app-deploy": "^1.0.409"
   }
 }
