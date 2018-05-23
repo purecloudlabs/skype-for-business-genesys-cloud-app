@@ -1,5 +1,6 @@
 {
     "errors": {
+        "title": "Error",
         "textarea": {
             "messageLengthError": "Your message length is too long. It must be under {num} characters."
         },
@@ -7,6 +8,9 @@
             "closedPopup": "In order to access PureCloud's Skype for Business integration, please authenticate with Microsoft services in the provided popup window.",
             "generalError": "An error occurred during login. Please try again. If this continues, please contact your PureCloud administrator.",
             "multipleIdentities": "An error occurred during login. Please make sure you are only signed into one Microsoft account when accessing this application. You can sign out of all Microsoft accounts and try again."
+        },
+        "calls": {
+            "general": "An error occurred while attempting to make a call. Please try again. If this continues, please contact your PureCloud administrator."
         }
     },
     "login": {

@@ -61,7 +61,7 @@ export default Service.extend({
         }
 
         let env = this.get('environment');
-        if (!env) {
+        if (!env || window.location.hostname === 'localhost') {
             this.clientApp = new window.purecloud.apps.ClientApp({
                 pcOrigin: 'https://apps.inindca.com' // Local development hosted in DCA
             });
