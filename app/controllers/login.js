@@ -35,7 +35,11 @@ export default Controller.extend({
                 .catch(error => {
                     Logger.error('Error authenticating:', { error });
                     this.set('error', error);
-                    if (error.errorDetails) {
+
+                    if (error.code === 'CommandDisabled') {
+                        // We are in a bad state, reload
+                        window.location.reload();
+                    } else if (error.errorDetails) {
                         this.set('errorDetails', error.errorDetails);
                     } else if (error.error && error.error_description) {
                         this.set('errorDetails', error);

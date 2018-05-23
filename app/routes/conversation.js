@@ -21,7 +21,6 @@ export default Route.extend(AuthenticatedRoute, {
         const activeConversation = this.get('store.activeConversation');
         if (activeConversation) {
             once(this, this.transitionTo, 'conversation.detail', activeConversation.get('id'))
-            // this.transitionTo('conversation.detail', activeConversation.get('id'));
         }
     })
 });
