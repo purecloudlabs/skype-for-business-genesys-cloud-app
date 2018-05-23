@@ -19,7 +19,6 @@ export default Component.extend({
     auth: inject.service(),
     intl: inject.service(),
     store: inject.service(),
-    application: inject.service(),
 
     conversation: computed.alias('store.activeConversation'),
 
