@@ -48,7 +48,8 @@
     "ember-source": "^3.0.0",
     "ember-truth-helpers": "^2.0.0",
     "loader.js": "^4.2.3",
-    "localforage": "^1.6.0"
+    "localforage": "^1.6.0",
+    "markdown-it": "^8.4.1"
   },
   "engines": {
     "node": ">= 4"

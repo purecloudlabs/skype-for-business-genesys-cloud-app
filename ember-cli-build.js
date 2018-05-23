@@ -42,6 +42,8 @@ module.exports = function (defaults) {
     }
 
     app.import('node_modules/localforage/dist/localforage.js');
+    app.import('node_modules/markdown-it/dist/markdown-it.js');
+    app.import('vendor/shims/markdown-it.js');
 
     return app.toTree();
 };
