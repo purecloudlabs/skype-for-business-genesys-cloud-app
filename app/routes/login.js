@@ -15,6 +15,7 @@ export default Route.extend({
 
     beforeModel() {
         if (this.disableSilentLogin) {
+            this.get('application.clientApp').alerting.setAttentionCount(1);    //remove this when login stuff works
             return;
         }
 
