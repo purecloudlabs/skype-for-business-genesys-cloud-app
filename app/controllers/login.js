@@ -11,6 +11,7 @@ const {
 export default Controller.extend({
     intl: inject.service(),
     auth: inject.service(),
+    application: inject.service(),
     skype: inject.service(),
 
     error: null,
@@ -31,7 +32,10 @@ export default Controller.extend({
                 .then(() => skype.get('promise'))
                 .then(() => skype.signIn())
                 .then(() => this.set('authenticating', false))
-                .then(() => this.transitionToRoute('conversation'))
+                .then(() => {
+                    this.get('application.clientApp').alerting.setAttentionCount(0);    //remove this when login stuff works
+                    this.transitionToRoute('conversation');
+                })
                 .catch(error => {
                     Logger.error('Error authenticating:', { error });
                     this.set('error', error);
