@@ -61,10 +61,18 @@ export default Service.extend({
         }
 
         let env = this.get('environment');
-        if (!env || window.location.hostname === 'localhost') {
-            this.clientApp = new window.purecloud.apps.ClientApp({
-                pcOrigin: 'https://apps.inindca.com' // Local development hosted in DCA
-            });
+        let isDevelopmentEnvironment = env &&
+            (env.indexOf('inindca') > -1 || env.indexOf('inintca') > -1);
+        if (!env || isDevelopmentEnvironment || window.location.hostname === 'localhost') {
+            if (isDevelopmentEnvironment) {
+                this.clientApp = new window.purecloud.apps.ClientApp({
+                    pcOrigin: `https://apps.${env}`
+                });
+            } else {
+                this.clientApp = new window.purecloud.apps.ClientApp({
+                    pcOrigin: 'https://apps.inindca.com' // Local development hosted in DCA
+                });
+            }
         } else {
             try {
                 this.clientApp = new window.purecloud.apps.ClientApp({
