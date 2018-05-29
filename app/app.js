@@ -12,6 +12,17 @@ let App = Application.extend({
         this._super(...arguments);
 
         window.App = this;
+
+        // prevent file drag & drop from leaving the app
+        window.addEventListener('drop', function(ev){
+            ev.preventDefault();
+        });
+        window.addEventListener('dragover', function(ev){
+            ev.preventDefault();
+        });
+        window.addEventListener('dragenter', function(ev){
+            ev.preventDefault();
+        });
     },
 
     serviceFor(name) {
