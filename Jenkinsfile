@@ -76,7 +76,7 @@ pipeline {
             steps {
                 script {
                     def date = new Date()
-                    sh "echo -e '{\"name\":\"purecloud-skype\",\"version\":\"${env.BUILD_NUMBER}\",\"buildNumber\":\"${env.BUILD_NUMBER}\",\"buildDate\":\"${date}\",\"indexFiles\":[{\"file\":\"dist/index.html\"}]}' > manifest.json"
+                    sh "echo -e '{\"name\":\"purecloud-skype\",\"version\":\"${env.BUILD_NUMBER}\",\"buildNumber\":\"${env.BUILD_NUMBER}\",\"buildDate\":\"${date}\",\"indexFiles\":[{\"file\":\"index.html\"}]}' > manifest.json"
 
                     env.CLIENT_ID = params.CLIENT_ID
                     env.CDN_URL = sh script: "cdn --web-app-name purecloud-skype --manifest ${env.WORKSPACE}/manifest.json", returnStdout: true
