@@ -115,7 +115,7 @@ pipeline {
                         echo "Deploying to: ${environments}"
 
                         environments.each {
-                            sh "yarn run deploy --web-app-name purecloud-skype --dest-env ${it}"
+                            sh "yarn run deploy --web-app-name purecloud-skype --dest-env ${it} --version ${env.BUILD_NUMBER}"
                         }
                     }
                 }
