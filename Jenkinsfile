@@ -92,7 +92,9 @@ pipeline {
             steps {
                 script {
                     if (params.DEPLOY_APPLICATION) {
-                        sh "yarn run upload --web-app-name purecloud-skype --source-dir dist --create-manifest true --version 1.0.0 --build-number ${env.BUILD_NUMBER} --no-index-file-copy true"
+                        def date = new Date()
+                        sh "echo -e '{\"name\":\"purecloud-skype\",\"version\":\"${env.BUILD_NUMBER}\",\"buildNumber\":\"${env.BUILD_NUMBER}\",\"buildDate\":\"${date}\",\"indexFiles\":[{\"file\":\"dist/index.html\"}]}' > manifest.json"
+                        sh "yarn run upload"
                     }
                 }
             }
