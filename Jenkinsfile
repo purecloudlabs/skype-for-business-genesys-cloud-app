@@ -75,6 +75,7 @@ pipeline {
 
             steps {
                 script {
+                    def date = new Date()
                     sh "echo -e '{\"name\":\"purecloud-skype\",\"version\":\"${env.BUILD_NUMBER}\",\"buildNumber\":\"${env.BUILD_NUMBER}\",\"buildDate\":\"${date}\",\"indexFiles\":[{\"file\":\"dist/index.html\"}]}' > manifest.json"
 
                     env.CLIENT_ID = params.CLIENT_ID
@@ -94,7 +95,6 @@ pipeline {
             steps {
                 script {
                     if (params.DEPLOY_APPLICATION) {
-                        def date = new Date()
                         sh "yarn run upload --source-dir ${env.WORKSPACE}/dist --manifest ${env.WORKSPACE}/manifest.json --web-app-name purecloud-skype"
                     }
                 }
