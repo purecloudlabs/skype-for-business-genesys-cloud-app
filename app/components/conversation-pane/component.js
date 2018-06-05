@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import DS from 'ember-data';
 
 const {
     inject,
@@ -36,12 +37,29 @@ export default Component.extend({
         return this.get('text.length') > MAX_MESSAGE_LENGTH;
     }),
 
-    disableCallButton: computed('target.skypePhoneNumbers.isFulfilled', function () {
-        let promise = this.get('target.skypePhoneNumbers');
+    disableCallButton: computed('target.skypePhoneNumbers.isFulfilled', 'hasPurecloudStation.isFulfilled', function () {
+        let skypeNumbers = this.get('target.skypePhoneNumbers');
+        let purecloudStation = this.get('hasPurecloudStation');
 
-        return promise ?
-            !promise.get('content.0') :
+        return skypeNumbers && purecloudStation ?
+            !skypeNumbers.get('content.0') || !purecloudStation.get('content') :
             true;
+    }),
+
+    hasPurecloudStation: computed('auth.purecloudAccessToken', function () {
+        let platformClient = window.require('platformClient');
+        const environment = this.get('application.environment') || 'inindca.com';
+        platformClient.ApiClient.instance.setEnvironment(environment);
+        platformClient.ApiClient.instance.authentications['PureCloud Auth'].accessToken = this.get('auth.purecloudAccessToken');
+        let apiInstance = new platformClient.UsersApi();
+
+        let promise = apiInstance.getUsersMe().then( (user) => {
+           return apiInstance.getUserStation(user.id).then( (res) => {
+                return !!res.associatedStation;
+            });
+        });
+
+        return DS.PromiseObject.create({ promise });
     }),
 
     conversationChanged: observer('conversation', function () {
