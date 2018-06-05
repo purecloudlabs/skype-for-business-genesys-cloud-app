@@ -7,8 +7,7 @@ const {
     run,
     observer,
     Logger,
-    Component,
-    RSVP
+    Component
 } = Ember;
 
 const MAX_MESSAGE_LENGTH = 300;
