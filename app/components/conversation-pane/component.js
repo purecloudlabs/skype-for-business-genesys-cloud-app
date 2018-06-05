@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import DS from 'ember-data';
-// import PromiseObject from '../utils/promise-object'
 
 const {
     inject,
@@ -40,10 +39,11 @@ export default Component.extend({
     }),
 
     disableCallButton: computed('target.skypePhoneNumbers.isFulfilled', 'hasPurecloudStation.isFulfilled', function () {
-        let promise = this.get('target.skypePhoneNumbers');
+        let skypeNumbers = this.get('target.skypePhoneNumbers');
+        let purecloudStation = this.get('hasPurecloudStation');
 
-        return promise ?
-            !promise.get('content.0') || !this.get('hasPurecloudStation.content') :
+        return skypeNumbers && purecloudStation ?
+            !skypeNumbers.get('content.0') || !purecloudStation.get('content') :
             true;
     }),
 
