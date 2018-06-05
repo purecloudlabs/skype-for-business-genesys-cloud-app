@@ -75,8 +75,11 @@ pipeline {
 
             steps {
                 script {
+                    def date = new Date()
+                    sh "echo -e '{\"name\":\"purecloud-skype\",\"version\":\"${env.BUILD_NUMBER}\",\"buildNumber\":\"${env.BUILD_NUMBER}\",\"buildDate\":\"${date}\",\"indexFiles\":[{\"file\":\"index.html\"}]}' > manifest.json"
+
                     env.CLIENT_ID = params.CLIENT_ID
-                    env.CDN_URL = sh script: "cdn --web-app-name purecloud-skype --build-number ${env.BUILD_NUMBER}", returnStdout: true
+                    env.CDN_URL = sh script: "cdn --web-app-name purecloud-skype --manifest ${env.WORKSPACE}/manifest.json", returnStdout: true
                     sh 'yarn run ember build --environment=production'
                 }
             }
@@ -92,7 +95,7 @@ pipeline {
             steps {
                 script {
                     if (params.DEPLOY_APPLICATION) {
-                        sh "yarn run upload --web-app-name purecloud-skype --source-dir dist --create-manifest true --version 1.0.0 --build-number ${env.BUILD_NUMBER} --no-index-file-copy true"
+                        sh "yarn run upload --source-dir ${env.WORKSPACE}/dist --manifest ${env.WORKSPACE}/manifest.json --web-app-name purecloud-skype"
                     }
                 }
             }
@@ -112,7 +115,7 @@ pipeline {
                         echo "Deploying to: ${environments}"
 
                         environments.each {
-                            sh "yarn run deploy --web-app-name purecloud-skype --dest-env ${it} --build-number ${env.BUILD_NUMBER}"
+                            sh "yarn run deploy --web-app-name purecloud-skype --dest-env ${it} --version ${env.BUILD_NUMBER}"
                         }
                     }
                 }
