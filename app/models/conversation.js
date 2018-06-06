@@ -182,11 +182,14 @@ export default Ember.Object.extend({
 
             const cacheKey = getCacheKey(message);
             let model = MESSAGE_CACHE[cacheKey];
-            if (model && model.get('sender') !== this.get('store.me')) {
-                model.set('unread', true);
-                this._incrementBadgeCount();
-            } else if (message.direction() === 'Incoming') {
-                this._incrementBadgeCount();
+            let isCurrentConversation = model.get('sender.id') === this.get('store.activeConversation.conversationTarget.id');
+            if (!isCurrentConversation || !document.hasFocus()) {
+                if (model && model.get('sender') !== this.get('store.me')) {
+                    model.set('unread', true);
+                    this._incrementBadgeCount();
+                } else if (message.direction() === 'Incoming') {
+                    this._incrementBadgeCount();
+                }
             }
         });
 
