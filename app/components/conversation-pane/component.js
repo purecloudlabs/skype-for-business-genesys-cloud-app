@@ -87,7 +87,7 @@ export default Component.extend({
                 this.get('conversation').clearUnreadState();
             }
 
-            if ((key === 'Enter' || keyCode === 13) && !shiftKey) {
+            if ((key === 'Enter' || keyCode === 13) && !shiftKey && keyCode !== 229) {
                 event.preventDefault();
 
                 if (target.value.length > MAX_MESSAGE_LENGTH) {
