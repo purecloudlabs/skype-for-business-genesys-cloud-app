@@ -12,6 +12,10 @@ const {
 
 const MAX_MESSAGE_LENGTH = 300;
 
+const ENTER_KEY = 13;
+const ESCAPE_KEY = 27;
+const SPECIAL_ENTER = 229;
+
 export default Component.extend({
     classNames: ['conversation-pane'],
 
@@ -83,11 +87,11 @@ export default Component.extend({
         keydown(event) {
             const {key, keyCode, shiftKey, target} = event;
 
-            if ((key === 'Escape' || keyCode === 27) && target.value === '') {
+            if ((key === 'Escape' || keyCode === ESCAPE_KEY) && target.value === '') {
                 this.get('conversation').clearUnreadState();
             }
 
-            if ((key === 'Enter' || keyCode === 13) && !shiftKey && keyCode !== 229) {
+            if ((key === 'Enter' || keyCode === ENTER_KEY) && !shiftKey && keyCode !== SPECIAL_ENTER) {
                 event.preventDefault();
 
                 if (target.value.length > MAX_MESSAGE_LENGTH) {
