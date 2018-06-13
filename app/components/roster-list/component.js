@@ -4,7 +4,6 @@ const {
     inject,
     computed,
     RSVP,
-    Logger,
     Component
 } = Ember;
 
@@ -13,6 +12,7 @@ export default Component.extend({
 
     skype: inject.service(),
     store: inject.service(),
+    traceLogger: inject.service(),
 
     searchQuery: null,
 
@@ -66,17 +66,17 @@ export default Component.extend({
         query.limit(20);
         query.text(search);
 
-        Logger.log('Starting search for', { query });
+        Ember.Logger.log('components/roster-list', 'Starting search for', { query });
 
         return new RSVP.Promise((resolve, reject) => {
             query.getMore().then((results) => {
                 const data = results.map((result) => {
                     return this.get('store').getUserForPerson(result.result);
                 });
-                Logger.log('Results:', { data });
+                Ember.Logger.log('components/roster-list', 'Search results:', { data });
                 resolve(data);
             }, (error) => {
-                Logger.error('Failed loading results', { error });
+                this.get('traceLogger').error('components/roster-list', 'Search failed loading results', { error });
                 reject({ error });
             });
         })

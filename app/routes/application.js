@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import { inject as service } from '@ember/service'
 import Route from '@ember/routing/route';
 
@@ -7,6 +6,7 @@ const localforage = window.localforage;
 export default Route.extend({
     intl: service(),
     application: service(),
+    traceLogger: service(),
 
     actions: {
         loading() {
@@ -58,7 +58,7 @@ export default Route.extend({
                 }
 
             } catch (error) {
-                Ember.Logger.error('Error parsing SDK parameters:', {error});
+                this.get('traceLogger').error('routes/application', 'Error parsing Apps SDK parameters:', {error});
             }
         }
 

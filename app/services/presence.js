@@ -3,7 +3,6 @@ import Ember from 'ember';
 const {
     computed,
     inject,
-    Logger,
     Service
 } = Ember;
 
@@ -23,9 +22,9 @@ export default Service.extend({
 
     setStatus (status) {
         this.get('skype').application.personsAndGroupsManager.mePerson.status.set(status).then(() => {
-            Logger.info(`status changed to ${status}`);
-        }, (err) => {
-            Logger.error(err);
+            Ember.Logger.info('services/presence', `status changed to ${status}`);
+        }, (error) => {
+            Ember.Logger.warn('services/presence', 'set presence call failed', { error });
         });
     }
 })

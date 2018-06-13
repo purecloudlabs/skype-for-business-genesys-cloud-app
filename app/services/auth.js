@@ -5,7 +5,6 @@ const {
     inject,
     computed,
     RSVP,
-    Logger,
     Service
 } = Ember;
 
@@ -20,6 +19,7 @@ export default Service.extend({
     ajax: inject.service(),
     skype: inject.service(),
     application: inject.service(),
+    traceLogger: inject.service(),
 
     appId: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
     urls: {
@@ -59,7 +59,7 @@ export default Service.extend({
                     return;
                 }
 
-                Ember.Logger.info('Loaded token:', token);
+                Ember.Logger.info('services/auth', 'Loaded token:', token);
 
                 this.set('msftAccessToken', token);
                 this.get('msftAuthDeferred').resolve(token);
@@ -137,7 +137,7 @@ export default Service.extend({
         return client.loginImplicitGrant(clientId, this.get('redirectUri')).then(() => {
             this.get('purecloudAuthDeferred').resolve();
         }).catch((err) => {
-            Logger.error(err.error);
+            this.get('traceLogger').error('services/auth', 'purecloud auth implicit grant error', err.error);
             return RSVP.reject(err);
         })
     },
@@ -153,14 +153,14 @@ export default Service.extend({
         let apiInstance = new platformClient.UsersApi();
 
         return apiInstance.getUsersMe().then((data) => {
-            Logger.debug('Purecloud auth confirmed:', { data });
+            Ember.Logger.debug('services/auth', 'Purecloud auth confirmed:', { data });
             this.set('purecloudAccessToken', token);
             return this.setToken('purecloud', token);
         }).then(() => {
-            Logger.debug('Purecloud cookie set');
+            Ember.Logger.debug('services/auth', 'Purecloud cookie set');
             return this.get('purecloudAuthDeferred').resolve();
         }).catch(error => {
-            Logger.error('Purecloud auth error:', { error });
+            this.get('traceLogger').error('services/auth', 'Purecloud auth error:', { error });
             if (error.status === 401) {
                 return this.setToken('purecloud', null)
                     .then(this.purecloudAuth.bind(this))

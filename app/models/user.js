@@ -4,8 +4,7 @@ import PromiseObject from '../utils/promise-object';
 const {
     inject,
     computed,
-    RSVP,
-    Logger
+    RSVP
 } = Ember;
 
 export default Ember.Object.extend({
@@ -146,7 +145,7 @@ export default Ember.Object.extend({
         }).then(blob => {
             return (window.URL || window.webkitURL).createObjectURL(blob);
         }).catch(error => {
-            Logger.error('Error loading photo data:', { error });
+            Ember.Logger.warn('models/user', 'Error loading photo data:', { error });
         });
 
         return PromiseObject.create({
