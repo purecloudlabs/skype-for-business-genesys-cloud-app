@@ -2,14 +2,11 @@ import Ember from 'ember'
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 
-const {
-    Logger
-} = Ember;
-
 export default Route.extend({
     auth: service(),
     skype: service(),
     application: service(),
+    traceLogger: service(),
 
     disableSilentLogin: true,
 
@@ -25,19 +22,19 @@ export default Route.extend({
 
         const application = this.get('application');
         if (application.authenticatingInFrame() || application.loadingInsideFrame()) {
-            Logger.info('Authenticating inside iframe');
+            Ember.Logger.info('routes/login', 'Authenticating inside iframe');
             return;
         }
 
         return this.get('auth').silentLogin().then(() => {
-            Logger.info('Silently logged in');
+            Ember.Logger.info('routes/login', 'Silently logged in');
             return this.get('skype').get('promise');
         }).then(() => {
             return this.get('skype').signIn();
         }).then(() => {
             this.transitionTo('conversation');
         }).catch(error => {
-            Logger.error('Error logging in silently', { error });
+            this.get('traceLogger').error('routes/login', 'Error logging in silently', { error });
         });
     }
 })

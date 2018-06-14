@@ -10,7 +10,6 @@ const {
     observer,
     run,
     RSVP,
-    Logger
 } = Ember;
 
 const MESSAGE_CACHE = { };
@@ -80,7 +79,7 @@ export default Ember.Object.extend({
         const latest = this.get('extraConversations.lastObject');
         this.set('latestConversation', latest);
 
-        Logger.info('Incoming extra conversation', { conversation: latest });
+        Ember.Logger.info('models/conversation', 'Incoming extra conversation', { conversation: latest });
 
         run(this, () => run.once(this, this._setupMessageHandling, latest));
     }),
@@ -101,7 +100,7 @@ export default Ember.Object.extend({
 
         const conversation = this.get('conversation');
         if (!conversation) {
-            Logger.warn('Conversation model created without skype conversation.');
+            Ember.Logger.warn('models/conversation', 'Conversation model created without skype conversation.');
             return;
         }
 
@@ -125,7 +124,7 @@ export default Ember.Object.extend({
         this.clearUnreadState();
         this.get('latestConversation').chatService.sendMessage(message)
             .then(function () {
-                Logger.log('Message sent.');
+                Ember.Logger.log('models/conversation', 'Message sent', message);
             });
     },
 
@@ -133,7 +132,7 @@ export default Ember.Object.extend({
         if (!this.get('loadedHistory')) {
             this.get('deferred.promise').then(() => {
                 this.get('conversation').historyService.getMoreActivityItems().then(() => {
-                    Logger.log('History loaded', {
+                    Ember.Logger.log('models/conversation', 'History loaded', {
                         name: this.get('name'),
                         conversationId: this.get('conversation.id')
                     });
@@ -162,7 +161,7 @@ export default Ember.Object.extend({
         const conversation = this.get('conversation');
 
         conversation.participants.added(person => {
-            Logger.log('conversation.participants.added', person);
+            Ember.Logger.log('models/conversation', 'participants.added', person);
             this.notifyPropertyChange('conversationTarget');
             this.get('deferred').resolve();
         });
@@ -178,7 +177,7 @@ export default Ember.Object.extend({
         this.get('attachedListeners').addObject(conversation.id());
 
         conversation.chatService.messages.added(message => {
-            Logger.log('chatService.messages.added', message);
+            Ember.Logger.log('models/conversation', 'chatService.messages.added', message);
 
             const cacheKey = getCacheKey(message);
             let model = MESSAGE_CACHE[cacheKey];
@@ -199,10 +198,10 @@ export default Ember.Object.extend({
                 return;
             }
 
-            Logger.log('History added:', { message });
+            Ember.Logger.log('models/conversation', 'History added', message);
 
             if (message.type && message.type() !== 'TextMessage') {
-                Logger.log('Unsupported message type:', {
+                Ember.Logger.warn('models/conversation', 'Unsupported message type:', {
                     message,
                     messageType: message.type()
                 });
@@ -218,7 +217,7 @@ export default Ember.Object.extend({
 
             MESSAGE_CACHE[cacheKey] = messageModel;
 
-            Logger.log('conversation.historyService.activityItems.added', { message: messageModel });
+            Ember.Logger.log('models/conversation', 'conversation.historyService.activityItems.added', { message: messageModel });
 
             this.get('messages').pushObject(messageModel);
         });

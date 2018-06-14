@@ -6,7 +6,6 @@ const {
     computed,
     run,
     observer,
-    Logger,
     Component
 } = Ember;
 
@@ -24,6 +23,7 @@ export default Component.extend({
     auth: inject.service(),
     intl: inject.service(),
     store: inject.service(),
+    traceLogger: inject.service(),
 
     conversation: computed.alias('store.activeConversation'),
 
@@ -135,7 +135,7 @@ export default Component.extend({
                     };
 
                     apiInstance.postConversationsCalls(body).then((data) => {
-                        Logger.log('Call Made', data);
+                        Ember.Logger.log('components/conversation-pane', 'Call Made', data);
                     }).catch((err) => {
                         let title = this.get('intl').t('errors.title');
                         let text = this.get('intl').t('errors.calls.general');
@@ -143,9 +143,9 @@ export default Component.extend({
                             type: 'error',
                             timeout: 30,
                             showCloseButton: true
-                        }
+                        };
 
-                        Logger.error('CALL ERROR', err);
+                        this.get('traceLogger').error('components/conversation-pane', 'purecloud call error', err);
                         this.get('application.clientApp').alerting.showToastPopup(title, text, options);
                     });
                 } else {

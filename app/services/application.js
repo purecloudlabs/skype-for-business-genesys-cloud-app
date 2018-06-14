@@ -1,13 +1,11 @@
 import Ember from 'ember';
 import Service from '@ember/service';
 
-const {
-    Logger
-} = Ember;
-
 const ENV_REG_EXP = /^s*(?:(localhost|localhost.mypurecloud.com)|([^:/?#\s]*)?(inin[dts]ca|mypurecloud)([^:/?#]+))(?::\d+)?(\/[^?#]*)?(?:\?|#.*)?s*$/i;
 
 export default Service.extend({
+    traceLogger: Ember.inject.service(),
+
     environment: null,
     clientApp: null,
 
@@ -27,7 +25,7 @@ export default Service.extend({
             const parentLocation = window && window.top && window.top.location.host;
             return (isPurecloudAuth || isMicrosoftAuth) && inFrame && ENV_REG_EXP.test(parentLocation);
         } catch (e) {
-            Logger.warn('Application#authenticatingInFrame', { error: e });
+            Ember.Logger.warn('services/application', 'Application#authenticatingInFrame', { error: e });
             return false;
         }
     },
@@ -39,7 +37,7 @@ export default Service.extend({
 
             return inFrame && !ENV_REG_EXP.test(parentLocation);
         } catch (e) {
-            Logger.warn('Application#loadingInsideFrame', { error: e });
+            Ember.Logger.warn('services/application', 'Application#loadingInsideFrame', { error: e });
             return false;
         }
     },
@@ -79,7 +77,7 @@ export default Service.extend({
                     pcEnvironment: env
                 });
             } catch (err) {
-                Logger.error('There was an error setting up the apps SDK. Notifications will not work.', { err });
+                this.get('traceLogger').error('services/application', 'There was an error setting up the apps SDK. Notifications will not work.', { err });
             }
         }
     },

@@ -2,7 +2,6 @@ import Ember from 'ember';
 
 const {
     RSVP,
-    Logger,
     Service,
     Evented
 } = Ember;
@@ -37,6 +36,7 @@ export const EVENTS = {
 
 export default Service.extend(Evented, {
     ajax: Ember.inject.service(),
+    traceLogger: Ember.inject.service(),
 
     promise: null,
 
@@ -59,7 +59,7 @@ export default Service.extend(Evented, {
             });
             deferred.resolve();
         }, error => {
-            Logger.error('There was an error loading the api:', error);
+            this.get('traceLogger').Logger.error('services/skype', 'error initializing skype api', { error });
         });
     },
 
@@ -76,7 +76,7 @@ export default Service.extend(Evented, {
 
         return this.application.signInManager.signIn(options)
             .then(() => {
-                Logger.log('Skype.signIn.then', arguments);
+                Ember.Logger.log('services/skype', 'signIn', arguments);
                 const me = this.application.personsAndGroupsManager.mePerson;
                 this.set('me', me);
                 this.trigger(EVENTS.signIn, me);
@@ -87,7 +87,7 @@ export default Service.extend(Evented, {
                 this.application.conversationsManager.getMoreConversations();
             })
             .catch(error => {
-                Logger.error('Skype.signIn.catch', { error });
+                this.get('traceLogger').error('services/skype', 'signIn', { error });
                 return RSVP.reject(error);
             });
     },
@@ -103,16 +103,16 @@ export default Service.extend(Evented, {
         persons.subscribe();
 
         groups.added(group => {
-            Logger.debug('Group added:', { group });
+            Ember.Logger.debug('services/skype', 'Group added:', { group });
             this.trigger(EVENTS.groupAdded, group);
         });
         groups.removed(group => {
-            Logger.debug('Group removed:', { group });
+            Ember.Logger.debug('services/skype', 'Group removed:', { group });
             this.trigger(EVENTS.groupRemoved, group);
         });
 
         persons.added(person => {
-            Logger.debug('Person added:', { person });
+            Ember.Logger.debug('services/skype', 'Person added:', { person });
 
             person.id.get().then(() => {
                 this.trigger(EVENTS.personAdded, person);
@@ -120,7 +120,7 @@ export default Service.extend(Evented, {
         });
 
         conversations.added(conversation => {
-            Logger.debug('Conversation added:', { conversation });
+            Ember.Logger.debug('services/skype', 'Conversation added:', { conversation });
 
             conversation.chatService.accept();
             conversation.chatService.start();
@@ -138,10 +138,10 @@ export default Service.extend(Evented, {
         let group = groups[this.get('application').personsAndGroupsManager.all.groups().map(p => p.name()).indexOf('Other Contacts')];
 
         return group.persons.add(person.get('id')).then(() => {
-                Logger.log(`added ${person.displayName} to ${group.name()}`);
+                Ember.Logger.log('services/skype', `added ${person.displayName} to ${group.name()}`);
             },
             (err) => {
-                Logger.error(err);
+                this.get('traceLogger').error('services/skype', "error saving contact", err);
             });
     },
 

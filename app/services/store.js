@@ -6,7 +6,6 @@ import User from '../models/user';
 const {
     inject,
     getOwner,
-    Logger,
     Service,
 } = Ember;
 
@@ -44,14 +43,14 @@ export default Service.extend({
     },
 
     signIn(user) {
-        Logger.log('Store.signIn', { user });
+        Ember.Logger.log('services/store', 'signIn', { user });
 
         let me = this.getUserForPerson(user);
         this.set('me', me);
     },
 
     addConversation(conversation) {
-        Logger.debug('Store.addConversation', { conversation });
+        Ember.Logger.debug('services/store', 'addConversation', { conversation });
 
         const model = this.getConversation(conversation.id(), conversation);
         if (!this.get('activeConversation')) {
@@ -59,7 +58,7 @@ export default Service.extend({
         }
 
         conversation.state.changed((newValue, reason, oldValue) => {
-            Logger.debug('conversation.state.changed', {
+            Ember.Logger.debug('services/store', 'conversation.state.changed', {
                 conversation,
                 event: { newValue, reason, oldValue }
             });
@@ -72,11 +71,11 @@ export default Service.extend({
     },
 
     addGroup() {
-        Logger.debug('Store.addGroup - ', arguments);
+        Ember.Logger.debug('services/store', 'addGroup - ', arguments);
     },
 
     setActiveConversation(conversation) {
-        Logger.debug('Store.setActiveConversation', { conversation });
+        Ember.Logger.debug('services/store', 'setActiveConversation', { conversation });
 
         if (conversation !== this.get('activeConversation')) {
             this.set('activeConversation', conversation);

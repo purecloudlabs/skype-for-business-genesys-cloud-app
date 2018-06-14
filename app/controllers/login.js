@@ -4,7 +4,6 @@ import PromiseObject from '../utils/promise-object';
 const {
     inject,
     computed,
-    Logger,
     Controller
 } = Ember;
 
@@ -13,6 +12,7 @@ export default Controller.extend({
     auth: inject.service(),
     application: inject.service(),
     skype: inject.service(),
+    traceLogger: inject.service(),
 
     error: null,
     authPromise: null,
@@ -37,7 +37,7 @@ export default Controller.extend({
                     this.transitionToRoute('conversation');
                 })
                 .catch(error => {
-                    Logger.error('Error authenticating:', { error });
+                    this.get('traceLogger').error('controllers/login', 'Error authenticating skype:', { error });
                     this.set('error', error);
 
                     if (error.code === 'CommandDisabled') {
