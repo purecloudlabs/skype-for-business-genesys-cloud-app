@@ -9,7 +9,6 @@ const {
 
 export default Ember.Object.extend({
     auth: inject.service(),
-    ajax: inject.service(),
     skype: inject.service(),
 
     id: null,

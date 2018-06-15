@@ -35,7 +35,6 @@ export const EVENTS = {
 };
 
 export default Service.extend(Evented, {
-    ajax: Ember.inject.service(),
     traceLogger: Ember.inject.service(),
 
     promise: null,

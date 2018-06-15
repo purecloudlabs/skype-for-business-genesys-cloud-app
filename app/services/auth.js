@@ -16,7 +16,6 @@ function objectToQueryParameters(obj) {
 }
 
 export default Service.extend({
-    ajax: inject.service(),
     skype: inject.service(),
     application: inject.service(),
     traceLogger: inject.service(),

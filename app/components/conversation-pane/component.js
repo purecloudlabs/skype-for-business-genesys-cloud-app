@@ -18,7 +18,6 @@ const SPECIAL_ENTER = 229;
 export default Component.extend({
     classNames: ['conversation-pane'],
 
-    ajax: inject.service(),
     application: inject.service(),
     auth: inject.service(),
     intl: inject.service(),
