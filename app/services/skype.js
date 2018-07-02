@@ -11,11 +11,6 @@ const config = {
     apiKeyCC: '9c967f6b-a846-4df2-b43d-5167e47d81e1' // with UI
 };
 
-const redirectUri =
-    window.location.host.indexOf('localhost') > -1 ?
-        'https://localhost:4200/' :
-        window.location.href;
-
 const appConfigProperties = {
     displayName: 'purecloudskype',
     applicationID: 'ec744ffe-d332-454a-9f13-b9f7ebe8b249',
@@ -38,6 +33,13 @@ export default Service.extend(Evented, {
     traceLogger: Ember.inject.service(),
 
     promise: null,
+
+    redirectUri: Ember.computed(function () {
+        if (window.location.host.indexOf('localhost')) {
+            return 'https://localhost:4200/';
+        }
+        return `${window.location.origin}${window.location.pathname}`;
+    }),
 
     init() {
         window.skype = this;
@@ -70,7 +72,7 @@ export default Service.extend(Evented, {
             ],
             cors: true,
             version: 'PurecloudSkype/0.0.0',
-            redirect_uri: redirectUri
+            redirect_uri: this.get('redirectUri')
         };
 
         return this.application.signInManager.signIn(options)
