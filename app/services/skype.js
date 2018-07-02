@@ -35,7 +35,7 @@ export default Service.extend(Evented, {
     promise: null,
 
     redirectUri: Ember.computed(function () {
-        if (window.location.host.indexOf('localhost')) {
+        if (window.location.host.indexOf('localhost') > -1) {
             return 'https://localhost:4200/';
         }
         return `${window.location.origin}${window.location.pathname}`;
