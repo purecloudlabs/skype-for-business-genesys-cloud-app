@@ -22,7 +22,7 @@ pipeline {
     }
 
     parameters {
-        string(defaultValue: true, description: 'Pipeline build number to deploy', name: 'BUILD_NUMBER')
+        string(description: 'Pipeline build number to deploy', name: 'BUILD_NUMBER')
         booleanParam(defaultValue: true, description: 'Deploy to dev?', name: 'DEPLOY_TO_DEV')
         booleanParam(defaultValue: false, description: 'Deploy to test?', name: 'DEPLOY_TO_TEST')
         booleanParam(defaultValue: false, description: 'Deploy to production?', name: 'DEPLOY_TO_PROD')
