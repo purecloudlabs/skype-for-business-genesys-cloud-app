@@ -1,0 +1,68 @@
+pipeline {
+    agent {
+        label 'dev_shared'
+    }
+
+    tools {
+        nodejs 'NodeJS 6.12.1'
+    }
+
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+
+    environment {
+        NODE_VERSION = "6.12.1"
+        WEB_APP_NAME = "purecloud-skype"
+        GZIP_WEB_APP = true
+        LANG = "en_US.UTF-8"
+        LANGUAGE = "en_US:en"
+        LC_ALL = "en_US.UTF-8"
+        PATH = "./node_modules/.bin:$PATH"
+    }
+
+    parameters {
+        string(defaultValue: true, description: 'Pipeline build number to deploy', name: 'BUILD_NUMBER')
+        booleanParam(defaultValue: true, description: 'Deploy to dev?', name: 'DEPLOY_TO_DEV')
+        booleanParam(defaultValue: false, description: 'Deploy to test?', name: 'DEPLOY_TO_TEST')
+        booleanParam(defaultValue: false, description: 'Deploy to production?', name: 'DEPLOY_TO_PROD')
+    }
+
+    stages {
+        stage('Setup Environment') {
+            steps {
+                sh 'printenv'
+
+                script {
+                    currentBuild.description = "Build #${params.BUILD_NUMBER}"
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                expression {
+                    getDeployEnvironments().size() > 0
+                }
+            }
+
+            steps {
+                script {
+                    def environments = getDeployEnvironments()
+                    if (environments.size() > 0) {
+                        echo "Deploying to: ${environments}"
+
+                        environments.each {
+                            sh "yarn run deploy --web-app-name purecloud-skype --dest-env ${it} --version ${params.BUILD_NUMBER}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+def getDeployEnvironments() {
+    def deployMap = [dev: params.DEPLOY_TO_DEV, test: params.DEPLOY_TO_TEST, prod: params.DEPLOY_TO_PROD]
+    return ['dev', 'test', 'prod'].findAll { deployMap[it] }
+}
