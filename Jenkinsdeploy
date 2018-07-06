@@ -39,6 +39,17 @@ pipeline {
             }
         }
 
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    sh 'rm -rf npm-utils && git clone git@bitbucket.org:inindca/npm-utils.git'
+                    sh 'source ./npm-utils/scripts/jenkins-pre-build.sh ${NODE_VERSION} -m'
+
+                    sh 'yarn install --pure-lockfile'
+                }
+            }
+        }
+
         stage('Deploy') {
             when {
                 expression {
