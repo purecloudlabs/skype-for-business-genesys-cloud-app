@@ -55,12 +55,6 @@
   dependencies:
     "@glimmer/util" "^0.30.5"
 
-"@purecloud/purecloud-client-app-sdk@^1.0.0-alpha.7":
-  version "1.0.0-alpha.7"
-  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm-dev/@purecloud/purecloud-client-app-sdk/-/@purecloud/purecloud-client-app-sdk-1.0.0-alpha.7.tgz#cca8770d0bdfe1b8aa66c7c7c70029f8e5ae4f44"
-  dependencies:
-    query-string "^5.0.0"
-
 "@purecloud/web-app-deploy@^2.0.0":
   version "2.0.3"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm-dev/@purecloud/web-app-deploy/-/@purecloud/web-app-deploy-2.0.3.tgz#a8c573bd8bc63d07843fa828ea6994f796791023"
@@ -5787,6 +5781,13 @@ punycode@1.3.2:
 punycode@^1.4.1:
   version "1.4.1"
   resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
+
+purecloud-client-app-sdk@^1.0.0:
+  version "1.0.0"
+  resolved "https://purecloud.artifactoryonline.com/purecloud/api/npm/inin-internal-npm/purecloud-client-app-sdk/-/purecloud-client-app-sdk-1.0.0.tgz#01569a935987b0e7ac11c3f3b016dba2e8d17c78"
+  integrity sha1-AVaak1mHsOesEcPzsBbboujRfHg=
+  dependencies:
+    query-string "^5.0.0"
 
 qs@6.5.1, qs@^6.4.0:
   version "6.5.1"
