@@ -1,6 +1,8 @@
+@import 'genesys-light-theme';
+
 & {
     @border-grey: @pc-mercury;
-    @background-grey: #F9F9F9;
+    @background-grey: #f9f9f9;
 
     display: flex;
     flex-direction: column;
@@ -24,7 +26,7 @@
 
         .name {
             font-size: 18px;
-            color: rgb(152, 152, 152);
+            color: #27414c;
             padding-left: 20px;
         }
 
@@ -56,7 +58,8 @@
                 background-color: rgba(0, 0, 0, 0.1);
             }
 
-            &:disabled, &:disabled:active {
+            &:disabled,
+            &:disabled:active {
                 color: #e3e3e3;
                 cursor: not-allowed;
                 background-color: transparent;
@@ -66,7 +69,6 @@
         .initiate-call {
             font-size: 18px;
             padding-top: 5px;
-
         }
     }
 

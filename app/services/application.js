@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import Service from '@ember/service';
+import { loadCachedTheme, THEME_CLASSES } from '../utils/theme';
 
 const ENV_REG_EXP = /^s*(?:(localhost|localhost.mypurecloud.com)|([^:/?#\s]*)?(inin[dts]ca|mypurecloud)([^:/?#]+))(?::\d+)?(\/[^?#]*)?(?:\?|#.*)?s*$/i;
 
@@ -9,10 +10,27 @@ export default Service.extend({
     environment: null,
     clientApp: null,
 
+    theme: null,
+
+    init() {
+        this._super(...arguments);
+
+        try {
+            const theme = loadCachedTheme();
+            this.set('theme', theme);
+        } catch (e) {
+            this.get('traceLogger').debug(
+                'services/application',
+                'There was an error loading current theme cookie, defaulting to normal theming'
+            );
+            this.set('theme', { theme: THEME_CLASSES.ORIGINAL });
+        }
+    },
+
     authenticatingInFrame() {
         const href = window.location.href;
         const tokenIndex = href.indexOf('access_token');
-        const stateIndex = href.indexOf('session_state')
+        const stateIndex = href.indexOf('session_state');
         const isPurecloudAuth = tokenIndex > 0 && stateIndex === -1;
         const isMicrosoftAuth = tokenIndex > 0 && stateIndex > 0;
 
@@ -59,8 +77,7 @@ export default Service.extend({
         }
 
         let env = this.get('environment');
-        let isDevelopmentEnvironment = env &&
-            (env.indexOf('inindca') > -1 || env.indexOf('inintca') > -1);
+        let isDevelopmentEnvironment = env && (env.indexOf('inindca') > -1 || env.indexOf('inintca') > -1);
         if (!env || isDevelopmentEnvironment || window.location.hostname === 'localhost') {
             if (isDevelopmentEnvironment) {
                 this.clientApp = new window.purecloud.apps.ClientApp({
@@ -77,7 +94,11 @@ export default Service.extend({
                     pcEnvironment: env
                 });
             } catch (err) {
-                this.get('traceLogger').error('services/application', 'There was an error setting up the apps SDK. Notifications will not work.', { err });
+                this.get('traceLogger').error(
+                    'services/application',
+                    'There was an error setting up the apps SDK. Notifications will not work.',
+                    { err }
+                );
             }
         }
     },

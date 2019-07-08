@@ -1,0 +1,90 @@
+@gux-warm-red: #ff4f1f;
+@gux-plum: #5d3d5e;
+@gux-charcoal: #33383d;
+
+@gux-white: #fdfdfd;
+@gux-white2: #f8f8f8;
+@gux-gray1: #222529;
+@gux-gray2: #444a52;
+@gux-pale-gray: #77828f;
+@gux-pale-gray-dark: #9baab8;
+@gux-icons: #98a7b8;
+@gux-panel: #393e45;
+
+@gux-border: #e4e9f0;
+@gux-border-strong: #c3cad4;
+
+@gux-dark-blue: #2a60c8;
+@gux-blue: #75a8ff;
+@gux-select-blue: #deeaff;
+@gux-highlight-current: #ffef27;
+@gux-highlight-next: #fff793;
+
+@gux-alert: #f53131;
+@gux-alert-dark: #ff7070;
+@gux-warn: #fabb00;
+@gux-positive: #a1d318;
+@gux-neutral: #203b73;
+@gux-neutral-dark: #75a8ff;
+
+@gux-chart1: #203b73;
+@gux-chart2: #75a8ff;
+@gux-chart3: #a452cf;
+@gux-chart4: #1da8b3;
+@gux-chart5: #b5b5eb;
+@gux-chart6: #cc3ebe;
+@gux-chart7: #5e5782;
+@gux-chart8: #ff8fdd;
+@gux-chart9: #868c1e;
+@gux-chart10: #ddd933;
+
+.light-theme {
+    @link-color: @gux-dark-blue;
+    @text-color: @gux-gray2;
+    @bg-color: @gux-white;
+
+    @genesys-icon: @gux-warm-red;
+
+    @primary-button-bg: @gux-dark-blue;
+    @primary-button-border: #2455a3;
+
+    @secondary-button-bg: @gux-border; // yes, that's correct
+    @secondary-button-border: #d5dce0;
+
+    @button-primary-background: @gux-dark-blue;
+    @button-link-color: @gux-dark-blue;
+
+    background-color: @bg-color;
+    color: @text-color;
+    font-family: @font-family;
+
+    a {
+        color: @gux-dark-blue;
+
+        &:hover,
+        &:visited {
+            color: @gux-dark-blue;
+        }
+    }
+
+    .btn.btn-primary,
+    .btn.btn-purecloud.btn-success {
+        background-color: @button-primary-background;
+        background-image: none;
+        border: 1px solid @primary-button-border;
+        border-color: @primary-button-border;
+        box-shadow: none;
+    }
+
+    .btn:not(.btn-link):not(.btn-primary):not(.btn-purecloud.btn-success) {
+        background-color: @secondary-button-bg;
+        background-image: none;
+        border: 1px solid @secondary-button-border;
+        border-color: @secondary-button-border;
+        box-shadow: none;
+    }
+
+    .btn.btn-link {
+        color: @button-link-color;
+    }
+}

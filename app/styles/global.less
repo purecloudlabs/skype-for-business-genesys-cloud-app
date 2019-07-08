@@ -8,8 +8,12 @@
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(359deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
 }
 
 button {
@@ -20,7 +24,9 @@ button {
     background: #fff;
     outline: none;
 
-    &:hover, &active, &:focus {
+    &:hover,
+    &active,
+    &:focus {
         outline: none;
     }
 
@@ -33,4 +39,8 @@ button {
             cursor: pointer;
         }
     }
+}
+
+a {
+    color: @pc-blue;
 }
