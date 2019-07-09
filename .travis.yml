@@ -16,6 +16,7 @@ before_install:
     - npm config set spin false
 
 install:
+    - npm install object-assign
     - npm install --only=dev
 
 script:
