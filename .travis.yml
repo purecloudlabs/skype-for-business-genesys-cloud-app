@@ -16,7 +16,6 @@ before_install:
     - npm config set spin false
 
 install:
-    - npm install query-string
     - npm install --only=dev
 
 script:
