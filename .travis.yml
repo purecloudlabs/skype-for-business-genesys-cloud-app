@@ -1,22 +1,23 @@
 ---
 language: node_js
 node_js:
-  - "6"
+    - '10'
 
 sudo: false
 
 env:
-  - SKIP_DEPENDENCY_CHECKER=true
+    - SKIP_DEPENDENCY_CHECKER=true
 
 cache:
-  directories:
-    - $HOME/.npm
+    directories:
+        - $HOME/.npm
 
 before_install:
-  - npm config set spin false
+    - npm config set spin false
 
 install:
-  - npm install --only=dev
+    - npm install object-assign
+    - npm install --only=dev
 
 script:
-  - npm test
+    - npm test

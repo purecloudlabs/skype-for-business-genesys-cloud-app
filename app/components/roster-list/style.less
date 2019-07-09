@@ -1,4 +1,5 @@
-@import "variables";
+@import 'variables';
+@import 'genesys-light-theme';
 
 & {
     background-color: @bg-blue-light;
@@ -9,6 +10,11 @@
     > div {
         padding: 0 20px;
     }
+}
+
+.light-theme & {
+    background-color: @gux-white2;
+    border-right: 1px solid @gux-border;
 }
 
 h3 {
@@ -26,6 +32,10 @@ h3 {
 
         color: @text-blue-grey;
         font-weight: normal;
+
+        .light-theme & {
+            color: @gux-gray2;
+        }
     }
 
     .controls {
@@ -50,6 +60,10 @@ h3 {
             border: 1px solid @pc-darkblue;
             box-sizing: border-box;
             outline: none;
+
+            .light-theme & {
+                border-color: @gux-border;
+            }
         }
 
         i {
@@ -57,6 +71,10 @@ h3 {
             left: 6px;
             top: 6px;
             color: @text-grey;
+
+            .light-theme & {
+                color: @gux-pale-gray;
+            }
         }
     }
 
@@ -64,7 +82,7 @@ h3 {
         position: absolute;
         left: 0;
         top: 36px;
-        width: calc(~"100% - 40px");
+        width: calc(~'100% - 40px');
         max-height: 300px;
         margin: 0 20px;
         overflow: auto;
@@ -87,9 +105,21 @@ h3 {
                 overflow: hidden;
                 text-overflow: ellipsis;
 
-                &:hover, &:active, &:focus {
+                &:hover,
+                &:active,
+                &:focus {
                     color: @text-color;
                     text-decoration: none;
+                }
+
+                .light-theme & {
+                    color: @gux-gray2;
+
+                    &:hover,
+                    &:active,
+                    &:focus {
+                        color: @gux-gray2;
+                    }
                 }
             }
 
@@ -98,7 +128,8 @@ h3 {
                 background-color: @bg-grey-light;
             }
 
-            &.loading:hover, .no-results:hover {
+            &.loading:hover,
+            .no-results:hover {
                 cursor: default;
                 background-color: transparent;
             }
@@ -117,6 +148,10 @@ h3 {
     .roster-heading {
         color: @pc-darkblue;
         padding: 0 20px;
+
+        .light-theme & {
+            color: @gux-gray2;
+        }
     }
 
     .roster-entry {
@@ -130,23 +165,40 @@ h3 {
         font-size: 0.9em;
         text-decoration: none;
 
+        .light-theme & {
+            color: @gux-gray2;
+        }
+
         &:hover {
             cursor: pointer;
             background-color: @bg-grey-light;
             text-decoration: none;
+
+            .light-theme & {
+                background-color: @gux-select-blue;
+            }
 
             .close {
                 display: block;
             }
         }
 
-        &:visited, &:active {
+        &:visited,
+        &:active {
             color: @text-color;
             text-decoration: none;
+
+            .light-theme & {
+                color: @gux-gray2;
+            }
         }
 
         &.active {
             background-color: @pc-darkblue;
+
+            .light-theme & {
+                background-color: @panel-active-background;
+            }
 
             .name {
                 color: #fff;
