@@ -52,7 +52,7 @@
         "markdown-it": "^8.4.1"
     },
     "engines": {
-        "node": ">= 8"
+        "node": ">= 6.12.1"
     },
     "private": true,
     "dependencies": {
