@@ -56,7 +56,7 @@
     },
     "private": true,
     "dependencies": {
-        "purecloud-client-app-sdk": "^1.0.0",
+        "purecloud-client-app-sdk": "^1.2.0",
         "@purecloud/web-app-deploy": "^2.0.0"
     }
 }
