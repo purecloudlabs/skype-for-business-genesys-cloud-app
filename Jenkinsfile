@@ -4,7 +4,7 @@ webappPipeline {
     slaveLabel = 'dev_v2'
     projectName = 'purecloud-skype'
     manifest = directoryManifest('./dist')
-    buildType = { env.BRANCH_NAME == 'user-promise-fix' ? 'MAINLINE' : 'FEATURE' }
+    buildType = { env.BRANCH_NAME == 'master' ? 'MAINLINE' : 'FEATURE' }
     publishPackage = {}
     shouldDeployDev = { true }
     shouldDeployTest = { true }
