@@ -3,7 +3,7 @@
 var pkg = require('../package.json');
 
 module.exports = function (environment) {
-    var rootURL = environment === 'production' ? '' : '/';
+    var rootURL = '/';
     var ENV = {
         modulePrefix: 'purecloud-skype',
         environment: environment,

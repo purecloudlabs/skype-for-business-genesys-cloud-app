@@ -15,7 +15,6 @@ webappPipeline {
       sh("""
         export CLIENT_ID=e47d28c7-9b4c-4d94-bf1e-09fd1e20d92c
         export CDN_URL="\$(npx cdn --ecosystem pc --name \$APP_NAME --build \$BUILD_ID --version ${CDN_VERSION})"
-        echo "CDN_URL \$CDN_URL"
         yarn --pure-lockfile
         yarn test
         yarn run build
