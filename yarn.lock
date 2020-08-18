@@ -5794,10 +5794,10 @@ punycode@^1.4.1:
   version "1.4.1"
   resolved "https://purecloud.jfrog.io/purecloud/api/npm/inin-internal-npm/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
-purecloud-client-app-sdk@^1.2.0:
-  version "1.2.0"
-  resolved "https://purecloud.jfrog.io/purecloud/api/npm/inin-internal-npm/purecloud-client-app-sdk/-/purecloud-client-app-sdk-1.2.0.tgz#5698313df20da3c9e7fbe30a00f7af508fc05669"
-  integrity sha1-VpgxPfINo8nn++MKAPevUI/AVmk=
+purecloud-client-app-sdk@^1.4.0:
+  version "1.4.0"
+  resolved "https://purecloud.jfrog.io/purecloud/api/npm/inin-internal-npm/purecloud-client-app-sdk/-/purecloud-client-app-sdk-1.4.0.tgz#f38b77f0590934fe6b5066fdb24e3abd1b39a861"
+  integrity sha1-84t38FkJNP5rUGb9sk46vRs5qGE=
   dependencies:
     query-string "^5.0.0"
 
