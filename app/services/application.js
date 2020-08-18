@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import Service from '@ember/service';
-import { loadCachedTheme, THEME_CLASSES } from '../utils/theme';
+import { THEME_CLASSES } from '../utils/theme';
 
 const ENV_REG_EXP = /^s*(?:(localhost|localhost.mypurecloud.com)|([^:/?#\s]*)?(inin[dts]ca|mypurecloud)([^:/?#]+))(?::\d+)?(\/[^?#]*)?(?:\?|#.*)?s*$/i;
 
@@ -16,8 +16,9 @@ export default Service.extend({
         this._super(...arguments);
 
         try {
-            const theme = loadCachedTheme();
-            this.set('theme', theme);
+            this.set('theme', {
+                theme: THEME_CLASSES.LIGHT
+            });
         } catch (e) {
             this.get('traceLogger').debug(
                 'services/application',

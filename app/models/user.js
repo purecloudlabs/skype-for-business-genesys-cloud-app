@@ -70,7 +70,7 @@ export default Ember.Object.extend({
         if (typeof name === 'string') {
             promise = RSVP.resolve(name);
         } else {
-            promise = RSVP.Promise(resolve => {
+            promise = new RSVP.Promise(resolve => {
                 person.displayName.get().then(resolve);
             });
         }
