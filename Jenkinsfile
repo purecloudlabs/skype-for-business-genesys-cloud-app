@@ -6,8 +6,14 @@ webappPipeline {
     manifest = directoryManifest('./dist')
     buildType = { env.BRANCH_NAME == 'master' ? 'MAINLINE' : 'FEATURE' }
     publishPackage = {}
-    shouldDeployDev = { true }
-    shouldDeployTest = { true }
+
+    cmConfig = {
+        return [
+            managerEmail: 'omar.estrella@genesys.com',
+            rollbackPlan: 'Rollback to previous version.',
+            testResults: 'https://jenkins.ininica.com/job/web-pipeline-skype-integration/job/master/'
+        ]
+    }
 
     buildStep = {
       env.CDN_VERSION = (env.BRANCH_NAME == 'master' && env.VERSION != null) ? env.VERSION : env.BRANCH_NAME
@@ -19,11 +25,5 @@ webappPipeline {
         yarn test
         yarn run build
       """)
-    }
-
-    upsertCMStep = {
-      sh('''
-        echo "No CM step yet..."
-      ''')
     }
 }
